@@ -8,6 +8,7 @@
   .list-title {
     text-align: left;
     margin-left: 20px;
+    margin-bottom: 20px;
     font-size: 24px;
     font-weight: bold;
   }
@@ -63,8 +64,12 @@
   }
   
   .heart {
-    cursor: pointer;
-    font-size: 18px;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* cursor: pointer; */
   }
   
   .heart:hover {
@@ -73,6 +78,8 @@
   }
   
   .number {
+    width: 20px;
+    text-align: center;
     color: #0045B0;
   }
 

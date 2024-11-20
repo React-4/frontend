@@ -1,0 +1,54 @@
+.filters {
+    border: 1px solid #0045B0;
+    padding: 16px;
+    margin-bottom: 24px;
+    border-radius: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  
+  .filter-group {
+    flex: 1;
+    min-width: 200px;
+  }
+  
+  .filter-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+  
+  .filter-group button {
+    margin-right: 8px;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    cursor: pointer;
+  }
+  
+  .filter-group button.active {
+    background-color: #0045B0;
+    color: white;
+    border-color: #0045B0;
+  }
+  
+  .filter-actions {
+    margin-top: 8px;
+  }
+  
+  .filter-actions .reset {
+    padding: 8px 16px;
+    background-color: #f1f1f1;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .result-company {
+    font-size: 30px;
+    font-weight: bold;
+    margin-left: 20px;
+    color: #0045B0;
+  }
