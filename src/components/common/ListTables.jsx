@@ -34,7 +34,8 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 export default function ListTables({ data, headers }) {
   const [currentPage, setCurrentPage] = useState(1);
-  const [favorites, setFavorites] = useState(new Array(data.length).fill(false));
+  // const [favorites, setFavorites] = useState(new Array(data.length).fill(false));
+  const [favorites, setFavorites] = useState({});
   const itemsPerPage = 10;
 
   const totalPages = Math.ceil(data.length / itemsPerPage);
@@ -43,10 +44,11 @@ export default function ListTables({ data, headers }) {
     setCurrentPage(page);
   };
 
-  const handleFavoriteToggle = (index) => {
-    const updatedFavorites = [...favorites];
-    updatedFavorites[index] = !updatedFavorites[index];
-    setFavorites(updatedFavorites);
+  const handleFavoriteToggle = (id) => {
+    setFavorites((prevFavorites) => ({
+      ...prevFavorites,
+      [id]: !prevFavorites[id], // 고유 id의 상태를 토글
+    }));
   };
 
   const currentData = data.slice(
@@ -69,7 +71,7 @@ export default function ListTables({ data, headers }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {currentData.map((row, index) => (
+            {currentData.map((row) => (
               <StyledTableRow key={row.id}>
                 {headers.map((header, i) => (
                   <StyledTableCell key={i} align="center">
@@ -77,10 +79,10 @@ export default function ListTables({ data, headers }) {
                       <div className="heart-number">
                         <span
                           className="heart"
-                          onClick={() => handleFavoriteToggle(index)}
+                          onClick={() => handleFavoriteToggle(row.id)}
                           style={{ cursor: "pointer" }}
                         >
-                          {favorites[index] ? (
+                          {favorites[row.id] ? (
                             <FavoriteIcon style={{ color: "red" }} />
                           ) : (
                             <FavoriteBorderIcon />
