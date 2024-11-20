@@ -54,7 +54,7 @@ const MainPage = () => {
     }
   });
 
-  const [stockSortType, setStockSortType] = useState("price");
+  const [stockSortType, setStockSortType] = useState("latest");
 
   const stockData = Array.from({ length: 28 }, (_, index) => ({
     id: index + 1,
@@ -102,22 +102,39 @@ const MainPage = () => {
 
   return (
     <div>
-      <ListTables
-        title="공시"
-        data={sortedDisclosureData}
-        headers={disclosureHeaders}
-        sortOptions={disclosureSortOptions}
-        sortType={disclosureSortType}
-        onSortChange={handleDisclosureSortChange}
-      />
+      <h2 className="list-title">공시</h2>
+      <div className="sort-buttons">
+        {disclosureSortOptions.map((option) => (
+          <button
+            key={option.key}
+            className={disclosureSortType === option.key ? "active" : ""}
+            onClick={() => handleDisclosureSortChange(option.key)}
+          >
+            {option.label}
+          </button>
+        ))}
+      </div>
 
       <ListTables
-        title="종목"
+        data={sortedDisclosureData}
+        headers={disclosureHeaders}
+      />
+
+      <h2 className="list-title">종목</h2>
+      <div className="sort-buttons">
+        {disclosureSortOptions.map((option) => (
+          <button
+            key={option.key}
+            className={stockSortType === option.key ? "active" : ""}
+            onClick={() => handleStockSortChange(option.key)}
+          >
+            {option.label}
+          </button>
+        ))}
+      </div>
+      <ListTables
         data={sortedStockData}
         headers={stockHeaders}
-        sortOptions={stockSortOptions}
-        sortType={stockSortType}
-        onSortChange={handleStockSortChange}
       />
 
     </div>
