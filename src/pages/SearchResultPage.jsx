@@ -56,14 +56,11 @@ const SearchResultPage = () => {
 
     return (
         <div>
-          <ListTables
-            title="공시"
-            data={sortedDisclosureData}
-            headers={disclosureHeaders}
-            sortOptions={disclosureSortOptions}
-            sortType={disclosureSortType}
-            onSortChange={handleDisclosureSortChange}
-          />
+            <h2 className="list-title">공시</h2>
+            <ListTables
+                data={sortedDisclosureData}
+                headers={disclosureHeaders}
+            />
         </div>
     );
 };
