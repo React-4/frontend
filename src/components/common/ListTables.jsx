@@ -59,8 +59,6 @@ export default function ListTables({
     currentPage * itemsPerPage
   );
 
-  const startNumber = (currentPage - 1) * itemsPerPage + 1;
-
   return (
     <div className="list-container">
       {/* 제목 */}
@@ -105,6 +103,11 @@ export default function ListTables({
                           {favorites[index] ? "❤️" : "🤍"}
                         </span>
                         <span className="number">{row[header.key]}</span>
+                      </div>
+                    ) : header.key === "votes" ? (
+                      <div className="votes-container">
+                        <span className="votes-good">호재 {row.votes.good}</span> |
+                        <span className="votes-bad">악재 {row.votes.bad}</span>
                       </div>
                     ) : (
                       row[header.key]

@@ -11,7 +11,10 @@ const MainPage = () => {
     report: `보고서 ${index + 1}`,
     submitter: `제출자 ${index + 1}`,
     date: `2024-11-${(index % 30) + 1}`,
-    votes: Math.floor(Math.random() * 100),
+    votes: {
+      good: Math.floor(Math.random() * 11),
+      bad: Math.floor(Math.random() * 11),
+    },
     comments: Math.floor(Math.random() * 50),
   }));
 
@@ -41,7 +44,9 @@ const MainPage = () => {
       case "latest":
         return new Date(b.date) - new Date(a.date);
       case "votes":
-        return b.votes - a.votes;
+        const totalVotesA = a.votes.good + a.votes.bad;
+        const totalVotesB = b.votes.good + b.votes.bad;
+        return totalVotesB - totalVotesA;
       case "comments":
         return b.comments - a.comments;
       default:
