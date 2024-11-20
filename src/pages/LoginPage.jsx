@@ -6,14 +6,18 @@ import personalCard from "../assets/Personalcard.png";
 import { Input, InputAdornment, TextField } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLogin } from "../hooks/useLogin";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
   const navigate = useNavigate();
+  const { loggedIn, setLoggedIn } = useLogin();
   const handleLogin = () => {
     navigate("/");
     localStorage.setItem("login-token", email);
+    setLoggedIn(email);
   };
+
   return (
     <div className="flex flex-col items-center w-full mt-11 gap-5">
       <div className="font-bold text-2xl">로그인</div>
@@ -23,12 +27,11 @@ export default function LoginPage() {
           onChange={(e) => {
             setEmail(e.target.value);
           }}
-          sx={{ border: 0, width: 1 / 3 }}
+          variant="outlined"
+          className="inputRoundedTop"
+          sx={{ width: 1 / 3 }}
           value={email}
           slotProps={{
-            style: {
-              borderRadius: "10px",
-            },
             input: {
               startAdornment: (
                 <InputAdornment position="start">
@@ -48,8 +51,9 @@ export default function LoginPage() {
           onChange={(e) => {
             setPw(e.target.value);
           }}
-          id="outlined-start-adornment"
-          className="border-primary-2 border-2 rounded-b-xl w-1/3 p-10"
+          variant="outlined"
+          className="inputRoundedBottom"
+          sx={{ width: 1 / 3 }}
           slotProps={{
             input: {
               startAdornment: (

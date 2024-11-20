@@ -16,6 +16,9 @@ export default {
         "94%": "94%",
         "3%": "3%",
       },
+      borderWidth: {
+        1: "1.5px",
+      },
     },
   },
   plugins: [],

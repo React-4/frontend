@@ -17,6 +17,17 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.inputRoundedTop .MuiOutlinedInput-root {
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
+  border-bottom: none;
+}
+
+.inputRoundedBottom .MuiOutlinedInput-root {
+  border-bottom-left-radius: 25px;
+  border-bottom-right-radius: 25px;
+}
+
 /* a {
   font-weight: 500;
   color: #646cff;

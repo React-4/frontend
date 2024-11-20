@@ -3,6 +3,7 @@ import Layout from "../components/common/Layout";
 import MainPage from "../pages/MainPage";
 import LoginPage from "../pages/LoginPage";
 import SignupPage from "../pages/SignupPage";
+import MyPage from "../pages/MyPage";
 
 export const mainRoutes = [
   {
@@ -11,6 +12,7 @@ export const mainRoutes = [
     children: [
       { element: <MainPage />, index: true },
       { element: <LoginPage />, path: "/login" },
+      { element: <MyPage />, path: "/mypage" },
     ],
   },
   {
