@@ -75,3 +75,18 @@
   .number {
     color: #0045B0;
   }
+
+  .votes-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .votes-good {
+    color: red;
+  }
+
+  .votes-bad {
+    color: blue;
+  }
