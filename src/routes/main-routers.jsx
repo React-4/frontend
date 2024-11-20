@@ -7,9 +7,12 @@ export const mainRoutes = [
   {
     path: "/",
     element: <Layout />,
-    children: [{ element: <MainPage />, index: true }],
+    children: [
+      { element: <MainPage />, index: true }, // / 경로
+    ],
   },
 ];
+
 
 const router = createBrowserRouter(mainRoutes);
 
