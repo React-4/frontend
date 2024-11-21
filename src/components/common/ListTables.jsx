@@ -9,7 +9,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Pagination from "@mui/material/Pagination";
 import "../css/ListTables.css"; // 추가된 CSS 파일
-import FavoriteIcon from "@mui/icons-material/Favorite";  //빨간 하트
+import FavoriteIcon from "@mui/icons-material/Favorite"; //빨간 하트
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder"; //빈 하트
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -34,7 +34,9 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 export default function ListTables({ data, headers }) {
   const [currentPage, setCurrentPage] = useState(1);
-  const [favorites, setFavorites] = useState(new Array(data.length).fill(false));
+  const [favorites, setFavorites] = useState(
+    new Array(data.length).fill(false)
+  );
   const itemsPerPage = 10;
 
   const totalPages = Math.ceil(data.length / itemsPerPage);
@@ -58,7 +60,11 @@ export default function ListTables({ data, headers }) {
     <div className="list-container">
       {/* 테이블 */}
       <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 700 }} aria-label="customized table" className="list-table">
+        <Table
+          sx={{ minWidth: 700 }}
+          aria-label="customized table"
+          className="list-table"
+        >
           <TableHead>
             <TableRow>
               {headers.map((header, index) => (
@@ -81,17 +87,19 @@ export default function ListTables({ data, headers }) {
                           style={{ cursor: "pointer" }}
                         >
                           {favorites[index] ? (
-                            <FavoriteIcon style={{ color: "red" }} />
+                            <FavoriteIcon style={{ color: "#F04452" }} />
                           ) : (
                             <FavoriteBorderIcon />
-                          )}   
+                          )}
                         </span>
                         <span className="number">{row[header.key]}</span>
                       </div>
                     ) : header.key === "votes" ? (
                       <div className="votes-container">
-                        <span className="votes-good">호재 {row.votes.good}</span> |
-                        <span className="votes-bad">악재 {row.votes.bad}</span>
+                        <span className="votes-good">
+                          호재 {row.votes.good}
+                        </span>{" "}
+                        |<span className="votes-bad">악재 {row.votes.bad}</span>
                       </div>
                     ) : (
                       row[header.key]

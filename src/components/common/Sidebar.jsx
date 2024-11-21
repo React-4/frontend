@@ -6,28 +6,72 @@ import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import HistoryIcon from "@mui/icons-material/History";
+import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import Button from "@mui/material/Button";
 import SidebarContent from "./SidebarContent";
+
+const favData = {
+  stock: [
+    { company: "카카오", price: "51,100", gap: "-1300", rate: "3.5" },
+    { company: "카카오2", price: "51,100", gap: "-1390", rate: "3.5" },
+    { company: "카카오3", price: "51,100", gap: "10", rate: "3.5" },
+    { company: "카카오4", price: "51,100", gap: "1300", rate: "3.5" },
+    { company: "카카오1", price: "51,100", gap: "-1300", rate: "3.5" },
+    {
+      company: "카카오5카카오카카오",
+      price: "51,100",
+      gap: "1300",
+      rate: "3.5",
+    },
+  ],
+  disclosure: [
+    {
+      company: "카카오",
+      title: "기업설명회 안내",
+      desc: "(주)카카오 기업설명회(IR) 개최(안내공시)",
+    },
+    {
+      company: "카카오2zkzkdh",
+      title: "기업설명회 안내2dkssodksso",
+      desc: "(주)카카오 기업설명회(IR) 개최(안내공시)주)카카오 기업설명회(IR) 개최(안내공시)",
+    },
+  ],
+};
+
+const histData = {
+  stock: [
+    { company: "방문카카오", price: "51,100", gap: "-1300", rate: "3.5" },
+    { company: "방문카카오2", price: "51,100", gap: "-1390", rate: "3.5" },
+    { company: "방문카카오3", price: "51,100", gap: "10", rate: "3.5" },
+    { company: "방문카카오4", price: "51,100", gap: "1300", rate: "3.5" },
+    { company: "방문카카오1", price: "51,100", gap: "-1300", rate: "3.5" },
+    { company: "방문카카오5", price: "51,100", gap: "1300", rate: "3.5" },
+  ],
+  disclosure: [],
+};
 
 export default function SidebarWithDrawer() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerTitle, setDrawerTitle] = useState("");
-  const [favColor, setFavColor] = useState("white");
-  const [histColor, setHistColor] = useState("white");
-  const [data, setData] = useState([]);
+  const [favColor, setFavColor] = useState("black");
+  const [histColor, setHistColor] = useState("black");
+  const [data, setData] = useState({
+    stock: [],
+    disclosure: [],
+  });
 
   useEffect(() => {
     console.log(drawerTitle);
     if (drawerTitle === "관심") {
       setFavColor("primary-1");
-      setData(favStockData);
+      setData(favData);
     } else {
       setFavColor("primary-2");
     }
 
     if (drawerTitle === "최근 본") {
       setHistColor("primary-1");
-      setData([...histStockData]);
+      setData(histData);
     } else {
       setHistColor("primary-2");
     }
@@ -42,22 +86,8 @@ export default function SidebarWithDrawer() {
     setDrawerOpen(false);
   };
 
-  const favStockData = [
-    { title: "카카오", price: "51,100" },
-    { title: "카카오", price: "51,100" },
-    { title: "카카오", price: "51,100" },
-  ];
-  const histStockData = [
-    { title: "카카오", price: "51,100" },
-    { title: "카카오", price: "51,100" },
-    { title: "카카오", price: "51,100" },
-  ];
-  // const favDisclosureData = [{ company: "카카오", title: "기업설명회 안내" }];
-  // const histDisclosureData = [{ company: "카카오", title: "기업설명회 안내" }];
-
   return (
     <Box sx={{ display: "flex", height: "100vh", position: "relative" }}>
-      {/* 외부 클릭 시 Drawer 닫기 */}
       {drawerOpen && (
         <Box
           onClick={handleDrawerClose}
@@ -72,10 +102,9 @@ export default function SidebarWithDrawer() {
         />
       )}
 
-      {/* 고정 사이드바 */}
       <Box
         sx={{
-          width: "6%",
+          width: "4%",
           height: "100vh",
           backgroundColor: "#f7f7f7",
           borderRight: "1px solid #ddd",
@@ -85,10 +114,18 @@ export default function SidebarWithDrawer() {
           paddingTop: "5px",
           position: "fixed",
           right: 0,
-          zIndex: 2, // 외부 클릭 영역보다 위에 위치하도록 설정
+          zIndex: 2,
         }}
       >
         <List>
+          <ListItem disablePadding>
+            <Button onClick={handleDrawerClose}>
+              <div className="flex flex-col items-center text-primary-2">
+                <HomeOutlinedIcon />
+                닫기
+              </div>
+            </Button>
+          </ListItem>
           <ListItem disablePadding>
             <Button onClick={() => handleDrawerOpen("관심")}>
               <div className={`flex flex-col items-center text-${favColor}`}>
@@ -113,38 +150,28 @@ export default function SidebarWithDrawer() {
         anchor="right"
         open={drawerOpen}
         onClose={handleDrawerClose}
-        // BackdropProps={{ invisible: true }} // 어두운 배경 제거
         variant="persistent"
         sx={{
           "& .MuiDrawer-paper": {
-            width: 240,
-            marginRight: "6%", // 사이드바 옆에 위치하도록 여백 설정
+            width: 280,
+            marginRight: "4%",
             height: "100vh",
-            boxShadow: "none", // 그림자 제거
+            boxShadow: "none",
             backgroundColor: "#f7f7f7",
-            zIndex: 3, // 사이드바보다 위에 위치하도록 설정
+            zIndex: 3,
           },
         }}
       >
-        {/* drawer 상세 내용 */}
         <SidebarContent drawerTitle={drawerTitle} data={data} />
       </Drawer>
       <Box
-        component="main"
         sx={{
           flexGrow: 1,
           p: 3,
-          marginRight: drawerOpen ? "calc(6% + 280px)" : "6%",
+          marginRight: drawerOpen ? "calc(4% + 300px)" : "4%",
           transition: "margin-right 0.3s ease",
         }}
-      >
-        {/* <Outlet /> 여기에 다른 라우트 내용이 표시될 수 있음 */}
-        {/* <Typography variant="h4">메인 콘텐츠 영역</Typography>
-        <Typography>
-          여기에 메인 콘텐츠가 들어갑니다. 사이드바와 Drawer가 고정된 상태로
-          콘텐츠를 표시합니다.
-        </Typography> */}
-      </Box>
+      ></Box>
     </Box>
   );
 }
