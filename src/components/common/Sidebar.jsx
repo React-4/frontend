@@ -12,8 +12,8 @@ import SidebarContent from "./SidebarContent";
 export default function SidebarWithDrawer() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerTitle, setDrawerTitle] = useState("");
-  const [favColor, setFavColor] = useState("black");
-  const [histColor, setHistColor] = useState("black");
+  const [favColor, setFavColor] = useState("white");
+  const [histColor, setHistColor] = useState("white");
   const [data, setData] = useState([]);
 
   useEffect(() => {
