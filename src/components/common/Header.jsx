@@ -30,29 +30,13 @@ export default function Header() {
           placeholder="검색어를 입력하세요"
         />
       </div>
-      {/* <TextField
-        placeholder="검색어를 입력하세요"
-        variant="outlined"
-        className="inputRounded h-10"
-        sx={{ width: 1 / 3, height: "40px" }}
-        slotProps={{
-          input: {
-            startAdornment: (
-              <InputAdornment position="start">
-                <img src={search}></img>
-              </InputAdornment>
-            ),
-          },
-        }}
-      /> */}
-
       {loggedIn ? (
         <div className="relative">
           <button
             className="rounded-full w-10 h-10 bg-red-400 text-white"
             onClick={() => setShowTooltip(true)}
           >
-            {loggedIn}
+            {loggedIn.slice(0, 2)}
           </button>
 
           {showTooltip && (

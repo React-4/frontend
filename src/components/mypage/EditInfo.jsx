@@ -63,8 +63,8 @@ export default function EditInfo() {
     <div className="w-2/3">
       <div className="flex flex-row justify-between">
         <div className="flex flex-col items-center ml-6 w-32">
-          <div className="rounded-full w-24 h-24 bg-red-400 text-white flex items-center justify-center">
-            {loggedIn}
+          <div className="rounded-full w-24 h-24 bg-red-400 text-4xl text-white flex items-center justify-center">
+            {loggedIn.slice(0, 2)}
           </div>
           <div className="flex flex-row items-center justify-center ">
             {isEditingNickname ? (
