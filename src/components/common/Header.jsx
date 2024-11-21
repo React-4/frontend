@@ -10,6 +10,7 @@ export default function Header() {
   const [showTooltip, setShowTooltip] = useState(false);
 
   const handleLogout = () => {
+    localStorage.removeItem("login-token");
     setShowTooltip(false);
     setLoggedIn(false);
     navigate("/");
