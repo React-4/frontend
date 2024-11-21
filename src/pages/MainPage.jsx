@@ -54,7 +54,7 @@ const MainPage = () => {
     }
   });
 
-  const [stockSortType, setStockSortType] = useState("latest");
+  const [stockSortType, setStockSortType] = useState("price");
 
   const stockData = Array.from({ length: 28 }, (_, index) => ({
     id: index + 1,
@@ -122,7 +122,7 @@ const MainPage = () => {
 
       <h2 className="list-title">종목</h2>
       <div className="sort-buttons">
-        {disclosureSortOptions.map((option) => (
+        {stockSortOptions.map((option) => (
           <button
             key={option.key}
             className={stockSortType === option.key ? "active" : ""}

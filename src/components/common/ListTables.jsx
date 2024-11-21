@@ -9,6 +9,8 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Pagination from "@mui/material/Pagination";
 import "../css/ListTables.css"; // 추가된 CSS 파일
+import FavoriteIcon from "@mui/icons-material/Favorite";  //빨간 하트
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder"; //빈 하트
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -30,7 +32,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-export default function ListTables({ title, data, headers }) {
+export default function ListTables({ data, headers }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [favorites, setFavorites] = useState(new Array(data.length).fill(false));
   const itemsPerPage = 10;
@@ -76,8 +78,13 @@ export default function ListTables({ title, data, headers }) {
                         <span
                           className="heart"
                           onClick={() => handleFavoriteToggle(index)}
+                          style={{ cursor: "pointer" }}
                         >
-                          {favorites[index] ? "❤️" : "🤍"}
+                          {favorites[index] ? (
+                            <FavoriteIcon style={{ color: "red" }} />
+                          ) : (
+                            <FavoriteBorderIcon />
+                          )}   
                         </span>
                         <span className="number">{row[header.key]}</span>
                       </div>
