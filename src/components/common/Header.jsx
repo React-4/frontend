@@ -10,6 +10,7 @@ export default function Header() {
   const [showTooltip, setShowTooltip] = useState(false);
 
   const handleLogout = () => {
+    setShowTooltip(false);
     setLoggedIn(false);
     navigate("/");
   };
@@ -45,13 +46,9 @@ export default function Header() {
       /> */}
 
       {loggedIn ? (
-        <div
-          className="relative"
-          onMouseEnter={() => setShowTooltip(true)}
-          onMouseLeave={() => setShowTooltip(false)}
-        >
+        <div className="relative">
           <button
-            className="rounded-full w-10 h-10 bg-pink-300"
+            className="rounded-full w-10 h-10 bg-red-400 text-white"
             onClick={() => setShowTooltip(true)}
           >
             {loggedIn}
@@ -61,7 +58,10 @@ export default function Header() {
             <div className="absolute right-0 mt-2 w-32 bg-white shadow-lg rounded-md z-10">
               <button
                 className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
-                onClick={() => navigate("/mypage")}
+                onClick={() => {
+                  navigate("/mypage");
+                  setShowTooltip(false);
+                }}
               >
                 마이페이지
               </button>

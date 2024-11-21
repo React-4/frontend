@@ -15,9 +15,13 @@ export default {
       width: {
         "94%": "94%",
         "3%": "3%",
+        "1/20": "2%",
       },
       borderWidth: {
         1: "1.5px",
+      },
+      maxHeight: {
+        18: "70px",
       },
     },
   },

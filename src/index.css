@@ -27,7 +27,9 @@
   border-bottom-left-radius: 25px;
   border-bottom-right-radius: 25px;
 }
-
+* {
+  font-family: "Noto Sans KR";
+}
 /* a {
   font-weight: 500;
   color: #646cff;
