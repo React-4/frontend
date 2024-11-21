@@ -29,17 +29,19 @@ const SearchResultPage = () => {
     });
 
     const [filters, setFilters] = useState({
-        period: "1개월",
-        market: "코스닥",
-        type: "정기공시",
+        period: "",
+        market: "",
+        type: "",
+        startDate: "",
+        endDate: "",
       });
-    
-    const handleFilterChange = (field, value) => {
-    setFilters({
-        ...filters,
-        [field]: value,
-    });
-    };
+      
+      const handleFilterChange = (field, value) => {
+        setFilters((prevFilters) => ({
+          ...prevFilters,
+          [field]: prevFilters[field] === value ? "" : value, // Toggle filter value
+        }));
+      };
 
     const resetFilters = () => {
         setFilters({
@@ -47,6 +49,41 @@ const SearchResultPage = () => {
             market: "",
             type: "",
         });
+        setFilteredData(disclosureData);
+    };
+
+    const searchFilters = () => {  
+        const now = new Date();
+        const filtered = disclosureData.filter((item) => {
+        // Filter by period
+        if (filters.period) {
+            const daysAgo = {
+            "1개월": 30,
+            "6개월": 180,
+            "1년": 365,
+            "3년": 1095,
+            }[filters.period];
+            const itemDate = new Date(item.date);
+            const cutoffDate = new Date(now);
+            cutoffDate.setDate(now.getDate() - daysAgo);
+
+            if (itemDate < cutoffDate) return false;
+        }
+
+        // Filter by market
+        if (filters.market && filters.market !== "전체") {
+            if (item.market !== filters.market) return false;
+        }
+
+        // Filter by type
+        if (filters.type && item.type !== filters.type) {
+            return false;
+        }
+
+        return true;
+        });
+
+        setFilteredData(filtered);
     };
     
     const disclosureData = Array.from({ length: 50 }, (_, index) => ({
@@ -73,23 +110,25 @@ const SearchResultPage = () => {
       { key: "comments", label: "댓글수" },
     ];
 
-    const filteredData = disclosureData.filter((item) => {
-        // 간단한 필터 로직 예시: 시장 필터링
-        if (filters.market !== "전체" && item.company.includes(filters.market) === false) {
-          return false;
-        }
-        // 다른 필터 조건 추가 가능
-        return true;
-    });
-  
+    const [filteredData, setFilteredData] = useState(disclosureData);
+
     const sortedDisclosureData = [...filteredData].sort((a, b) => {
       return new Date(b.date) - new Date(a.date);
     });
 
+    const handleInputChange = (event) => {
+        const { value } = event.target;
+        setFilters((prevFilters) => ({
+            ...prevFilters,
+            company: value,
+        }));
+    };
+
     return (
         <div>
             <div className="search-result-title">
-                <h1 className="result-company1">
+                <h1 className="result-title
+                ">
                     <span style={{ color: "#0045B0", fontSize: "30px", fontWeight: "bold", marginLeft: "20px"}}>'삼성'</span>
                     <span style={{ color: "black", fontSize: "20px"}}> 검색결과</span>
                 </h1>
@@ -103,50 +142,137 @@ const SearchResultPage = () => {
 
             <h2 className="list-title">공시</h2>
             <div className="filters">
-                <div className="filter-group">
-                <label>기간</label>
-                {["1개월", "6개월", "1년", "3년"].map((period) => (
-                    <button
-                    key={period}
-                    className={filters.period === period ? "active" : ""}
-                    onClick={() => handleFilterChange("period", period)}
-                    >
-                    {period}
-                    </button>
-                ))}
-                </div>
+                <div className="sec">
+                    <div className="sector1">
+                        <div className="row">
+                            <div className="filter-group search-group">
+                            <label>공시대상 회사</label>
+                            <div className="search-bar">
+                                <input
+                                    type="text"
+                                    placeholder="회사명 | 티커"
+                                    value={filters.company}
+                                    onChange={handleInputChange}
+                                />
+                            </div>                    
+                            </div>
+                        </div>
+                    
+                        <div className="row">
+                            <div className="filter-group period-group">
+                            <label>기간</label>
+                            <div className="period-buttons">
+                                {["1개월", "6개월", "1년", "3년", "지정"].map((period) => (
+                                <button
+                                    key={period}
+                                    className={filters.period === period ? "active" : ""}
+                                    onClick={() => handleFilterChange("period", period)}
+                                    >
+                                    {period}
+                                </button>
+                                ))}
+                                {filters.period === "지정" && (
+                                    <div className="date-picker">
+                                    <label>
+                                        <input
+                                        type="date"
+                                        value={filters.startDate || ""}
+                                        onChange={(e) => setFilters((prev) => ({ ...prev, startDate: e.target.value }))}
+                                        />
+                                    </label>
+                                    <label>
+                                        <input
+                                        type="date"
+                                        value={filters.endDate || ""}
+                                        onChange={(e) => setFilters((prev) => ({ ...prev, endDate: e.target.value }))}
+                                        />
+                                    </label>
+                                    </div>
+                                )}
 
-                <div className="filter-group">
-                <label>시장</label>
-                {["코스피", "코스닥", "전체"].map((market) => (
-                    <button
-                    key={market}
-                    className={filters.market === market ? "active" : ""}
-                    onClick={() => handleFilterChange("market", market)}
-                    >
-                    {market}
-                    </button>
-                ))}
-                </div>
+                                {/* 선택된 날짜 표시 */}
+                                {filters.startDate && filters.endDate && filters.period === "지정" && (
+                                    <div className="selected-dates">
+                                    <span>
+                                        선택된 날짜: {filters.startDate} ~ {filters.endDate}
+                                    </span>
+                                    </div>
+                                )}
 
-                <div className="filter-group">
+                            </div>
+                            </div>
+                        </div>
+
+                        <div className="row">
+                            <div className="filter-group market-group">
+                                <label>시장</label>
+                                <div className="market-buttons">
+                                    {["코스피", "코스닥", "전체"].map((market) => (
+                                    <button
+                                        key={market}
+                                        className={filters.market === market ? "active" : ""}
+                                        onClick={() => handleFilterChange("market", market)}
+                                        >
+                                        {market}
+                                    </button>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <section className="separator"></section>
+
+                </div>
+                
+
+                
+
+                {/* <div className="filter-group type-group">
                 <label>공시 유형</label>
-                {["정기공시", "주요사항보고", "발행공시", "자율공시"].map((type) => (
+                <div className="type-buttons">
+                    {[
+                    "정기공시",
+                    "주요사항보고",
+                    "발행공시",
+                    "지분공시",
+                    "기타공시",
+                    "외부감사관련",
+                    "펀드공시",
+                    "자산유동화",
+                    "거래소공시",
+                    "공정위공시",
+                    ].map((type) => (
                     <button
-                    key={type}
-                    className={filters.type === type ? "active" : ""}
-                    onClick={() => handleFilterChange("type", type)}
+                        key={type}
+                        className={filters.type === type ? "active" : ""}
+                        onClick={() => handleFilterChange("type", type)}
                     >
-                    {type}
+                        {type}
                     </button>
-                ))}
+                    ))}
+                </div>
+                <section className="separator" role="search" aria-label="Search section"></section>
+
+                <div className="sector1">
+                <div className="filter-actions">
+                <button className="fibut" onClick={searchFilters}>
+                    검색
+                </button>
                 </div>
 
                 <div className="filter-actions">
-                <button className="reset" onClick={resetFilters}>
+                <button className="fibut" onClick={resetFilters}>
                     초기화
                 </button>
                 </div>
+
+                </div>
+            </div>
+ */}
+
+                
+                
+
             </div>
 
             <ListTables

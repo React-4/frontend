@@ -1,54 +1,185 @@
 .filters {
     border: 1px solid #0045B0;
-    padding: 16px;
-    margin-bottom: 24px;
-    border-radius: 8px;
+    padding: 20px;
+    margin: 0 20px 20px 20px;
+    border-radius: 20px;
     display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
+    gap: 10px;
+    justify-content: space-between;
+    align-items: center;
+  }
+.sec {
+  display: flex;
+  flex-direction: row;
+}
+
+.sector1 {
+  flex-direction: column;
+}
+
+  .row {
+    display: flex;
+    /* justify-content: flex-start; */
+    align-items: center;
+    margin-bottom: 8px;
   }
   
   .filter-group {
-    flex: 1;
+    /* flex: 1; */
     min-width: 200px;
+    display: flex;
+    flex-direction: row;
+    gap: 3px;
+  }
+
+  .search-group {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 600px;
+    margin-bottom: 5px;
   }
   
+  .search-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .search-bar input {
+    flex: 1;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #d4d8db;
+    font-size: 14px;
+    width: 100%;
+  }
+
+  .separator {
+    display: flex;
+    width: 1px;
+    border: 1px solid #0045B0;
+  }
+
+  .period-group,
+  .market-group,
+  .type-group {
+    flex: 1;
+  }
+  
+  .period-group label,
+  .market-group label,
+  .type-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: bold;
+    color: #2c3a4b;
+  }
+  
+  .period-group button,
+  .market-group button,
+  .type-group button {
+    padding: 8px 16px;
+    border-radius: 16px;
+    background-color: white;
+    color: #6b7583;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    cursor: pointer;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    flex-direction: row;
+  }
+  
+  .period-group button.active,
+  .market-group button.active 
+  .type-group button.active{
+    background-color: #e8f2ff;
+    /* border: 1px solid #2372eb; */
+    color: #2372eb;
+  }
+  
+  .period-buttons,
+  .type-buttons,
+  .market-buttons {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+  }
+
   .filter-group label {
     display: block;
-    margin-bottom: 8px;
+    margin-right: 5px;
+    margin-top: 3px;
     font-weight: bold;
+    font-size: 14px;
   }
   
   .filter-group button {
-    margin-right: 8px;
-    padding: 8px 12px;
-    border: 1px solid #ccc;
+    margin-right: 5px;
+    padding: 6px 10px;
     border-radius: 4px;
-    background-color: #f9f9f9;
+    background-color: #F6F7F9;
+    color: #8B95A1;
+    font-size: 9px;
+    font-weight: bold;
     cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
   }
   
   .filter-group button.active {
-    background-color: #0045B0;
-    color: white;
-    border-color: #0045B0;
+    background-color: #E8F2FF;    
+    font-weight: bold;
+    color: #2372EB;
   }
   
   .filter-actions {
     margin-top: 8px;
+    display: flex;
+    flex-direction: column; /* 버튼들을 세로로 정렬 */
+    align-items: center; /* 가로 방향으로 가운데 정렬 */
+    justify-content: center; /* 세로 방향으로 가운데 정렬 */
+    gap: 10px; /* 버튼 간 간격 */
+    height: 100%;
+    width: 100%;
   }
   
-  .filter-actions .reset {
+  .filter-actions .fibut {
     padding: 8px 16px;
-    background-color: #f1f1f1;
-    border: 1px solid #ccc;
+    background-color: #0045B0;
+    color: white;
+    font-weight: bold;
+    font-size: 15px;
     border-radius: 4px;
     cursor: pointer;
+    display: flex;
+    text-align: center;
   }
   
-  .result-company {
+  .result-title {
     font-size: 30px;
     font-weight: bold;
-    margin-left: 20px;
     color: #0045B0;
   }
+
+  .date-picker {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column; /* 세로 정렬 */
+    gap: 10px; /* 입력 필드 간 간격 */
+  }
+  
+  .date-picker label {
+    font-size: 14px;
+    font-weight: bold;
+    color: #2c3a4b;
+  }
+  
+  .date-picker input {
+    padding: 8px;
+    border: 1px solid #d4d8db;
+    border-radius: 4px;
+    font-size: 14px;
+    width: 100%;
+  }
+  
