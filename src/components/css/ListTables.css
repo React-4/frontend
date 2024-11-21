@@ -21,27 +21,20 @@
     font-size: 16px;
   }
 
-  .list-table th,
-  .list-table td {
-    border: none;
-  }
+/* 제목 스타일 */
+.list-title {
+  text-align: left;
+  margin-left: 20px;
+  font-size: 24px;
+  font-weight: bold;
+}
 
-  
-  /* 버튼 컨테이너 */
-  .sort-buttons {
-    margin-bottom: 20px;
-    text-align: right;
-  }
-  
-  .sort-buttons button {
-    margin: 0 5px;
-    border: none;
-    background: none;
-    color: black;
-    padding: 5px 10px;
-    cursor: pointer;
-    transition: background 0.3s, color 0.3s;
-  }
+/* 전체 리스트 개수 */
+.list-count {
+  margin-bottom: 10px;
+  font-weight: bold;
+  font-size: 16px;
+}
 
   .sort-buttons .active {
     background-color: #0045B0;
@@ -83,18 +76,73 @@
     text-align: center;
     color: #0045B0;
   }
+.list-table th,
+.list-table td {
+  border: none;
+}
 
-  .votes-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 5px;
-  }
+/* 버튼 컨테이너 */
+.sort-buttons {
+  margin-bottom: 20px;
+  text-align: right;
+}
 
-  .votes-good {
-    color: red;
-  }
+.sort-buttons button {
+  margin: 0 5px;
+  border: none;
+  background: none;
+  color: black;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+}
 
-  .votes-bad {
-    color: blue;
-  }
+.sort-buttons .active {
+  background-color: #0045b0;
+  color: #ffffff;
+  border-radius: 5px;
+}
+
+/* 페이지네이션 컨테이너 */
+.pagination-container {
+  margin-top: 20px;
+  display: flex;
+  text-align: center;
+  justify-content: center;
+}
+
+.heart-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 25px;
+}
+
+.heart {
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.heart:hover {
+  transform: scale(1.2);
+  transition: transform 0.2s;
+}
+
+.number {
+  color: #0045b0;
+}
+
+.votes-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+}
+
+.votes-good {
+  color: #f04452;
+}
+
+.votes-bad {
+  color: #3182f6;
+}
