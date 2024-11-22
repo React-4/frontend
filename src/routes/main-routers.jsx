@@ -6,7 +6,7 @@ import LoginPage from "../pages/LoginPage";
 import SignupPage from "../pages/SignupPage";
 import MyPage from "../pages/MyPage";
 import SearchResultPage from "../pages/SearchResultPage";
-
+import DisclosurePage from "../pages/DisclosurePage";
 
 export const mainRoutes = [
   {
@@ -17,6 +17,7 @@ export const mainRoutes = [
       { element: <LoginPage />, path: "/login" },
       { element: <MyPage />, path: "/mypage" },
       { path: "search-result", element: <SearchResultPage /> },
+      { element: <DisclosurePage />, path: "/disclosure/:id" },
     ],
   },
   {
@@ -24,7 +25,6 @@ export const mainRoutes = [
     element: <SignupPage />,
   },
 ];
-
 
 const router = createBrowserRouter(mainRoutes);
 
