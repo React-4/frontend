@@ -1,0 +1,303 @@
+.filters {
+    border: 1px solid #0045B0;
+    padding: 10px 60px 10px 60px;
+    margin: 0 20px 20px 20px;
+    border-radius: 20px;
+    display: flex;
+    gap: 10px;
+    justify-content: space-between;
+    align-items: stretch;
+    height: auto;
+  }
+
+.sector1 {
+  /* flex: 2; */
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: row;
+  gap: 3px;
+}
+
+.search-group {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 5px;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.search-bar input {
+  flex: 1;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #d4d8db;
+  font-size: 14px;
+  width: 100%;
+}
+
+.search-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: bold;
+  color: black;
+  display: block;
+  margin-right: 5px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.period-group label,
+.market-group label{
+  display: block;
+  font-size: 12px;
+  font-weight: bold;
+  color: black;
+  display: block;
+  margin-right: 5px;
+  margin-top: 3px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+/* .type-group {
+  flex:3;
+} */
+
+.type-group label {
+  display: flex;
+  font-size: 12px;
+  font-weight: bold;
+  color: black;
+  display: block;
+  margin-right: 5px;
+  margin-top: 18px;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.period-buttons,
+.type-buttons {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  align-items: center;
+}
+
+.market-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.separator {
+  margin-left: 20px;
+  margin-right: 20px;
+  display: flex;
+  width: 1px;
+  height: auto;
+  min-height: 100%;
+  align-self: stretch;
+  border: 1px solid #0045B0;
+}
+
+.filter-group button {
+  display: flex;
+  margin-right: 5px;
+  padding: 8px 16px;
+  border-radius: 4px;
+  background-color: #F6F7F9;
+  color: #8B95A1;
+  font-size: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  height: 30.5px;
+  text-align: center;
+  justify-content: center;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.filter-group button.active {
+  background-color: #E8F2FF;    
+  font-weight: bold;
+  color: #2372EB;
+}
+
+.filter-actions {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  justify-content: center; 
+  gap: 10px;
+  height: 100%;
+  width: 100%;
+}
+
+.filter-actions .fibut {
+  padding: 8px 16px;
+  background-color: #0045B0;
+  color: white;
+  font-weight: bold;
+  font-size: 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.result-title {
+  font-size: 30px;
+  font-weight: bold;
+  color: #0045B0;
+}
+
+.sector2 {
+  /* flex: 1; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  gap: 27px;
+}
+
+
+/* 모달 오버레이 스타일 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* 반투명 배경 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* 화면 최상단 */
+}
+
+/* 모달 콘텐츠 스타일 */
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  width: 300px; /* 너비 */
+  text-align: center; /* 텍스트 중앙 정렬 */
+}
+
+/* 모달 제목 스타일 */
+.modal-content h3 {
+  margin-bottom: 20px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #0045b0;
+}
+
+/* 날짜 선택 필드 스타일 */
+.modal-content label {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 15px;
+  font-size: 14px;
+  /* font-weight: bold; */
+  color: black;
+}
+
+.modal-content input[type="date"] {
+  padding: 8px;
+  border: 1px solid #949494;
+  border-radius: 4px;
+  font-size: 12px;
+  width: 100%; /* 입력 필드 너비 */
+  color: #949494; /* 텍스트 검정 */
+  background-color: white; /* 배경 흰색 */
+  appearance: none; /* 기본 스타일 제거 */
+  -webkit-appearance: none; 
+  -moz-appearance: none; 
+  height: 35px; /* 높이 조정 */
+}
+
+/* 비활성화된 필드 스타일 */
+.modal-content input[type="date"]:disabled {
+  color: #949494; /* 텍스트 검정 */
+  background-color: white; /* 배경 흰색 */
+  border: 1px solid #949494;
+  opacity: 1; /* 흐려지지 않도록 설정 */
+  cursor: not-allowed;
+}
+
+/* 날짜 필드 내부 텍스트 색상 설정 */
+.modal-content input[type="date"]::-webkit-datetime-edit {
+  color: #949494;
+}
+
+.modal-content input[type="date"]::-webkit-datetime-edit-fields-wrapper {
+  color: #949494;
+}
+
+.modal-content input[type="date"]::-webkit-datetime-edit-text {
+  color: #949494;
+}
+
+.modal-content input[type="date"]::-webkit-datetime-edit-year-field,
+.modal-content input[type="date"]::-webkit-datetime-edit-month-field,
+.modal-content input[type="date"]::-webkit-datetime-edit-day-field {
+  color: #949494;
+}
+
+.modal-content input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: none;
+  opacity: 1;
+  cursor: pointer;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.modal-actions button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  background-color: #0045b0;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.modal-actions button:hover {
+  background-color: #003080;
+}
+
+
+.selected-dates {
+  margin-top: 6px;
+  font-size: 10px;
+  font-weight: bold;
+  color: #0045b0;
+}
+
