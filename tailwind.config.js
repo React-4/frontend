@@ -23,6 +23,7 @@ export default {
           1: "#2372EB",
         },
         profile: {
+          DEFAULT: "#0045B0",
           0: "#F5AAAA",
           1: "#F8BA84",
           2: "#F0EA96",
