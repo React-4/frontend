@@ -86,7 +86,7 @@ export default function ListTables({ data, headers }) {
                           onClick={() => handleFavoriteToggle(row.id)}
                           style={{ cursor: "pointer" }}
                         >
-                          {favorites[index] ? (
+                          {favorites[row.id] ? (
                             <FavoriteIcon style={{ color: "#F04452" }} />
                           ) : (
                             <FavoriteBorderIcon />
