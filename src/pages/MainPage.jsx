@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import ListTables from "../components/common/ListTables";
 
 const MainPage = () => {
@@ -19,7 +19,7 @@ const MainPage = () => {
   }));
 
   const disclosureHeaders = [
-    { key: "num", label: `전체 리스트 ${disclosureData.length}개`},
+    { key: "num", label: `전체 리스트 ${disclosureData.length}개` },
     { key: "company", label: "공시 대상 회사" },
     { key: "report", label: "보고서명" },
     { key: "submitter", label: "제출인" },
@@ -60,11 +60,13 @@ const MainPage = () => {
     id: index + 1,
     num: index + 1,
     name: `종목명 ${index + 1}`,
-    code: `${Math.floor(Math.random() * (999999-100000+1))+100000}`.toString(),
-    price: `${Math.floor(Math.random() * 9001)+1000} 억 원`,
+    code: `${
+      Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000
+    }`.toString(),
+    price: `${Math.floor(Math.random() * 9001) + 1000} 억 원`,
     changeRate: `${(Math.random() * 10 - 5).toFixed(2)}%`,
-    marketCap: `${Math.floor(Math.random() * 9001)+1000} 억 원`,
-    transaction: `${Math.floor(Math.random() * 19001)+1000} 억 원`,
+    marketCap: `${Math.floor(Math.random() * 9001) + 1000} 억 원`,
+    transaction: `${Math.floor(Math.random() * 19001) + 1000} 억 원`,
   }));
 
   const stockHeaders = [
@@ -90,11 +92,20 @@ const MainPage = () => {
   const sortedStockData = [...stockData].sort((a, b) => {
     switch (stockSortType) {
       case "price":
-        return parseFloat(b.price.replace(/[^0-9.-]+/g, "")) - parseFloat(a.price.replace(/[^0-9.-]+/g, ""));
+        return (
+          parseFloat(b.price.replace(/[^0-9.-]+/g, "")) -
+          parseFloat(a.price.replace(/[^0-9.-]+/g, ""))
+        );
       case "changeRate":
-        return parseFloat(b.changeRate.replace(/[^0-9.-]+/g, "")) - parseFloat(a.changeRate.replace(/[^0-9.-]+/g, ""));
+        return (
+          parseFloat(b.changeRate.replace(/[^0-9.-]+/g, "")) -
+          parseFloat(a.changeRate.replace(/[^0-9.-]+/g, ""))
+        );
       case "transaction":
-        return parseFloat(b.transaction.replace(/[^0-9.-]+/g, "")) - parseFloat(a.transaction.replace(/[^0-9.-]+/g, ""));
+        return (
+          parseFloat(b.transaction.replace(/[^0-9.-]+/g, "")) -
+          parseFloat(a.transaction.replace(/[^0-9.-]+/g, ""))
+        );
       default:
         return 0;
     }
@@ -116,6 +127,7 @@ const MainPage = () => {
       </div>
 
       <ListTables
+        type="disclosure"
         data={sortedDisclosureData}
         headers={disclosureHeaders}
       />
@@ -132,11 +144,7 @@ const MainPage = () => {
           </button>
         ))}
       </div>
-      <ListTables
-        data={sortedStockData}
-        headers={stockHeaders}
-      />
-
+      <ListTables type="stock" data={sortedStockData} headers={stockHeaders} />
     </div>
   );
 };

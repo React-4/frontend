@@ -27,7 +27,7 @@ export default function CommentItem({ username, comment, date }) {
   };
   const handleEdit = () => {};
   return (
-    <div className="flex flex-row justify-between w-94% mt-6">
+    <div className="flex flex-row justify-between mt-6">
       <div
         className={`rounded-full w-10 h-10 text-white text-center p-1 ${colorcode}`}
       >
@@ -40,7 +40,7 @@ export default function CommentItem({ username, comment, date }) {
         </div>
 
         {isEditing ? (
-          <div className="relative inline-block w-94% ">
+          <div className="relative inline-block">
             <textarea
               className="bg-primary-1 w-full h-24 p-4 rounded-lg"
               placeholder="의견을 남겨주세요"

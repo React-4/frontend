@@ -145,12 +145,12 @@ const ApexChart = () => {
           height={350}
         />{" "}
         {/* 거래량 차트 수정 */}
-        <ReactApexChart
+        {/* <ReactApexChart
           options={chartOptions.optionsBar}
           // series={chartOptions.series}
           type="bar"
           height={160}
-        />
+        /> */}
       </div>
     </div>
   );

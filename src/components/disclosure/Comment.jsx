@@ -1,7 +1,7 @@
 import React from "react";
 import { useLogin } from "../../hooks/useLogin";
 import { useState, useRef, useEffect } from "react";
-import CommentItem from "./CommentItem";
+import CommentList from "./CommentList";
 
 const commentData = [
   {
@@ -65,7 +65,7 @@ export default function Comment() {
   };
 
   return (
-    <div className="flex flex-col items-center mt-3 w-9/12">
+    <div className="flex flex-col items-center">
       {/* 투표 */}
       <div className="flex flex-row gap-4 w-full justify-end">
         <div
@@ -107,7 +107,8 @@ export default function Comment() {
           </div>
         </div>
       )}
-      {/* 댓글 리스트 */}
+      <CommentList commentData={commentData} />
+      {/* 댓글 리스트
       {commentData.slice(0, visibleComments).map((data) => (
         <CommentItem
           key={data.username}
@@ -124,7 +125,7 @@ export default function Comment() {
         >
           더보기
         </button>
-      )}
+      )} */}
     </div>
   );
 }
