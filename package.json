@@ -15,10 +15,13 @@
     "@mui/icons-material": "^6.1.7",
     "@mui/material": "^6.1.7",
     "apexcharts": "^3.54.1",
+    "d3-format": "^3.1.0",
+    "d3-time-format": "^4.1.0",
     "mui": "^0.0.1",
     "react": "^18.3.1",
     "react-apexcharts": "^1.5.0",
     "react-dom": "^18.3.1",
+    "react-financial-charts": "^2.0.1",
     "react-router-dom": "^6.28.0"
   },
   "devDependencies": {

@@ -1,82 +1,136 @@
-import { useEffect, useState } from "react";
+import React, { useState } from "react";
 import ReactApexChart from "react-apexcharts";
 
 const ApexChart = () => {
+  // 100일치의 가상 주가 데이터를 생성
+  const generateStockData = () => {
+    const data = [];
+    const markerData = [];
+    const startDate = new Date(2024, 0, 1); // 시작 날짜: 2024년 1월 1일
+    let open = 70000;
+
+    for (let i = 0; i < 100; i++) {
+      const date = new Date(startDate);
+      date.setDate(date.getDate() + i); // 날짜를 1일씩 증가
+
+      // 랜덤한 주가 생성
+      const high = open + Math.floor(Math.random() * 1000); // 고가
+      const low = open - Math.floor(Math.random() * 1000); // 저가
+      const close = low + Math.floor(Math.random() * (high - low)); // 종가
+
+      data.push({
+        x: date,
+        y: [open, high, low, close],
+      });
+
+      // 특정 날짜마다 공시를 추가 (약 10개)
+      if (i % 10 === 0) {
+        markerData.push({
+          x: date,
+          y: close,
+          announcement: `공시 제목 ${i / 10 + 1}`,
+        });
+      }
+
+      open = close; // 다음 날의 시가를 현재 종가로 설정
+    }
+
+    return { data, markerData };
+  };
+
+  const { data, markerData } = generateStockData();
+
   const [chartOptions, setChartOptions] = useState({
     series: [
       {
         name: "Candlestick",
         type: "candlestick",
-        data: [
-          {
-            x: new Date(1538778600000),
-            y: [6629.81, 6650.5, 6623.04, 6633.33],
-          },
-          { x: new Date(1538780400000), y: [6632.01, 6643.59, 6620, 6630.11] },
-          {
-            x: new Date(1538782200000),
-            y: [6630.71, 6648.95, 6623.34, 6635.65],
-          },
-          // (추가 데이터 생략)
-          { x: new Date(1538884800000), y: [6604.98, 6606, 6604.07, 6606] },
-        ],
+        data: data,
       },
       {
-        name: "Marker Points",
-        type: "line",
-        data: [
-          { x: new Date(1538780400000), y: 6625.59 }, // 마커가 표시될 포인트
-          // { x: new Date(1538794800000), y: 6614.4 }, // 다른 마커 포인트
-          //{ x: new Date(1538827200000), y: 6600 }, // 또 다른 포인트
-        ],
+        name: "Public Announcements",
+        type: "scatter",
+        data: markerData,
       },
     ],
     options: {
       chart: {
-        // 해당 부분 눌렀을 때 뜸
-
-        events: {
-          //   click: () => {
-          //     console.log("clicked");
-          //   },
-          dataPointSelection: (event, chartContext, opts) => {
-            console.log(chartContext, opts);
-          },
-        },
+        type: "candlestick",
         height: 350,
-        type: "line",
+        toolbar: {
+          autoSelected: "pan",
+          show: false,
+        },
       },
       plotOptions: {
         candlestick: {
           colors: {
-            upward: "#00B746",
-            downward: "#EF403C",
+            upward: "#2372EB",
+            downward: "#FF5959",
           },
         },
       },
-      stroke: {
-        width: [1, 3], // 캔들스틱과 라인 두 개의 시리즈 중, 라인 시리즈의 두께 설정
-      },
       markers: {
-        size: 5,
-        colors: ["#FF4560"],
+        size: 8,
+        colors: ["#6a6a6a"],
         strokeColors: "#fff",
         strokeWidth: 2,
         hover: {
-          size: 7,
+          size: 13,
+        },
+      },
+      tooltip: {
+        enabled: true,
+        shared: false,
+        custom: ({ series, seriesIndex, dataPointIndex, w }) => {
+          if (seriesIndex === 1) {
+            const announcement =
+              w.config.series[seriesIndex].data[dataPointIndex].announcement;
+            return `<div style="padding: 5px; background: #fff; border: 1px solid #ccc;">
+                      <strong>${announcement}</strong>
+                    </div>`;
+          }
+          return null;
         },
       },
       xaxis: {
         type: "datetime",
+        labels: {
+          format: "yyyy-MM-dd",
+        },
       },
       yaxis: {
         tooltip: {
-          enabled: true,
+          enabled: false,
         },
       },
-      title: {
-        text: "Candlestick Chart with Markers",
-        align: "left",
+      // title: {
+      //   text: "차트",
+      //   align: "left",
+      // },
+    },
+    optionsBar: {
+      chart: {
+        height: 160,
+        type: "bar",
+        brush: {
+          enabled: true,
+          target: "candles",
+        },
+        selection: {
+          enabled: true,
+          xaxis: {
+            min: new Date("20 Jan 2017").getTime(),
+            max: new Date("10 Dec 2017").getTime(),
+          },
+          fill: {
+            color: "#ccc",
+            opacity: 0.4,
+          },
+          stroke: {
+            color: "#0D47A1",
+          },
+        },
       },
     },
   });
@@ -89,6 +143,13 @@ const ApexChart = () => {
           series={chartOptions.series}
           type="candlestick"
           height={350}
+        />{" "}
+        {/* 거래량 차트 수정 */}
+        <ReactApexChart
+          options={chartOptions.optionsBar}
+          // series={chartOptions.series}
+          type="bar"
+          height={160}
         />
       </div>
     </div>
