@@ -6,8 +6,6 @@ import { useLogin } from "../../hooks/useLogin";
 import { useNavigate } from "react-router-dom";
 
 export default function SidebarContent({ drawerTitle, data }) {
-  console.log("data", data);
-  //console.log("mid", drawerTitle, data.stock[0].price);
   const { loggedIn } = useLogin();
   const navigate = useNavigate();
   return (
@@ -30,7 +28,8 @@ export default function SidebarContent({ drawerTitle, data }) {
                       {data?.stock.map((d) => {
                         return (
                           <StockSidebarItem
-                            key={d}
+                            key={d.id}
+                            id={d.id}
                             drawerTitle={drawerTitle}
                             company={d.company}
                             price={d.price}
@@ -60,7 +59,8 @@ export default function SidebarContent({ drawerTitle, data }) {
                       {data?.disclosure.map((d) => {
                         return (
                           <DisclosureSidebarItem
-                            key={d}
+                            key={d.id}
+                            id={d.id}
                             drawerTitle={drawerTitle}
                             company={d.company}
                             title={d.title}

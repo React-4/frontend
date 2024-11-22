@@ -4,18 +4,20 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import CloseIcon from "@mui/icons-material/Close";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-export function StockSidebarItem({ drawerTitle, company, price, gap, rate }) {
+export function StockSidebarItem({
+  id,
+  drawerTitle,
+  company,
+  price,
+  gap,
+  rate,
+}) {
   const [fav, setFav] = useState(true);
-  const [priceColor, setPriceColor] = useState("primary-3");
 
-  useEffect(() => {
-    if (Number(gap) < 0) {
-      setPriceColor("primary-4");
-    } else {
-      setPriceColor("primary-3");
-    }
-  }, [gap]);
+  const navigate = useNavigate();
+
   const handleRemoveHist = () => {
     // hist list에서 제거하는 로직 추가
   };
@@ -26,13 +28,19 @@ export function StockSidebarItem({ drawerTitle, company, price, gap, rate }) {
 
   return (
     <div className="flex flex-row justify-between items-start mx-1 my-3">
-      <div className="font-semibold max-w-20 min-w-20 cursor-pointer">
+      <div
+        className="font-semibold max-w-20 min-w-20 cursor-pointer"
+        onClick={() => navigate(`/stock/${id}`)}
+      >
         {company}
       </div>
       <div className="flex flex-col items-end  mr-2">
         <div className="font-semibold">{price}원</div>
         <div
-          className={`flex flex-row text-xs text-${priceColor} ml-3 items-end `}
+          // className={`flex flex-row text-xs text-${priceColor} ml-3 items-end `}
+          className={`flex flex-row text-xs ml-3 items-end ${
+            gap > 0 ? "text-primary-3" : "text-primary-4"
+          }`}
         >
           <div className="flex flex-row"> {gap}원 </div>
           <div> ({rate}%)</div>
@@ -64,7 +72,13 @@ export function StockSidebarItem({ drawerTitle, company, price, gap, rate }) {
   );
 }
 
-export function DisclosureSidebarItem({ drawerTitle, company, title, desc }) {
+export function DisclosureSidebarItem({
+  id,
+  drawerTitle,
+  company,
+  title,
+  desc,
+}) {
   const [fav, setFav] = useState(true);
   const handleRemoveHist = () => {
     // hist list에서 제거하는 로직 추가
@@ -73,11 +87,17 @@ export function DisclosureSidebarItem({ drawerTitle, company, title, desc }) {
     setFav(false);
     // fav list에서 제거하는 로직 추가
   };
+  const navigate = useNavigate();
   return (
     <div className="flex flex-row mx-1 my-3">
       <div className="font-semibold max-w-20 min-w-20">{company}</div>
       <div className="flex flex-col items-start">
-        <div className="font-semibold text-xs cursor-pointer">{title}</div>
+        <div
+          className="font-semibold text-xs cursor-pointer"
+          onClick={() => navigate(`/disclosure/${id}`)}
+        >
+          {title}
+        </div>
         <div className=" text-xs text-primary-2"> {desc} </div>
       </div>
       {drawerTitle === "최근 본" ? (

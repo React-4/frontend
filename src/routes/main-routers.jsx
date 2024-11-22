@@ -7,6 +7,7 @@ import SignupPage from "../pages/SignupPage";
 import MyPage from "../pages/MyPage";
 import SearchResultPage from "../pages/SearchResultPage";
 import DisclosurePage from "../pages/DisclosurePage";
+import StockPage from "../pages/StockPage";
 
 export const mainRoutes = [
   {
@@ -18,6 +19,7 @@ export const mainRoutes = [
       { element: <MyPage />, path: "/mypage" },
       { path: "search-result", element: <SearchResultPage /> },
       { element: <DisclosurePage />, path: "/disclosure/:id" },
+      { element: <StockPage />, path: "/stock/:id" },
     ],
   },
   {

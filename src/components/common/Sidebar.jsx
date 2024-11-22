@@ -12,12 +12,13 @@ import SidebarContent from "./SidebarContent";
 
 const favData = {
   stock: [
-    { company: "카카오", price: "51,100", gap: "-1300", rate: "3.5" },
-    { company: "카카오2", price: "51,100", gap: "-1390", rate: "3.5" },
-    { company: "카카오3", price: "51,100", gap: "10", rate: "3.5" },
-    { company: "카카오4", price: "51,100", gap: "1300", rate: "3.5" },
-    { company: "카카오1", price: "51,100", gap: "-1300", rate: "3.5" },
+    { id: "1", company: "카카오", price: "51,100", gap: "-1300", rate: "3.5" },
+    { id: "2", company: "카카오2", price: "51,100", gap: "-1390", rate: "3.5" },
+    { id: "3", company: "카카오3", price: "51,100", gap: "10", rate: "3.5" },
+    { id: "4", company: "카카오4", price: "51,100", gap: "1300", rate: "3.5" },
+    { id: "5", company: "카카오1", price: "51,100", gap: "-1300", rate: "3.5" },
     {
+      id: "6",
       company: "카카오5카카오카카오",
       price: "51,100",
       gap: "1300",
@@ -26,11 +27,13 @@ const favData = {
   ],
   disclosure: [
     {
+      id: "1",
       company: "카카오",
       title: "기업설명회 안내",
       desc: "(주)카카오 기업설명회(IR) 개최(안내공시)",
     },
     {
+      id: "2",
       company: "카카오2zkzkdh",
       title: "기업설명회 안내2dkssodksso",
       desc: "(주)카카오 기업설명회(IR) 개최(안내공시)주)카카오 기업설명회(IR) 개최(안내공시)",
@@ -40,12 +43,48 @@ const favData = {
 
 const histData = {
   stock: [
-    { company: "방문카카오", price: "51,100", gap: "-1300", rate: "3.5" },
-    { company: "방문카카오2", price: "51,100", gap: "-1390", rate: "3.5" },
-    { company: "방문카카오3", price: "51,100", gap: "10", rate: "3.5" },
-    { company: "방문카카오4", price: "51,100", gap: "1300", rate: "3.5" },
-    { company: "방문카카오1", price: "51,100", gap: "-1300", rate: "3.5" },
-    { company: "방문카카오5", price: "51,100", gap: "1300", rate: "3.5" },
+    {
+      id: "1",
+      company: "방문카카오",
+      price: "51,100",
+      gap: "-1300",
+      rate: "3.5",
+    },
+    {
+      id: "2",
+      company: "방문카카오2",
+      price: "51,100",
+      gap: "-1390",
+      rate: "3.5",
+    },
+    {
+      id: "3",
+      company: "방문카카오3",
+      price: "51,100",
+      gap: "10",
+      rate: "3.5",
+    },
+    {
+      id: "4",
+      company: "방문카카오4",
+      price: "51,100",
+      gap: "1300",
+      rate: "3.5",
+    },
+    {
+      id: "5",
+      company: "방문카카오1",
+      price: "51,100",
+      gap: "-1300",
+      rate: "3.5",
+    },
+    {
+      id: "6",
+      company: "방문카카오5",
+      price: "51,100",
+      gap: "1300",
+      rate: "3.5",
+    },
   ],
   disclosure: [],
 };
@@ -61,16 +100,15 @@ export default function SidebarWithDrawer() {
   });
 
   useEffect(() => {
-    console.log(drawerTitle);
     if (drawerTitle === "관심") {
-      setFavColor("primary-1");
+      setFavColor("primary");
       setData(favData);
     } else {
       setFavColor("primary-2");
     }
 
     if (drawerTitle === "최근 본") {
-      setHistColor("primary-1");
+      setHistColor("primary");
       setData(histData);
     } else {
       setHistColor("primary-2");
@@ -128,7 +166,11 @@ export default function SidebarWithDrawer() {
           </ListItem>
           <ListItem disablePadding>
             <Button onClick={() => handleDrawerOpen("관심")}>
-              <div className={`flex flex-col items-center text-${favColor}`}>
+              <div
+                className={`flex flex-col items-center ${
+                  favColor === "primary" ? "text-primary" : "text-primary-2"
+                }`}
+              >
                 <FavoriteBorderIcon />
                 관심
               </div>
@@ -136,7 +178,11 @@ export default function SidebarWithDrawer() {
           </ListItem>
           {/* <ListItem disablePadding> */}
           <Button onClick={() => handleDrawerOpen("최근 본")}>
-            <div className={`flex flex-col items-center text-${histColor}`}>
+            <div
+              className={`flex flex-col items-center  ${
+                histColor === "primary" ? "text-primary" : "text-primary-2"
+              }`}
+            >
               <HistoryIcon />
               최근 본
             </div>

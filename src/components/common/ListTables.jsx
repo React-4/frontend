@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useState } from "react";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
@@ -11,6 +12,7 @@ import Pagination from "@mui/material/Pagination";
 import "../css/ListTables.css"; // 추가된 CSS 파일
 import FavoriteIcon from "@mui/icons-material/Favorite"; //빨간 하트
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder"; //빈 하트
+import { useNavigate } from "react-router-dom";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -32,7 +34,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-export default function ListTables({ data, headers }) {
+export default function ListTables({ type, data, headers }) {
   const [currentPage, setCurrentPage] = useState(1);
   // const [favorites, setFavorites] = useState(new Array(data.length).fill(false));
   const [favorites, setFavorites] = useState({});
@@ -56,6 +58,10 @@ export default function ListTables({ data, headers }) {
     currentPage * itemsPerPage
   );
 
+  const navigate = useNavigate();
+  const handleNavigate = (id) => {
+    navigate(`/${type}/${id}`);
+  };
   return (
     <div className="list-container">
       {/* 테이블 */}
@@ -76,7 +82,10 @@ export default function ListTables({ data, headers }) {
           </TableHead>
           <TableBody>
             {currentData.map((row) => (
-              <StyledTableRow key={row.id}>
+              <StyledTableRow
+                key={row.id}
+                onClick={() => handleNavigate(row.id)}
+              >
                 {headers.map((header, i) => (
                   <StyledTableCell key={i} align="center">
                     {header.key === "num" ? (

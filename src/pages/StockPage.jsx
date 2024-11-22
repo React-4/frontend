@@ -1,7 +1,7 @@
 import React from "react";
-import { useLogin } from "../../hooks/useLogin";
-import { useState, useRef, useEffect } from "react";
-import CommentList from "./CommentList";
+import ApexChart from "../components/chart/ApexChart";
+import ListTables from "../components/common/ListTables";
+import CommentList from "../components/disclosure/CommentList";
 
 const commentData = [
   {
@@ -54,78 +54,61 @@ const commentData = [
   },
 ];
 
-export default function Comment() {
-  const [good, setGood] = useState(36);
-  const [bad, setBad] = useState(20);
-  const { loggedIn } = useLogin();
-  const [visibleComments, setVisibleComments] = useState(3);
-  const [newComment, setNewComment] = useState("");
-  const handleShowMore = () => {
-    setVisibleComments((prev) => prev + 3);
-  };
+const disclosureData = Array.from({ length: 50 }, (_, index) => ({
+  id: index + 1,
+  num: index + 1,
+  company: `회사 ${index + 1}`,
+  report: `보고서 ${index + 1}`,
+  submitter: `제출자 ${index + 1}`,
+  date: `2024-11-${(index % 30) + 1}`,
+  votes: {
+    good: Math.floor(Math.random() * 11),
+    bad: Math.floor(Math.random() * 11),
+  },
+  comments: Math.floor(Math.random() * 50),
+}));
 
+const disclosureHeaders = [
+  { key: "num", label: `전체 리스트 ${disclosureData.length}개` },
+  { key: "company", label: "공시 대상 회사" },
+  { key: "report", label: "보고서명" },
+  { key: "submitter", label: "제출인" },
+  { key: "date", label: "접수일자" },
+  { key: "votes", label: "투표" },
+  { key: "comments", label: "댓글수" },
+];
+
+export default function StockPage() {
   return (
-    <div className="flex flex-col items-center">
-      {/* 투표 */}
-      <div className="flex flex-row gap-4 w-full justify-end">
-        <div
-          className="bg-good text-good-1 w-20 h-8 rounded-lg text-center py-1 cursor-pointer"
-          onClick={() => setGood(good + 1)}
-        >
-          호재 {good}
-        </div>
-        <div
-          className="bg-bad text-bad-1 w-20 h-8 rounded-lg text-center py-1 cursor-pointer"
-          onClick={() => setBad(bad + 1)}
-        >
-          악재 {bad}
+    <div className="flex flex-col">
+      <div className="flex flex-row  gap-2">
+        <div className="font-semibold text-xl">삼성전자</div>
+        <div className="text-primary-2 font-semibold text-lg ">005930</div>
+      </div>
+      <div className="flex flex-row gap-3">
+        <div className="font-bold text-xl">50,900원</div>
+        <div className="text-sm">
+          어제보다{" "}
+          <span className="text-primary-4 font-bold">-2000원 (3.7%)</span>
         </div>
       </div>
-
-      {/* 댓글창 */}
-
-      {loggedIn && (
-        <div className="flex flex-row justify-between my-4 w-full ">
-          <div className="flex flex-col">
-            <div className="rounded-full w-10 h-10 bg-red-400 text-white text-center p-1">
-              {loggedIn.slice(0, 2)}
-            </div>
-            <div>{loggedIn}</div>
-          </div>
-          <div className="relative inline-block w-94% ">
-            <textarea
-              className="bg-primary-1 w-full h-24 p-4 rounded-lg"
-              placeholder="의견을 남겨주세요"
-              onChange={(e) => setNewComment(e.target.value)}
-            ></textarea>
-            <button
-              type="submit"
-              className="absolute bottom-4 right-4 h-8 w-16 bg-primary text-white rounded-lg"
-            >
-              등록
-            </button>
-          </div>
-        </div>
-      )}
-      <CommentList commentData={commentData} />
-      {/* 댓글 리스트
-      {commentData.slice(0, visibleComments).map((data) => (
-        <CommentItem
-          key={data.username}
-          username={data.username}
-          comment={data.comment}
-          date={data.date}
+      <div>
+        <div className="font-bold text-xl">차트</div>
+        <ApexChart />
+      </div>
+      <div>
+        <div className="font-bold text-xl">공시</div>
+        <ListTables
+          type="disclosure"
+          data={disclosureData}
+          headers={disclosureHeaders}
         />
-      ))}
+      </div>
+      <div>
+        <div className="font-bold text-xl">댓글</div>
 
-      {visibleComments < commentData.length && (
-        <button
-          onClick={handleShowMore}
-          className="mt-4 text-primary-4 hover:underline"
-        >
-          더보기
-        </button>
-      )} */}
+        <CommentList commentData={commentData} />
+      </div>
     </div>
   );
 }

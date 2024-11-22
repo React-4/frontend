@@ -6,7 +6,9 @@ export default function DisclosurePage() {
   return (
     <div className="flex flex-col mt-9 mb-20 items-center">
       <GptDisclosure />
-      <Comment />
+      <div className=" mt-3 w-9/12">
+        <Comment />
+      </div>
     </div>
   );
 }
