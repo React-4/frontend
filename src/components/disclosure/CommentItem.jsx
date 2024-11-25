@@ -2,7 +2,7 @@
 import React from "react";
 import { useRef, useEffect, useState } from "react";
 import { useLogin } from "../../hooks/useLogin";
-import edit from "../../assets/Edit.png";
+import edit from "/assets/Edit.png";
 import DoneIcon from "@mui/icons-material/Done";
 import CloseIcon from "@mui/icons-material/Close";
 

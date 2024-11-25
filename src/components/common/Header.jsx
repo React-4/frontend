@@ -1,8 +1,8 @@
-import logoImg from "../../assets/disclo_white.png";
+import logoImg from "/assets/disclo_white.png";
 import { useLogin } from "../../hooks/useLogin";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import search from "../../assets/Search.png";
+import search from "/assets/Search.png";
 
 export default function Header() {
   const navigate = useNavigate();
