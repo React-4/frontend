@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
+import ScrollToTop from "./ScrollToTop";
 
 export default function Layout() {
   return (
@@ -10,6 +11,7 @@ export default function Layout() {
           <Header />
         </div>
         <div className="mx-10 mt-16 h-full ">
+          <ScrollToTop />
           <Outlet />
         </div>
       </div>

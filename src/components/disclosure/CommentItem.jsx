@@ -1,9 +1,7 @@
 /* eslint-disable react/prop-types */
-import React from "react";
 import { useRef, useEffect, useState } from "react";
 import { useLogin } from "../../hooks/useLogin";
 import edit from "../../assets/Edit.png";
-import DoneIcon from "@mui/icons-material/Done";
 import CloseIcon from "@mui/icons-material/Close";
 
 export default function CommentItem({ username, comment, date }) {
@@ -27,9 +25,9 @@ export default function CommentItem({ username, comment, date }) {
   };
   const handleEdit = () => {};
   return (
-    <div className="flex flex-row justify-between mt-6">
+    <div className="flex flex-row justify-between mt-6 w-full">
       <div
-        className={`rounded-full w-10 h-10 text-white text-center p-1 ${colorcode}`}
+        className={`rounded-full w-10 h-10 text-white text-center p-1 ${"bg-profile-1"}`}
       >
         {username.slice(0, 2)}
       </div>

@@ -84,7 +84,9 @@ export default function ListTables({ type, data, headers }) {
             {currentData.map((row) => (
               <StyledTableRow
                 key={row.id}
-                onClick={() => handleNavigate(row.id)}
+                onClick={() => {
+                  handleNavigate(row.id);
+                }}
               >
                 {headers.map((header, i) => (
                   <StyledTableCell key={i} align="center">
@@ -92,7 +94,10 @@ export default function ListTables({ type, data, headers }) {
                       <div className="heart-number">
                         <span
                           className="heart"
-                          onClick={() => handleFavoriteToggle(row.id)}
+                          onClick={(e) => {
+                            handleFavoriteToggle(row.id);
+                            e.stopPropagation();
+                          }}
                           style={{ cursor: "pointer" }}
                         >
                           {favorites[row.id] ? (

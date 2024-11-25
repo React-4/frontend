@@ -1,5 +1,3 @@
-import React from "react";
-
 function parseSectionContent(content) {
   const result = [];
   const regex = /\d+\.\s\*\*(.*?)\*\*:\s(.*?)(?=\d+\.\s|\s*$)/gs; // 각 항목 추출 정규식
