@@ -1,5 +1,5 @@
 import React from "react";
-import logoImg from "/assets/disclo_white.png";
+import logoImg from "/img/disclo_white.png";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FormGroup, FormControlLabel, Checkbox } from "@mui/material";
