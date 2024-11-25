@@ -1,9 +1,9 @@
 import React from "react";
-import lock from "../assets/Lock.png";
-import eyeOpen from "../assets/EyeOpen.png";
-import check from "../assets/Check.png";
-import checkLogin from "../assets/checkLogin.png";
-import personalCard from "../assets/Personalcard.png";
+import lock from "/img/Lock.png";
+import eyeOpen from "/img/EyeOpen.png";
+import check from "/img/Check.png";
+import checkLogin from "/img/checkLogin.png";
+import personalCard from "/img/Personalcard.png";
 import { Input, InputAdornment, TextField } from "@mui/material";
 import { useState } from "react";
 

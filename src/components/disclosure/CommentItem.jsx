@@ -1,7 +1,8 @@
 /* eslint-disable react/prop-types */
 import { useRef, useEffect, useState } from "react";
 import { useLogin } from "../../hooks/useLogin";
-import edit from "../../assets/Edit.png";
+import edit from "/img/edit.png";
+import DoneIcon from "@mui/icons-material/Done";
 import CloseIcon from "@mui/icons-material/Close";
 
 export default function CommentItem({ username, comment, date }) {
