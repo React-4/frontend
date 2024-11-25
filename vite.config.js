@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [react()],
   css: {
     postcss: {
-      plugins: [tailwindcss()],
+      plugins: [react(), tailwindcss()],
       assetsInclude: ['**/*.jpg', '**/*.png'],
     },
   },
