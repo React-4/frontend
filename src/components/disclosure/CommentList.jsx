@@ -1,5 +1,4 @@
 /* eslint-disable react/prop-types */
-import React from "react";
 import { useState } from "react";
 import CommentItem from "./CommentItem";
 
@@ -10,7 +9,7 @@ export default function CommentList({ commentData }) {
   };
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center ">
       {/* 댓글 리스트 */}
       {commentData.slice(0, visibleComments).map((data) => (
         <CommentItem

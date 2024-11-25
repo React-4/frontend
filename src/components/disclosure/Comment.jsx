@@ -1,6 +1,5 @@
-import React from "react";
 import { useLogin } from "../../hooks/useLogin";
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import CommentList from "./CommentList";
 
 const commentData = [
@@ -20,7 +19,7 @@ const commentData = [
     username: "유저3",
     date: "2024.10.12",
     comment:
-      "일봉 기준 기울기 각도가 거진 80-90도가 되면패닉셀 및 바닥권이 머지 않았다는걸 의미 합니다.그래서 오늘 좀 매수질을 했습니다.",
+      "일봉 기준 기울기 각도가 거진 80-90도가 되면패닉셀 및 바닥권이 머지 않았다는걸 의미 합니다.그래서 오늘 좀 매수질을 했습니다.일봉 기준 기울기 각도가 거진 80-90도가 되면패닉셀 및 바닥권이 머지 않았다는걸 의미 합니다.그래서 오늘 좀 매수질을 했습니다.일봉 기준 기울기 각도가 거진 80-90도가 되면패닉셀 및 바닥권이 머지 않았다는걸 의미 합니다.그래서 오늘 좀 매수질을 했습니다.",
   },
   {
     username: "유저4",
@@ -108,24 +107,6 @@ export default function Comment() {
         </div>
       )}
       <CommentList commentData={commentData} />
-      {/* 댓글 리스트
-      {commentData.slice(0, visibleComments).map((data) => (
-        <CommentItem
-          key={data.username}
-          username={data.username}
-          comment={data.comment}
-          date={data.date}
-        />
-      ))}
-
-      {visibleComments < commentData.length && (
-        <button
-          onClick={handleShowMore}
-          className="mt-4 text-primary-4 hover:underline"
-        >
-          더보기
-        </button>
-      )} */}
     </div>
   );
 }

@@ -80,7 +80,7 @@ const disclosureHeaders = [
 
 export default function StockPage() {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col mb-12 m-3">
       <div className="flex flex-row  gap-2">
         <div className="font-semibold text-xl">삼성전자</div>
         <div className="text-primary-2 font-semibold text-lg ">005930</div>
@@ -106,8 +106,9 @@ export default function StockPage() {
       </div>
       <div>
         <div className="font-bold text-xl">댓글</div>
-
-        <CommentList commentData={commentData} />
+        <div className="mx-4">
+          <CommentList commentData={commentData} />
+        </div>
       </div>
     </div>
   );
