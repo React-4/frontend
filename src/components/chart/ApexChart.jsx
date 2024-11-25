@@ -8,6 +8,50 @@ const ApexChart = () => {
   const [markerData, setMarkerData] = useState([]);
   const [chartOptions, setChartOptions] = useState(null);
 
+  // 데이터 정리: 연속되지 않은 날짜 제거
+  const processStockData = (data) => {
+    const processedData = [];
+    let previousDate = null;
+    let previousStock = null;
+
+    for (const stock of data) {
+      const currentDate = new Date(
+        stock.date.slice(0, 4),
+        stock.date.slice(5, 7) - 1,
+        stock.date.slice(8, 10)
+      );
+
+      // 비어있는 날짜를 직전 날짜 값으로 채우기
+      if (previousDate) {
+        let diffDays = (currentDate - previousDate) / (1000 * 60 * 60 * 24); // 날짜 차이 계산
+        while (diffDays > 1) {
+          previousDate.setDate(previousDate.getDate() + 1); // 다음 날짜 생성
+          processedData.push({
+            x: previousDate.getTime(),
+            y: [
+              previousStock.closePrice,
+              previousStock.closePrice,
+              previousStock.closePrice,
+              previousStock.closePrice,
+            ],
+          });
+          diffDays--;
+        }
+      }
+
+      // 현재 날짜 데이터 추가
+      processedData.push({
+        x: currentDate.getTime(), // X축에 timestamp 사용
+        y: [stock.openPrice, stock.highPrice, stock.lowPrice, stock.closePrice],
+      });
+
+      previousDate = currentDate; // 직전 날짜 업데이트
+      previousStock = stock; // 직전 주식 데이터 업데이트
+    }
+
+    return processedData;
+  };
+
   // 공시 데이터 생성
   const generateDisclosure = (data) => {
     const markerData = [];
@@ -19,28 +63,13 @@ const ApexChart = () => {
           stock.date.slice(8, 10)
         );
         markerData.push({
-          x: currentDate.toISOString().slice(0, 10), // 공시 날짜 (ISO 포맷)
+          x: currentDate.getTime(), // timestamp 형식으로 변경
           y: stock.closePrice, // 공시가 발생한 종가
           announcement: `공시 제목 ${Math.floor(index / 10) + 1}`,
         });
       }
     });
     return markerData;
-  };
-
-  // 주가 데이터 처리 및 정렬
-  const processStockData = (data) => {
-    const processedData = data.map((stock) => ({
-      x: new Date(
-        stock.date.slice(0, 4),
-        stock.date.slice(5, 7) - 1,
-        stock.date.slice(8, 10)
-      )
-        .toISOString()
-        .slice(0, 10), // ISO 포맷으로 저장
-      y: [stock.openPrice, stock.highPrice, stock.lowPrice, stock.closePrice],
-    }));
-    return processedData.sort((a, b) => new Date(a.x) - new Date(b.x));
   };
 
   const getStockData = async () => {
@@ -55,10 +84,26 @@ const ApexChart = () => {
 
   useEffect(() => {
     if (stockData.length > 0) {
-      const filteredData = processStockData(stockData);
-      setChartData(filteredData);
+      // 날짜 정렬 후 비연속적인 날짜 제거
+      const sortedData = stockData.sort(
+        (a, b) =>
+          new Date(
+            a.date.slice(0, 4),
+            a.date.slice(5, 7) - 1,
+            a.date.slice(8, 10)
+          ) -
+          new Date(
+            b.date.slice(0, 4),
+            b.date.slice(5, 7) - 1,
+            b.date.slice(8, 10)
+          )
+      );
+      const continuousData = processStockData(sortedData);
 
-      const generatedMarkerData = generateDisclosure(stockData);
+      setChartData(continuousData);
+
+      // 공시 데이터 생성
+      const generatedMarkerData = generateDisclosure(sortedData);
       setMarkerData(generatedMarkerData);
     }
   }, [stockData]);
@@ -68,14 +113,16 @@ const ApexChart = () => {
       setChartOptions({
         series: [
           {
-            name: "Candlestick",
+            name: "주가",
             type: "candlestick",
             data: chartData,
+            color: "#0045B0",
           },
           {
-            name: "Public Announcements",
+            name: "공시",
             type: "scatter",
             data: markerData,
+            color: "#fff716",
           },
         ],
         options: {
@@ -84,15 +131,12 @@ const ApexChart = () => {
             height: 350,
             toolbar: {
               autoSelected: "pan",
+              show: true,
             },
             zoom: {
               enabled: true,
             },
           },
-          // title: {
-          //   text: "CandleStick Chart",
-          //   align: "left",
-          // },
           plotOptions: {
             candlestick: {
               colors: {
@@ -102,16 +146,15 @@ const ApexChart = () => {
             },
           },
           xaxis: {
-            type: "categories",
-            categories: chartData.map((data) => data.x),
+            type: "datetime", // X축을 datetime으로 설정
             labels: {
               format: "yyyy-MM-dd",
             },
           },
           markers: {
             size: 7,
-            colors: ["#787878"],
-            strokeColors: "#fff",
+            colors: ["#fff716"],
+            strokeColors: "#5a5a5a",
             strokeWidth: 2,
             shape: "star",
             hover: {
