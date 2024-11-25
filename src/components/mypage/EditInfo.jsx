@@ -8,7 +8,7 @@ import {
   Button,
 } from "@mui/material";
 import { useLogin } from "../../hooks/useLogin";
-import edit from "../../assets/Edit.png";
+import edit from "/img/edit.png";
 import DoneIcon from "@mui/icons-material/Done";
 
 export default function EditInfo() {
