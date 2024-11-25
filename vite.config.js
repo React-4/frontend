@@ -8,6 +8,7 @@ export default defineConfig({
   css: {
     postcss: {
       plugins: [tailwindcss()],
+      assetsInclude: ['**/*.jpg', '**/*.png'],
     },
   },
 });
