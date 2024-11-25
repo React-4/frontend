@@ -2,6 +2,7 @@
 .list-container {
     padding: 20px;
     font-family: Arial, sans-serif;
+    cursor: pointer;
   }
   
   /* 제목 스타일 */
@@ -63,7 +64,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    /* cursor: pointer; */
+    cursor: pointer;
   }
   
   .heart:hover {
@@ -109,6 +110,11 @@
   display: flex;
   text-align: center;
   justify-content: center;
+}
+
+.pagination-container a, 
+.pagination-container button {
+  cursor: pointer;
 }
 
 .heart-number {
