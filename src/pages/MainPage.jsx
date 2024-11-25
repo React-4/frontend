@@ -1,22 +1,42 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ListTables from "../components/common/ListTables";
+import stockJson from "../components/dummy/stock.json";
+import disclosureJson from "../components/dummy/disclosure.json";
 
 const MainPage = () => {
   const [disclosureSortType, setDisclosureSortType] = useState("latest");
+  const [stockSortType, setStockSortType] = useState("price");
+  const [disclosureData, setDisclosureData] = useState([]);
+  const [stockData, setStockData] = useState([]);
 
-  const disclosureData = Array.from({ length: 50 }, (_, index) => ({
-    id: index + 1,
-    num: index + 1,
-    company: `회사 ${index + 1}`,
-    report: `보고서 ${index + 1}`,
-    submitter: `제출자 ${index + 1}`,
-    date: `2024-11-${(index % 30) + 1}`,
-    votes: {
-      good: Math.floor(Math.random() * 11),
-      bad: Math.floor(Math.random() * 11),
-    },
-    comments: Math.floor(Math.random() * 50),
-  }));
+  useEffect(() => {
+    const disclosures = disclosureJson.data.announcementList.map((announcement) => ({
+      id: announcement.announcementId,
+      num: announcement.announcementId,
+      company: announcement.stockName,
+      report: announcement.title.trim(),
+      submitter: announcement.submitter,
+      date: announcement.announcementDate,
+      votes: {
+        good: announcement.positiveVoteCount,
+        bad: announcement.negativeVoteCount,
+      },
+      comments: announcement.commentCount,
+    }));
+    setDisclosureData(disclosures);
+
+    const stockData = Object.values(stockJson.data).map((stock, index) => ({
+      id: index + 1,
+      num: index + 1,
+      name: `종목 ${index + 1}`, // JSON 데이터에 이름 정보가 없어서 추가
+      code: stock["종목코드"],
+      price: `${stock["현재가"]} 원`,
+      changeRate: `${stock["등락률"]}%`,
+      marketCap: "N/A", // JSON 데이터에 없어서 임시 값 설정
+      transaction: `${stock["거래량"]} 주`,
+    }));
+    setStockData(stockData);
+  }, []);
 
   const disclosureHeaders = [
     { key: "num", label: `전체 리스트 ${disclosureData.length}개` },
@@ -35,40 +55,6 @@ const MainPage = () => {
     { key: "votes", label: "투표수" },
   ];
 
-  const handleDisclosureSortChange = (key) => {
-    setDisclosureSortType(key);
-  };
-
-  const sortedDisclosureData = [...disclosureData].sort((a, b) => {
-    switch (disclosureSortType) {
-      case "latest":
-        return new Date(b.date) - new Date(a.date);
-      case "votes":
-        const totalVotesA = a.votes.good + a.votes.bad;
-        const totalVotesB = b.votes.good + b.votes.bad;
-        return totalVotesB - totalVotesA;
-      case "comments":
-        return b.comments - a.comments;
-      default:
-        return 0;
-    }
-  });
-
-  const [stockSortType, setStockSortType] = useState("price");
-
-  const stockData = Array.from({ length: 28 }, (_, index) => ({
-    id: index + 1,
-    num: index + 1,
-    name: `종목명 ${index + 1}`,
-    code: `${
-      Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000
-    }`.toString(),
-    price: `${Math.floor(Math.random() * 9001) + 1000} 억 원`,
-    changeRate: `${(Math.random() * 10 - 5).toFixed(2)}%`,
-    marketCap: `${Math.floor(Math.random() * 9001) + 1000} 억 원`,
-    transaction: `${Math.floor(Math.random() * 19001) + 1000} 억 원`,
-  }));
-
   const stockHeaders = [
     { key: "num", label: `검색된 주식${stockData.length}개` },
     { key: "name", label: "종목명" },
@@ -85,9 +71,28 @@ const MainPage = () => {
     { key: "transaction", label: "거래량 순" },
   ];
 
+  const handleDisclosureSortChange = (key) => {
+    setDisclosureSortType(key);
+  };
+
   const handleStockSortChange = (key) => {
     setStockSortType(key);
   };
+
+  const sortedDisclosureData = [...disclosureData].sort((a, b) => {
+    switch (disclosureSortType) {
+      case "latest":
+        return new Date(b.date) - new Date(a.date);
+      case "votes":
+        const totalVotesA = a.votes.good + a.votes.bad;
+        const totalVotesB = b.votes.good + b.votes.bad;
+        return totalVotesB - totalVotesA;
+      case "comments":
+        return b.comments - a.comments;
+      default:
+        return 0;
+    }
+  });
 
   const sortedStockData = [...stockData].sort((a, b) => {
     switch (stockSortType) {

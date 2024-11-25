@@ -60,6 +60,10 @@ export default function ListTables({ type, data, headers }) {
 
   const navigate = useNavigate();
   const handleNavigate = (id) => {
+    if (!type) {
+      console.error("Error: 'type' is undefined.");
+      return;
+    }
     navigate(`/${type}/${id}`);
   };
   return (

@@ -1,21 +1,66 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import ListTables from "../components/common/ListTables";
 import '../components/css/SearRes.css';
+import { useNavigate } from "react-router-dom";
+import stockJson from "../components/dummy/stock.json";
+import disclosureJson from "../components/dummy/disclosure.json";
 
 const SearchResultPage = () => {
+    const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const stockData = Array.from({ length: 6 }, (_, index) => ({
-        id: index + 1,
-        num: index + 1,
-        name: `삼성 ${index + 1}`,
-        code: `${Math.floor(Math.random() * (999999-100000+1))+100000}`.toString(),
-        price: `${Math.floor(Math.random() * 9001)+1000} 억 원`,
-        changeRate: `${(Math.random() * 10 - 5).toFixed(2)}%`,
-        marketCap: `${Math.floor(Math.random() * 9001)+1000} 억 원`,
-        transaction: `${Math.floor(Math.random() * 19001)+1000} 억 원`,
-      }));
+    const [stockData, setStockData] = useState([]);
+    const [disclosureData, setDisclosureData] = useState([]);
+    const [filteredData, setFilteredData] = useState(disclosureData);
+    const [filters, setFilters] = useState({
+        period: "",
+        market: "",
+        type: "",
+        startDate: "",
+        endDate: "",
+        company: "",
+      });
+    // const stockData = Array.from({ length: 6 }, (_, index) => ({
+    //     id: index + 1,
+    //     num: index + 1,
+    //     name: `삼성 ${index + 1}`,
+    //     code: `${Math.floor(Math.random() * (999999-100000+1))+100000}`.toString(),
+    //     price: `${Math.floor(Math.random() * 9001)+1000} 억 원`,
+    //     changeRate: `${(Math.random() * 10 - 5).toFixed(2)}%`,
+    //     marketCap: `${Math.floor(Math.random() * 9001)+1000} 억 원`,
+    //     transaction: `${Math.floor(Math.random() * 19001)+1000} 억 원`,
+    //   }));
 
-      const stockHeaders = [
+    useEffect(() => {
+        const stocks = Object.values(stockJson.data).map((stock, index) => ({
+            id: index + 1,
+            num: index + 1,
+            name: `종목 ${index + 1}`, // JSON 데이터에 이름 정보가 없어서 추가(이건 테이블 조인하고)
+            code: stock["종목코드"],
+            price: `${stock["현재가"]} 원`,
+            changeRate: `${stock["등락률"]}%`,
+            marketCap: "N/A", // JSON 데이터에 없어서 임시 값 설정
+            transaction: `${stock["거래량"]} 주`,
+        }));
+        setStockData(stocks);
+
+        const disclosures = disclosureJson.data.announcementList.map((announcement) => ({
+            id: announcement.announcementId,
+            num: announcement.announcementId,
+            company: announcement.stockName,
+            report: announcement.title.trim(),
+            submitter: announcement.submitter,
+            date: announcement.announcementDate,
+            votes: {
+                good: announcement.positiveVoteCount,
+                bad: announcement.negativeVoteCount,
+            },
+            comments: announcement.commentCount,
+        }));
+        setDisclosureData(disclosures);
+        setFilteredData(disclosures);
+    }, []);
+
+    const stockHeaders = [
         { key: "num", label: `검색된 주식${stockData.length}개` },
         { key: "name", label: "종목명" },
         { key: "code", label: "종목코드" },
@@ -23,40 +68,41 @@ const SearchResultPage = () => {
         { key: "changeRate", label: "등락률" },
         { key: "marketCap", label: "시가총액" },
         { key: "transaction", label: "거래량" },
+    ];
+
+    const disclosureHeaders = [
+        { key: "num", label: `검색된 공시 ${disclosureData.length}개`},
+        { key: "company", label: "공시 대상 회사" },
+        { key: "report", label: "보고서명" },
+        { key: "submitter", label: "제출인" },
+        { key: "date", label: "접수일자" },
+        { key: "votes", label: "투표" },
+        { key: "comments", label: "댓글수" },
       ];
 
-    const sortedStockData = [...stockData].sort((a, b) => {
-        return a.name.localeCompare(b.name);
-    });
+    const sortedStockData = [...stockData].sort((a, b) => { return a.name.localeCompare(b.name); });
+    const sortedDisclosureData = [...filteredData].sort((a, b) => { return new Date(b.date) - new Date(a.date); });
 
-    const [filters, setFilters] = useState({
-        period: "",
-        market: "",
-        type: "",
-        startDate: "",
-        endDate: "",
-      });
-      
-      const handleFilterChange = (field, value) => {
+    const handleFilterChange = (field, value) => {
         setFilters((prevFilters) => ({
-          ...prevFilters,
-          [field]: prevFilters[field] === value ? "" : value, // Toggle filter value
-        }));
-      };
-
-      const handleTypeToggle = (type) => {
-        setFilters((prevFilters) => {
-          const currentTypes = prevFilters.type || [];
-          const isTypeSelected = currentTypes.includes(type);
-      
-          return {
             ...prevFilters,
-            type: isTypeSelected
-              ? currentTypes.filter((t) => t !== type) // 이미 선택된 경우 제거
-              : [...currentTypes, type], // 선택되지 않은 경우 추가
-          };
-        });
-      };
+            [field]: prevFilters[field] === value ? "" : value, // Toggle filter value
+        }));
+    };
+
+    const handleTypeToggle = (type) => {
+    setFilters((prevFilters) => {
+        const currentTypes = prevFilters.type || [];
+        const isTypeSelected = currentTypes.includes(type);
+    
+        return {
+        ...prevFilters,
+        type: isTypeSelected
+            ? currentTypes.filter((t) => t !== type) // 이미 선택된 경우 제거
+            : [...currentTypes, type], // 선택되지 않은 경우 추가
+        };
+    });
+    };
       
 
     const resetFilters = () => {
@@ -90,13 +136,13 @@ const SearchResultPage = () => {
             if (itemDate < cutoffDate) return false;
         }
 
-        if (filters.market && filters.market !== "전체") {
-            if (item.market !== filters.market) return false;
-        }
+        // if (filters.market && filters.market !== "전체") {
+        //     if (item.market !== filters.market) return false;
+        // }
 
-        if (filters.type && item.type !== filters.type) {
-            return false;
-        }
+        // if (filters.type && item.type !== filters.type) {
+        //     return false;
+        // }
 
         return true;
         });
@@ -133,37 +179,6 @@ const SearchResultPage = () => {
       }
     };
 
-    
-    const disclosureData = Array.from({ length: 50 }, (_, index) => ({
-      id: index + 1,
-      num: index + 1,
-      company: `회사 ${index + 1}`,
-      report: `보고서 ${index + 1}`,
-      submitter: `제출자 ${index + 1}`,
-      date: `2024-11-${(index % 30) + 1}`,
-      votes: {
-        good: Math.floor(Math.random() * 11),
-        bad: Math.floor(Math.random() * 11),
-      },
-      comments: Math.floor(Math.random() * 50),
-    }));
-  
-    const disclosureHeaders = [
-      { key: "num", label: `검색된 공시 ${disclosureData.length}개`},
-      { key: "company", label: "공시 대상 회사" },
-      { key: "report", label: "보고서명" },
-      { key: "submitter", label: "제출인" },
-      { key: "date", label: "접수일자" },
-      { key: "votes", label: "투표" },
-      { key: "comments", label: "댓글수" },
-    ];
-
-    const [filteredData, setFilteredData] = useState(disclosureData);
-
-    const sortedDisclosureData = [...filteredData].sort((a, b) => {
-      return new Date(b.date) - new Date(a.date);
-    });
-
     const handleInputChange = (event) => {
         const { value } = event.target;
         setFilters((prevFilters) => ({
@@ -171,6 +186,12 @@ const SearchResultPage = () => {
             company: value,
         }));
     };
+
+    const handleKeyDown = (event) => {
+        if(event.key === "Enter") {
+            searchFilters();
+        }
+    }
 
     return (
         <div>
@@ -184,6 +205,7 @@ const SearchResultPage = () => {
 
             <h2 className="list-title">종목명</h2>
             <ListTables
+                type="stock"
                 data={sortedStockData}
                 headers={stockHeaders}
             />
@@ -201,6 +223,7 @@ const SearchResultPage = () => {
                                         placeholder="회사명 | 티커"
                                         value={filters.company}
                                         onChange={handleInputChange}
+                                        onKeyDown={handleKeyDown}
                                     />
                                 </div>                    
                             </div>
@@ -335,6 +358,7 @@ const SearchResultPage = () => {
         )}
 
             <ListTables
+                type="disclosure"
                 data={sortedDisclosureData}
                 headers={disclosureHeaders}
             />
