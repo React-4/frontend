@@ -26,7 +26,6 @@ const SearchResultPage = () => {
     //     code: `${Math.floor(Math.random() * (999999-100000+1))+100000}`.toString(),
     //     price: `${Math.floor(Math.random() * 9001)+1000} 억 원`,
     //     changeRate: `${(Math.random() * 10 - 5).toFixed(2)}%`,
-    //     marketCap: `${Math.floor(Math.random() * 9001)+1000} 억 원`,
     //     transaction: `${Math.floor(Math.random() * 19001)+1000} 억 원`,
     //   }));
 
@@ -38,7 +37,6 @@ const SearchResultPage = () => {
             code: stock["종목코드"],
             price: `${stock["현재가"]} 원`,
             changeRate: `${stock["등락률"]}%`,
-            marketCap: "N/A", // JSON 데이터에 없어서 임시 값 설정
             transaction: `${stock["거래량"]} 주`,
         }));
         setStockData(stocks);
@@ -66,7 +64,6 @@ const SearchResultPage = () => {
         { key: "code", label: "종목코드" },
         { key: "price", label: "현재가" },
         { key: "changeRate", label: "등락률" },
-        { key: "marketCap", label: "시가총액" },
         { key: "transaction", label: "거래량" },
     ];
 
