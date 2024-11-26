@@ -17,7 +17,22 @@ export default function CommentItem({ username, comment, date }) {
     }
   }, []);
 
-  const colorcode = "bg-profile-" + String(Math.floor(Math.random() * 10));
+  // Tailwind에서 사용할 색상 클래스를 미리 정의
+  const colorClasses = [
+    "bg-profile",
+    "bg-profile-0",
+    "bg-profile-1",
+    "bg-profile-2",
+    "bg-profile-3",
+    "bg-profile-4",
+    "bg-profile-5",
+    "bg-profile-6",
+    "bg-profile-7",
+    "bg-profile-8",
+    "bg-profile-9",
+  ];
+  const randomIndex = Math.floor(Math.random() * colorClasses.length);
+  const colorClass = colorClasses[randomIndex]; // 무작위 색상 선택
 
   const [editedComment, setEditedComment] = useState(comment);
   const [isEditing, setIsEditing] = useState(false);
@@ -28,7 +43,7 @@ export default function CommentItem({ username, comment, date }) {
   return (
     <div className="flex flex-row justify-between mt-6 w-full">
       <div
-        className={`rounded-full w-10 h-10 text-white text-center p-1 ${"bg-profile-1"}`}
+        className={`rounded-full w-10 h-10 text-white p-1 ${colorClass} flex flex-col items-center justify-center`}
       >
         {username.slice(0, 2)}
       </div>

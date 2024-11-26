@@ -5,6 +5,7 @@ import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import ContrastIcon from "@mui/icons-material/Contrast";
 import HistoryIcon from "@mui/icons-material/History";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import Button from "@mui/material/Button";
@@ -155,39 +156,53 @@ export default function SidebarWithDrawer() {
           zIndex: 2,
         }}
       >
-        <List>
-          <ListItem disablePadding>
-            <Button onClick={handleDrawerClose}>
-              <div className="flex flex-col items-center text-primary-2">
-                <HomeOutlinedIcon />
-                닫기
-              </div>
-            </Button>
-          </ListItem>
-          <ListItem disablePadding>
-            <Button onClick={() => handleDrawerOpen("관심")}>
+        <List
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            height: "100%",
+            justifyContent: "space-between",
+          }}
+        >
+          <div>
+            <ListItem disablePadding>
+              <Button onClick={handleDrawerClose}>
+                <div className="flex flex-col items-center text-primary-2">
+                  <HomeOutlinedIcon />
+                  닫기
+                </div>
+              </Button>
+            </ListItem>
+            <ListItem disablePadding>
+              <Button onClick={() => handleDrawerOpen("관심")}>
+                <div
+                  className={`flex flex-col items-center ${
+                    favColor === "primary" ? "text-primary" : "text-primary-2"
+                  }`}
+                >
+                  <FavoriteBorderIcon />
+                  관심
+                </div>
+              </Button>
+            </ListItem>
+            {/* <ListItem disablePadding> */}
+            <Button onClick={() => handleDrawerOpen("최근 본")}>
               <div
-                className={`flex flex-col items-center ${
-                  favColor === "primary" ? "text-primary" : "text-primary-2"
+                className={`flex flex-col items-center  ${
+                  histColor === "primary" ? "text-primary" : "text-primary-2"
                 }`}
               >
-                <FavoriteBorderIcon />
-                관심
+                <HistoryIcon />
+                최근 본
               </div>
             </Button>
-          </ListItem>
-          {/* <ListItem disablePadding> */}
-          <Button onClick={() => handleDrawerOpen("최근 본")}>
-            <div
-              className={`flex flex-col items-center  ${
-                histColor === "primary" ? "text-primary" : "text-primary-2"
-              }`}
-            >
-              <HistoryIcon />
-              최근 본
+          </div>
+          <Button>
+            <div className="flex flex-col items-center text-primary-2">
+              <ContrastIcon />
+              <div className="text-xs">다크모드</div>
             </div>
           </Button>
-          {/* </ListItem> */}
         </List>
       </Box>
 
