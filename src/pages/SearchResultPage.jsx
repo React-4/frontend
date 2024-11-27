@@ -1,12 +1,11 @@
 import React, {useState, useEffect} from "react";
 import ListTables from "../components/common/ListTables";
 import '../components/css/SearRes.css';
-import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import stockJson from "../components/dummy/stock.json";
-import disclosureJson from "../components/dummy/disclosure.json";
 
 const SearchResultPage = () => {
-    const navigate = useNavigate();
+    const {query} = useParams();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [stockData, setStockData] = useState([]);
     const [disclosureData, setDisclosureData] = useState([]);
@@ -55,8 +54,14 @@ const SearchResultPage = () => {
             comments: announcement.commentCount,
         }));
         setDisclosureData(disclosures);
-        setFilteredData(disclosures);
-    }, []);
+        //const decodedQuery = decodeURIComponent(query.replace(/"/g, "")); // "검색어" 버튼으로 필터링
+        // setFilteredData(
+        //     disclosures.filter(
+        //         (item) =>
+        //         item.company.includes(decodedQuery) || item.report.includes(decodedQuery)
+        //     )
+        // );
+  }, [query]);
 
     const stockHeaders = [
         { key: "num", label: `검색된 주식${stockData.length}개` },
@@ -83,7 +88,7 @@ const SearchResultPage = () => {
     const handleFilterChange = (field, value) => {
         setFilters((prevFilters) => ({
             ...prevFilters,
-            [field]: prevFilters[field] === value ? "" : value, // Toggle filter value
+            [field]: prevFilters[field] === value ? "" : value, 
         }));
     };
 
@@ -101,7 +106,6 @@ const SearchResultPage = () => {
     });
     };
       
-
     const resetFilters = () => {
         setFilters({
             period: "",

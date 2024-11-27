@@ -1,19 +1,28 @@
 import logoImg from "/img/disclo_white.png";
 import { useLogin } from "../../hooks/useLogin";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import React, { useState } from "react";
 import search from "/img/Search.png";
 
 export default function Header() {
   const navigate = useNavigate();
   const { loggedIn, setLoggedIn } = useLogin();
   const [showTooltip, setShowTooltip] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleLogout = () => {
     localStorage.removeItem("login-token");
     setShowTooltip(false);
     setLoggedIn(false);
     navigate("/");
+  };
+
+  const handleSearchKeyDown = (e) => {
+    if (e.key === "Enter" && searchQuery.trim()) {
+      navigate(`/search=${encodeURIComponent(searchQuery.trim())}`);
+      console.log(encodeURIComponent(searchQuery.trim()));
+      //navigate('/search');
+    }
   };
 
   return (
@@ -28,6 +37,9 @@ export default function Header() {
         <input
           className="border-primary border-2 rounded-3xl h-10 w-full pl-10"
           placeholder="검색어를 입력하세요"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          onKeyDown={handleSearchKeyDown}
         />
       </div>
       {loggedIn ? (

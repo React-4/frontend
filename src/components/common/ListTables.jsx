@@ -131,14 +131,14 @@ export default function ListTables({ type, data, headers }) {
       </TableContainer>
 
       {/* 페이지네이션 */}
-      <div className="pagination-container">
+      {/* <div className="pagination-container">
         <Pagination
           count={totalPages}
           page={currentPage}
           onChange={handlePageChange}
           color="primary"
         />
-      </div>
+      </div> */}
     </div>
   );
 }

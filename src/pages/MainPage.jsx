@@ -1,50 +1,104 @@
 import React, { useState, useEffect } from "react";
 import ListTables from "../components/common/ListTables";
 import stockJson from "../components/dummy/stock.json";
+import Pagination from "@mui/material/Pagination";
 import axios from "axios";
 
 const MainPage = () => {
+  //공시
   const [disclosureSortType, setDisclosureSortType] = useState("latest");
-  const [stockSortType, setStockSortType] = useState("amount");
   const [disclosureData, setDisclosureData] = useState([]);
-  const [stockData, setStockData] = useState([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalDisclosure, setTotalDisclosure] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
 
-  useEffect(() => {
-    const fetchDisclosureData = async () => {
-      try {
-        const response = await axios.get(
+  const fetchDisclosureData = async (userPage, sortType) => {
+    try {
+      const apiPage = userPage - 1;
+      const response = await axios.get("http://43.203.154.25:8080/api/announcement", {
+        params: {
+          sortBy: sortType,
+          page: apiPage, 
+          size: pageSize,
+        },
+      });
+
+      const { announcementList, announcementCount } = response.data?.data || {};
+
+      setTotalPages(announcementCount);
+
+      setDisclosureData(
+        announcementList.map((item) => ({
+          id: item.announcementId,
+          num: item.announcementId,
+          company: item.stockName,
+          report: item.title?.trim() || "N/A",
+          submitter: item.submitter || "Unknown",
+          date: item.announcementDate || "Unknown",
+          votes: {
+            good: item.positiveVoteCount || 0,
+            bad: item.negativeVoteCount || 0,
+          },
+          comments: item.commentCount || 0,
+        }))
+      );
+
+      if (userPage === 1) {
+        const lastPageResponse = await axios.get(
           "http://43.203.154.25:8080/api/announcement",
           {
             params: {
               sortBy: disclosureSortType,
-              page: 0,
-              size: 10,
+              page: announcementCount - 1,
+              size: pageSize,
             },
           }
         );
-
-        const disclosures = response.data.announcementList.map((announcement) => ({
-          id: announcement.announcementId,
-          num: announcement.announcementId,
-          company: announcement.stockName,
-          report: announcement.title.trim(),
-          submitter: announcement.submitter,
-          date: announcement.announcementDate,
-          votes: {
-            good: announcement.positiveVoteCount,
-            bad: announcement.negativeVoteCount,
-          },
-          comments: announcement.commentCount,
-        }));
-
-        setDisclosureData(disclosures);
-      } catch (error) {
-        console.error("Failed to fetch disclosure data:", error);
+        const lastPageData = lastPageResponse.data?.data?.announcementList || [];
+        const totalDataCount = (announcementCount - 1) * pageSize + lastPageData.length;
+        setTotalDisclosure(totalDataCount);
       }
-    };
 
-    fetchDisclosureData();
+    } catch (error) {
+      console.error("Failed to fetch disclosure data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchDisclosureData(1); 
   }, [disclosureSortType]);
+
+  const handlePageClick = (event, userPage) => {
+    setCurrentPage(userPage);
+    fetchDisclosureData(userPage);
+  };
+
+  const handleDisclosureSortChange = (key) => {
+    setDisclosureSortType(key);
+    setCurrentPage(1);
+    fetchDisclosureData(1, key);
+  };
+
+  const disclosureHeaders = [
+    { key: "num", label: `전체 리스트 ${totalDisclosure}개` },
+    { key: "company", label: "공시 대상 회사" },
+    { key: "report", label: "보고서명" },
+    { key: "submitter", label: "제출인" },
+    { key: "date", label: "접수일자" },
+    { key: "votes", label: "투표" },
+    { key: "comments", label: "댓글수" },
+  ];
+
+  const disclosureSortOptions = [
+    { key: "latest", label: "최신순" },
+    { key: "comment", label: "댓글 많은 순" },
+    { key: "vote", label: "투표수" },
+  ];
+
+  //종목
+  const [stockSortType, setStockSortType] = useState("amount");
+  const [stockData, setStockData] = useState([]);
 
   useEffect(() => {
     const stockData = Object.values(stockJson.data).map((stock, index) => ({
@@ -59,25 +113,8 @@ const MainPage = () => {
     setStockData(stockData);
   }, []);
 
-  const disclosureHeaders = [
-    { key: "num", label: `전체 리스트 ${disclosureData.length}개` },
-    { key: "company", label: "공시 대상 회사" },
-    { key: "report", label: "보고서명" },
-    { key: "submitter", label: "제출인" },
-    { key: "date", label: "접수일자" },
-    { key: "votes", label: "투표" },
-    { key: "comments", label: "댓글수" },
-  ];
-
-  const disclosureSortOptions = [
-    { key: "latest", label: "최신순" },
-    { key: "views", label: "조회수 순" },
-    { key: "comments", label: "댓글 많은 순" },
-    { key: "votes", label: "투표수" },
-  ];
-
   const stockHeaders = [
-    { key: "num", label: `검색된 주식${stockData.length}개` },
+    { key: "num", label: `검색된 주식${totalDisclosure}개` },
     { key: "name", label: "종목명" },
     { key: "code", label: "종목코드" },
     { key: "price", label: "현재가" },
@@ -92,28 +129,6 @@ const MainPage = () => {
     { key: "change_rate_down", label: "하락률 순" },
   ];
 
-  const handleDisclosureSortChange = (key) => {
-    setDisclosureSortType(key);
-  };
-
-  const handleStockSortChange = (key) => {
-    setStockSortType(key);
-  };
-
-  const sortedDisclosureData = [...disclosureData].sort((a, b) => {
-    switch (disclosureSortType) {
-      case "latest":
-        return new Date(b.date) - new Date(a.date);
-      case "votes":
-        const totalVotesA = a.votes.good + a.votes.bad;
-        const totalVotesB = b.votes.good + b.votes.bad;
-        return totalVotesB - totalVotesA;
-      case "comments":
-        return b.comments - a.comments;
-      default:
-        return 0;
-    }
-  });
 
   const sortedStockData = [...stockData].sort((a, b) => {
     switch (stockSortType) {
@@ -164,9 +179,18 @@ const MainPage = () => {
 
       <ListTables
         type="disclosure"
-        data={sortedDisclosureData}
+        data={disclosureData}
         headers={disclosureHeaders}
       />
+
+      <div className="pagination-container">
+        <Pagination
+          count={totalPages} 
+          page={currentPage}
+          onChange={handlePageClick} 
+          color="primary"
+        />
+      </div>
 
       <h2 className="list-title">종목</h2>
       <div className="sort-buttons">
