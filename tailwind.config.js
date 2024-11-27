@@ -1,5 +1,3 @@
-import { Profiler } from "react";
-
 /** @type {import('tailwindcss').Config} */
 export default {
   content: ["./index.html", "./src/**/*.{js,jsx,ts,tsx}"],
@@ -35,7 +33,7 @@ export default {
           6: "#C2B4F2",
           7: "#656872",
           8: "#907267",
-          9: "#FFCDDC",
+          9: "#444444",
         },
       },
       width: {
