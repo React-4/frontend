@@ -6,12 +6,13 @@ import search from "/img/Search.png";
 
 export default function Header() {
   const navigate = useNavigate();
-  const { loggedIn, setLoggedIn } = useLogin();
+  const { loggedIn, setLoggedIn, profileColor } = useLogin();
   const [showTooltip, setShowTooltip] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   const handleLogout = () => {
     localStorage.removeItem("login-token");
+    localStorage.removeItem("profileColor");
     setShowTooltip(false);
     setLoggedIn(false);
     navigate("/");
@@ -26,8 +27,12 @@ export default function Header() {
   };
 
   return (
-    <div className="flex flex-row items-center justify-between p-3 h-16 w-full bg-white">
-      <img src={logoImg} className="w-1/12" onClick={() => navigate("/")} />
+    <div className="hover:opacity-80 flex flex-row items-center justify-between p-3 h-16 w-full bg-white">
+      <img
+        src={logoImg}
+        className="w-1/12 cursor-pointer hover:opacity-80 transition-opacity duration-200" // hover 효과 및 커서 변경
+        onClick={() => navigate("/")}
+      />
       <div className="relative w-4/12">
         <img
           src={search}
@@ -45,7 +50,7 @@ export default function Header() {
       {loggedIn ? (
         <div className="relative">
           <button
-            className="rounded-full w-10 h-10 bg-red-400 text-white"
+            className={`rounded-full w-10 h-10 bg-profile-${profileColor} text-white`}
             onClick={() => setShowTooltip(true)}
           >
             {loggedIn.slice(0, 2)}
@@ -74,7 +79,9 @@ export default function Header() {
       ) : (
         <button
           className="bg-primary text-white h-10 w-20 rounded-xl text-l"
-          onClick={() => navigate("/login")}
+          onClick={() =>
+            navigate("/login", { state: { from: window.location.pathname } })
+          } // 현재 경로를 state로 전달
         >
           로그인
         </button>
