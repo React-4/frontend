@@ -6,11 +6,12 @@ import search from "/img/Search.png";
 
 export default function Header() {
   const navigate = useNavigate();
-  const { loggedIn, setLoggedIn } = useLogin();
+  const { loggedIn, setLoggedIn, profileColor } = useLogin();
   const [showTooltip, setShowTooltip] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem("login-token");
+    localStorage.removeItem("profileColor");
     setShowTooltip(false);
     setLoggedIn(false);
     navigate("/");
@@ -37,7 +38,7 @@ export default function Header() {
       {loggedIn ? (
         <div className="relative">
           <button
-            className="rounded-full w-10 h-10 bg-red-400 text-white"
+            className={`rounded-full w-10 h-10 bg-profile-${profileColor} text-white`}
             onClick={() => setShowTooltip(true)}
           >
             {loggedIn.slice(0, 2)}
@@ -66,7 +67,9 @@ export default function Header() {
       ) : (
         <button
           className="bg-primary text-white h-10 w-20 rounded-xl text-l"
-          onClick={() => navigate("/login")}
+          onClick={() =>
+            navigate("/login", { state: { from: window.location.pathname } })
+          } // 현재 경로를 state로 전달
         >
           로그인
         </button>
