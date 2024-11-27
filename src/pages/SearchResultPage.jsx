@@ -2,7 +2,6 @@ import React, {useState, useEffect} from "react";
 import ListTables from "../components/common/ListTables";
 import '../components/css/SearRes.css';
 import { useParams } from "react-router-dom";
-import stockJson from "../components/dummy/stock.json";
 
 const SearchResultPage = () => {
     const {query} = useParams();
@@ -39,6 +38,7 @@ const SearchResultPage = () => {
             transaction: `${stock["거래량"]} 주`,
         }));
         setStockData(stocks);
+        //Json 수정 필필필
 
         const disclosures = disclosureJson.data.announcementList.map((announcement) => ({
             id: announcement.announcementId,
