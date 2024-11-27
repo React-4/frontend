@@ -20,9 +20,9 @@ export default function Header() {
 
   const handleSearchKeyDown = (e) => {
     if (e.key === "Enter" && searchQuery.trim()) {
-      navigate(`/search=${encodeURIComponent(searchQuery.trim())}`);
-      console.log(encodeURIComponent(searchQuery.trim()));
-      //navigate('/search');
+      // navigate(`/search=${encodeURIComponent(searchQuery.trim())}`);
+      // console.log(encodeURIComponent(searchQuery.trim()));
+      navigate('/search');
     }
   };
 

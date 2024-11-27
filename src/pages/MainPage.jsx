@@ -81,13 +81,13 @@ const MainPage = () => {
   };
 
   const disclosureHeaders = [
-    { key: "num", label: `전체 리스트 ${totalDisclosure}개` },
-    { key: "company", label: "공시 대상 회사" },
-    { key: "report", label: "보고서명" },
-    { key: "submitter", label: "제출인" },
-    { key: "date", label: "접수일자" },
-    { key: "votes", label: "투표" },
-    { key: "comments", label: "댓글수" },
+    { key: "num", label: `전체 ${totalDisclosure}개`, width: "10%" },
+    { key: "company", label: "공시 대상 회사", width: "18%" },
+    { key: "report", label: "보고서명", width: "25%" },
+    { key: "submitter", label: "제출인", width: "18%" },
+    { key: "date", label: "접수일자", width: "10%" },
+    { key: "votes", label: "투표", width: "12%" },
+    { key: "comments", label: "댓글수", width: "7%" },
   ];
 
   const disclosureSortOptions = [
