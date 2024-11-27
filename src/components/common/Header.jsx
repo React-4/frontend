@@ -17,7 +17,7 @@ export default function Header() {
   };
 
   return (
-    <div className="flex flex-row items-center justify-between p-3 h-16 w-full bg-white">
+    <div className="flex flex-row items-center justify-between p-3 h-16 w-full bg-white dark:bg-dark text-dark-1">
       <img src={logoImg} className="w-1/12" onClick={() => navigate("/")} />
       <div className="relative w-4/12">
         <img

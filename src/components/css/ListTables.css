@@ -1,26 +1,26 @@
 /* 공통 컨테이너 스타일 */
 .list-container {
-    padding: 20px;
-    font-family: Arial, sans-serif;
-    cursor: pointer;
-  }
-  
-  /* 제목 스타일 */
-  .list-title {
-    text-align: left;
-    margin-left: 20px;
-    margin-bottom: 20px;
-    margin-top: 20px;
-    font-size: 24px;
-    font-weight: bold;
-  }
-  
-  /* 전체 리스트 개수 */
-  .list-count {
-    margin-bottom: 10px;
-    font-weight: bold;
-    font-size: 16px;
-  }
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  cursor: pointer;
+}
+
+/* 제목 스타일 */
+.list-title {
+  text-align: left;
+  margin-left: 20px;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+/* 전체 리스트 개수 */
+.list-count {
+  margin-bottom: 10px;
+  font-weight: bold;
+  font-size: 16px;
+}
 
 /* 제목 스타일 */
 .list-title {
@@ -37,46 +37,46 @@
   font-size: 16px;
 }
 
-  .sort-buttons .active {
-    background-color: #0045B0;
-    color: #FFFFFF;
-    border-radius: 5px;
-  }
-  
-  /* 페이지네이션 컨테이너 */
-  .pagination-container {
-    margin-top: 20px;
-    display: flex;
-    text-align: center;
-    justify-content: center;
-  }
-  
-  .heart-number {
-    display: flex;
-    align-items: center;
-    justify-content: center; 
-    gap: 25px; 
-  }
-  
-  .heart {
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-  }
-  
-  .heart:hover {
-    transform: scale(1.2);
-    transition: transform 0.2s;
-  }
-  
-  .number {
-    width: 20px;
-    text-align: center;
-    color: #0045B0;
-  }
+.sort-buttons .active {
+  background-color: #0045b0;
+  color: #ffffff;
+  border-radius: 5px;
+}
+
+/* 페이지네이션 컨테이너 */
+.pagination-container {
+  margin-top: 20px;
+  display: flex;
+  text-align: center;
+  justify-content: center;
+}
+
+.heart-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 25px;
+}
+
+.heart {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.heart:hover {
+  transform: scale(1.2);
+  transition: transform 0.2s;
+}
+
+.number {
+  width: 20px;
+  text-align: center;
+  color: #0045b0;
+}
 .list-table th,
 .list-table td {
   border: none;
@@ -112,7 +112,7 @@
   justify-content: center;
 }
 
-.pagination-container a, 
+.pagination-container a,
 .pagination-container button {
   cursor: pointer;
 }

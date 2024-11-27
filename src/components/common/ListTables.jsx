@@ -13,11 +13,12 @@ import "../css/ListTables.css"; // 추가된 CSS 파일
 import FavoriteIcon from "@mui/icons-material/Favorite"; //빨간 하트
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder"; //빈 하트
 import { useNavigate } from "react-router-dom";
+import { useDarkmode } from "../../hooks/useDarkmode";
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
+const StyledTableCell = styled(TableCell)(({ dark }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: "white",
-    color: "black",
+    backgroundColor: dark ? "#292929" : "white",
+    color: dark ? "#fafafb" : "black",
     fontWeight: "bold",
   },
   [`&.${tableCellClasses.body}`]: {
@@ -38,6 +39,7 @@ export default function ListTables({ type, data, headers }) {
   const [currentPage, setCurrentPage] = useState(1);
   // const [favorites, setFavorites] = useState(new Array(data.length).fill(false));
   const [favorites, setFavorites] = useState({});
+  const { handleDarkMode, dark } = useDarkmode();
   const itemsPerPage = 10;
 
   const totalPages = Math.ceil(data.length / itemsPerPage);
@@ -78,7 +80,7 @@ export default function ListTables({ type, data, headers }) {
           <TableHead>
             <TableRow>
               {headers.map((header, index) => (
-                <StyledTableCell key={index} align="center">
+                <StyledTableCell key={index} align="center" dark={dark}>
                   {header.label}
                 </StyledTableCell>
               ))}

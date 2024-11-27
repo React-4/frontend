@@ -2,6 +2,8 @@ import React from "react";
 import ApexChart from "../components/chart/ApexChart";
 import ListTables from "../components/common/ListTables";
 import CommentList from "../components/disclosure/CommentList";
+import { getCommentByStock } from "../services/commentAPI";
+import { useEffect, useState } from "react";
 
 const commentData = [
   {
@@ -79,6 +81,19 @@ const disclosureHeaders = [
 ];
 
 export default function StockPage() {
+  const [commentList, setCommentList] = useState([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getCommentByStock();
+        console.log(data);
+      } catch (error) {
+        console.error("데이터를 가져오는 중 문제가 발생했습니다:", error);
+      }
+    };
+    setCommentList(fetchData());
+  }, []);
+  console.log(commentList);
   return (
     <div className="flex flex-col mb-12 m-3">
       <div className="flex flex-row  gap-2">
