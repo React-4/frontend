@@ -17,7 +17,7 @@ export const mainRoutes = [
       { element: <MainPage />, index: true },
       { element: <LoginPage />, path: "/login" },
       { element: <MyPage />, path: "/mypage" },
-      { element: <SearchResultPage />, path: "/search-result",  },
+      { element: <SearchResultPage />, path: '/search/:query' },
       { element: <DisclosurePage />, path: "/disclosure/:id" },
       { element: <StockPage />, path: "/stock/:id" },
     ],

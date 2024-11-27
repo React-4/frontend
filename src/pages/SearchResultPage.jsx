@@ -1,12 +1,11 @@
 import React, {useState, useEffect} from "react";
 import ListTables from "../components/common/ListTables";
 import '../components/css/SearRes.css';
-import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import stockJson from "../components/dummy/stock.json";
-import disclosureJson from "../components/dummy/disclosure.json";
 
 const SearchResultPage = () => {
-    const navigate = useNavigate();
+    const {query} = useParams();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [stockData, setStockData] = useState([]);
     const [disclosureData, setDisclosureData] = useState([]);
@@ -26,7 +25,6 @@ const SearchResultPage = () => {
     //     code: `${Math.floor(Math.random() * (999999-100000+1))+100000}`.toString(),
     //     price: `${Math.floor(Math.random() * 9001)+1000} 억 원`,
     //     changeRate: `${(Math.random() * 10 - 5).toFixed(2)}%`,
-    //     marketCap: `${Math.floor(Math.random() * 9001)+1000} 억 원`,
     //     transaction: `${Math.floor(Math.random() * 19001)+1000} 억 원`,
     //   }));
 
@@ -38,7 +36,6 @@ const SearchResultPage = () => {
             code: stock["종목코드"],
             price: `${stock["현재가"]} 원`,
             changeRate: `${stock["등락률"]}%`,
-            marketCap: "N/A", // JSON 데이터에 없어서 임시 값 설정
             transaction: `${stock["거래량"]} 주`,
         }));
         setStockData(stocks);
@@ -57,8 +54,14 @@ const SearchResultPage = () => {
             comments: announcement.commentCount,
         }));
         setDisclosureData(disclosures);
-        setFilteredData(disclosures);
-    }, []);
+        //const decodedQuery = decodeURIComponent(query.replace(/"/g, "")); // "검색어" 버튼으로 필터링
+        // setFilteredData(
+        //     disclosures.filter(
+        //         (item) =>
+        //         item.company.includes(decodedQuery) || item.report.includes(decodedQuery)
+        //     )
+        // );
+  }, [query]);
 
     const stockHeaders = [
         { key: "num", label: `검색된 주식${stockData.length}개` },
@@ -66,7 +69,6 @@ const SearchResultPage = () => {
         { key: "code", label: "종목코드" },
         { key: "price", label: "현재가" },
         { key: "changeRate", label: "등락률" },
-        { key: "marketCap", label: "시가총액" },
         { key: "transaction", label: "거래량" },
     ];
 
@@ -86,7 +88,7 @@ const SearchResultPage = () => {
     const handleFilterChange = (field, value) => {
         setFilters((prevFilters) => ({
             ...prevFilters,
-            [field]: prevFilters[field] === value ? "" : value, // Toggle filter value
+            [field]: prevFilters[field] === value ? "" : value, 
         }));
     };
 
@@ -104,7 +106,6 @@ const SearchResultPage = () => {
     });
     };
       
-
     const resetFilters = () => {
         setFilters({
             period: "",
