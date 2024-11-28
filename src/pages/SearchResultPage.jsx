@@ -1,91 +1,150 @@
 import React, {useState, useEffect} from "react";
 import ListTables from "../components/common/ListTables";
 import '../components/css/SearRes.css';
-import { useParams } from "react-router-dom";
-import stockJson from "../components/dummy/stock.json";
+import { useLocation } from "react-router-dom";
+import Pagination from "@mui/material/Pagination";
+import axios from "axios";
 
 const SearchResultPage = () => {
-    const {query} = useParams();
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const searchQuery = queryParams.get("query") || "";
+
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [stockData, setStockData] = useState([]);
-    const [disclosureData, setDisclosureData] = useState([]);
-    const [filteredData, setFilteredData] = useState(disclosureData);
+    const [filteredStockData, setFilteredStockData] = useState([]);
+    const [filteredDisclosureData, setFilteredDisclosureData] = useState([]);
     const [filters, setFilters] = useState({
         period: "",
-        market: "",
-        type: "",
-        startDate: "",
-        endDate: "",
-        company: "",
+        market: "전체",
+        types: [],
       });
-    // const stockData = Array.from({ length: 6 }, (_, index) => ({
-    //     id: index + 1,
-    //     num: index + 1,
-    //     name: `삼성 ${index + 1}`,
-    //     code: `${Math.floor(Math.random() * (999999-100000+1))+100000}`.toString(),
-    //     price: `${Math.floor(Math.random() * 9001)+1000} 억 원`,
-    //     changeRate: `${(Math.random() * 10 - 5).toFixed(2)}%`,
-    //     transaction: `${Math.floor(Math.random() * 19001)+1000} 억 원`,
-    //   }));
+    const pageSize = 10;
+    const [currentStockPage, setCurrentStockPage] = useState(1);
+    const [currentDisclosurePage, setCurrentDisclosurePage] = useState(1);
+    
+    const fetchStockData = async () => {
+        try {
+            const searchResponse = await axios.get(
+                `http://43.203.154.25:8080/api/stock/search`,
+                {
+                  params: { keyword: searchQuery },
+                }
+            );
+            const searchData = searchResponse.data?.data || [];
 
-    useEffect(() => {
-        const stocks = Object.values(stockJson.data).map((stock, index) => ({
-            id: index + 1,
-            num: index + 1,
-            name: `종목 ${index + 1}`, // JSON 데이터에 이름 정보가 없어서 추가(이건 테이블 조인하고)
-            code: stock["종목코드"],
-            price: `${stock["현재가"]} 원`,
-            changeRate: `${stock["등락률"]}%`,
-            transaction: `${stock["거래량"]} 주`,
-        }));
-        setStockData(stocks);
+            const rankResponse = await axios.get(
+                "http://43.203.154.25:8080/api/stockprice/rank",
+                {
+                  params: { sort_by: "change_rate_up" },
+                }
+            );
 
-        const disclosures = disclosureJson.data.announcementList.map((announcement) => ({
-            id: announcement.announcementId,
-            num: announcement.announcementId,
-            company: announcement.stockName,
-            report: announcement.title.trim(),
-            submitter: announcement.submitter,
-            date: announcement.announcementDate,
-            votes: {
-                good: announcement.positiveVoteCount,
-                bad: announcement.negativeVoteCount,
-            },
-            comments: announcement.commentCount,
-        }));
-        setDisclosureData(disclosures);
-        //const decodedQuery = decodeURIComponent(query.replace(/"/g, "")); // "검색어" 버튼으로 필터링
-        // setFilteredData(
-        //     disclosures.filter(
-        //         (item) =>
-        //         item.company.includes(decodedQuery) || item.report.includes(decodedQuery)
-        //     )
-        // );
-  }, [query]);
+            const rankData = rankResponse.data?.data || {};
 
+            const updatedData = await Promise.all(
+                searchData.map(async (stock) => {
+                  const ticker = stock.ticker;
+                  const priceData = Object.values(rankData).find(
+                    (item) => item["종목코드"] === ticker
+                  );
+          
+                  try {
+                    const tickerResponse = await axios.get(
+                      `http://43.203.154.25:8080/api/stock/ticker/${ticker}`
+                    );
+          
+                    const companyName = tickerResponse.data?.data?.companyName || "알 수 없음";
+                    const stockId = tickerResponse.data?.data?.stockId || stock.id;
+          
+                    return {
+                      id: stockId, 
+                      num: stockId, 
+                      code: ticker,
+                      name: companyName, 
+                      price: priceData?.현재가 ? `${priceData.현재가} 원` : "None", 
+                      changeRate: priceData?.등락률 ? `${priceData.등락률}%` : "None",
+                      transaction: priceData?.거래량 ? `${priceData.거래량} 주` : "None",
+                    };
+                  } catch (tickerError) {
+                    console.error(`Failed to fetch additional data for ticker ${ticker}`, tickerError);
+          
+                    return {
+                      id: stock.id,
+                      num: stock.id,
+                      code: ticker,
+                      name: stock.companyName,
+                      price: priceData?.현재가 ? `${priceData.현재가} 원` : "None", 
+                      changeRate: priceData?.등락률 ? `${priceData.등락률}%` : "None",
+                      transaction: priceData?.거래량 ? `${priceData.거래량} 주` : "None", 
+                    };
+                  }
+                })
+              );
+    
+          setFilteredStockData(updatedData);
+
+          const filtered = updatedData.filter((item) =>
+            item.name.includes(searchQuery)
+          );
+          setFilteredStockData(filtered);
+        } catch (error) {
+          console.error("Failed to fetch stock data:", error);
+        }
+      };
+      
     const stockHeaders = [
-        { key: "num", label: `검색된 주식${stockData.length}개` },
-        { key: "name", label: "종목명" },
-        { key: "code", label: "종목코드" },
-        { key: "price", label: "현재가" },
-        { key: "changeRate", label: "등락률" },
-        { key: "transaction", label: "거래량" },
+        { key: "num", label: `전체 ${filteredStockData.length}개`, width: "10%" },
+        { key: "name", label: "종목명", width: "20%"  },
+        { key: "code", label: "종목코드",  width: "10%"  },
+        { key: "price", label: "현재가", width: "10%" },
+        { key: "changeRate", label: "등락률", width: "10%"  },
+        { key: "transaction", label: "거래량", width: "10%"  },
     ];
 
-    const disclosureHeaders = [
-        { key: "num", label: `검색된 공시 ${disclosureData.length}개`},
-        { key: "company", label: "공시 대상 회사" },
-        { key: "report", label: "보고서명" },
-        { key: "submitter", label: "제출인" },
-        { key: "date", label: "접수일자" },
-        { key: "votes", label: "투표" },
-        { key: "comments", label: "댓글수" },
-      ];
+    const currentStockData = filteredStockData.slice(
+        (currentStockPage - 1) * pageSize,
+        currentStockPage * pageSize
+    );
 
-    const sortedStockData = [...stockData].sort((a, b) => { return a.name.localeCompare(b.name); });
-    const sortedDisclosureData = [...filteredData].sort((a, b) => { return new Date(b.date) - new Date(a.date); });
 
-    const handleFilterChange = (field, value) => {
+
+      const fetchDisclosureData = async () => {
+        try {
+          const response = await axios.get("http://43.203.154.25:8080/api/announcement", {
+            params: { sortBy: "latest", page: 0, size: 1000 },
+          });
+    
+          const { announcementList } = response.data?.data || {};
+          const formattedData = announcementList.map((item) => ({
+            id: item.announcementId,
+            num: item.announcementId,
+            company: item.stockName,
+            report: item.title?.trim() || "N/A",
+            submitter: item.submitter || "Unknown",
+            date: item.announcementDate || "Unknown",
+            votes: {
+              good: item.positiveVoteCount || 0,
+              bad: item.negativeVoteCount || 0,
+            },
+            comments: item.commentCount || 0,
+          }));
+    
+          // 검색어로 필터링
+          const filtered = formattedData.filter((item) =>
+            item.company.includes(searchQuery)
+          );
+          setFilteredDisclosureData(filtered);
+        } catch (error) {
+          console.error("Failed to fetch disclosure data:", error);
+        }
+      };
+
+      useEffect(() => {
+        fetchStockData();
+        fetchDisclosureData();
+      }, [searchQuery]);
+
+      const handleFilterChange = (field, value) => {
         setFilters((prevFilters) => ({
             ...prevFilters,
             [field]: prevFilters[field] === value ? "" : value, 
@@ -105,19 +164,37 @@ const SearchResultPage = () => {
         };
     });
     };
+
+
+    const disclosureHeaders = [
+        { key: "num", label: `검색된 공시 ${filteredDisclosureData.length}개`, width: "10%"},
+        { key: "company", label: "공시 대상 회사", width: "18%" },
+        { key: "report", label: "보고서명", width: "25%" },
+        { key: "submitter", label: "제출인", width: "18%" },
+        { key: "date", label: "접수일자", width: "10%" },
+        { key: "votes", label: "투표", width: "12%" },
+        { key: "comments", label: "댓글수", width: "7%" },
+      ];
+
+      
+    
+      const currentDisclosureData = filteredDisclosureData.slice(
+        (currentDisclosurePage - 1) * pageSize,
+        currentDisclosurePage * pageSize
+      );    
       
     const resetFilters = () => {
         setFilters({
             period: "",
-            market: "",
-            type: "",
+            market: "전체",
+            type: [],
         });
-        setFilteredData(disclosureData);
+        fetchDisclosureData();
     };
 
     const searchFilters = () => {  
         const now = new Date();
-        const filtered = disclosureData.filter((item) => {
+        const filtered = filteredDisclosureData.filter((item) => {
 
         if (filters.company && !item.company.includes(filters.company)) {
             return false;
@@ -137,19 +214,31 @@ const SearchResultPage = () => {
             if (itemDate < cutoffDate) return false;
         }
 
-        // if (filters.market && filters.market !== "전체") {
-        //     if (item.market !== filters.market) return false;
-        // }
-
-        // if (filters.type && item.type !== filters.type) {
-        //     return false;
-        // }
+        // 시장 필터 적용
+        if (filters.market !== "전체") {
+            filtered = filtered.filter((item) => item.market === filters.market);
+        }
+    
+        // 공시 유형 필터 적용
+        if (filters.types.length > 0) {
+            filtered = filtered.filter((item) =>
+            filters.types.some((type) => item.types.includes(type))
+            );
+        }
 
         return true;
         });
 
-        setFilteredData(filtered);
+        setFilteredDisclosureData(filtered);
     };
+
+    useEffect(() => {
+        searchFilters();
+      }, [filters]);
+    
+      const handlePageChange = (setPage) => (event, page) => {
+        setPage(page);
+      };
 
     const openModal = () => setIsModalOpen(true); 
     const closeModal = () => setIsModalOpen(false); 
@@ -197,9 +286,8 @@ const SearchResultPage = () => {
     return (
         <div>
             <div className="search-result-title">
-                <h1 className="result-title
-                ">
-                    <span style={{ color: "#0045B0", fontSize: "30px", fontWeight: "bold", marginLeft: "20px"}}>'삼성'</span>
+                <h1 className="result-title">
+                    <span style={{ color: "#0045B0", fontSize: "30px", fontWeight: "bold", marginLeft: "20px"}}>'{searchQuery}'</span>
                     <span style={{ color: "black", fontSize: "20px"}}> 검색결과</span>
                 </h1>
             </div>
@@ -207,9 +295,18 @@ const SearchResultPage = () => {
             <h2 className="list-title">종목명</h2>
             <ListTables
                 type="stock"
-                data={sortedStockData}
+                data={currentStockData}
                 headers={stockHeaders}
             />
+            <div className="pagination-container">
+                <Pagination
+                    count={Math.ceil(filteredStockData.length / pageSize)}
+                    page={currentStockPage}
+                    onChange={(event, page) => setCurrentStockPage(page)}
+                    color="primary"
+                />
+            </div>
+            
 
             <h2 className="list-title">공시</h2>
             <div className="filters">
@@ -302,7 +399,7 @@ const SearchResultPage = () => {
                         ].map((type) => (
                         <button
                             key={type}
-                            className={filters.type.includes(type) ? "active" : ""}
+                            className={filters.types.includes(type) ? "active" : ""}
                             onClick={() => handleTypeToggle(type)}
                         >
                             {type}
@@ -360,9 +457,15 @@ const SearchResultPage = () => {
 
             <ListTables
                 type="disclosure"
-                data={sortedDisclosureData}
+                data={currentDisclosureData}
                 headers={disclosureHeaders}
             />
+            <Pagination
+        count={Math.ceil(filteredDisclosureData.length / pageSize)}
+        page={currentDisclosurePage}
+        onChange={(event, page) => setCurrentDisclosurePage(page)}
+        color="primary"
+      />
         </div>
     );
 };

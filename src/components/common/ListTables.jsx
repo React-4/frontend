@@ -37,16 +37,9 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 export default function ListTables({ type, data, headers }) {
   const [currentPage, setCurrentPage] = useState(1);
-  // const [favorites, setFavorites] = useState(new Array(data.length).fill(false));
   const [favorites, setFavorites] = useState({});
   const { handleDarkMode, dark } = useDarkmode();
   const itemsPerPage = 10;
-
-  const totalPages = Math.ceil(data.length / itemsPerPage);
-
-  const handlePageChange = (event, page) => {
-    setCurrentPage(page);
-  };
 
   const handleFavoriteToggle = (id) => {
     setFavorites((prevFavorites) => ({
@@ -79,8 +72,12 @@ export default function ListTables({ type, data, headers }) {
         >
           <TableHead>
             <TableRow>
-              {headers.map((header, index) => (
-                <StyledTableCell key={index} align="center" dark={dark}>
+              {headers.map((header) => (
+                <StyledTableCell
+                  key={header.key}
+                  style={{ width: header.width }} // 열 너비를 동적으로 적용
+                  align="center"
+                >
                   {header.label}
                 </StyledTableCell>
               ))}
