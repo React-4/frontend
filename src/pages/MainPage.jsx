@@ -96,10 +96,10 @@ const MainPage = () => {
   ];
 
   //종목
-  const [stockSortType, setStockSortType] = useState("change_rate_up");
+  const [stockSortType, setStockSortType] = useState("amount");
   const [stockData, setStockData] = useState([]);
   const [currentSPage, setCurrentSPage] = useState(1);
-  const pageSSize = 10; // 한 페이지에 표시할 데이터 수
+  const pageSSize = 10;
 
   const fetchStockData = async (sortType) => {
     try {
@@ -112,14 +112,30 @@ const MainPage = () => {
       const data = response.data?.data || {};
       const formattedData = Object.keys(data).map((key, index) => ({
         id: index + 1,
-        num: parseInt(key), // 순위
+        num: parseInt(key),
         code: data[key]["종목코드"],
         price: `${data[key]["현재가"]} 원`,
         changeRate: `${data[key]["등락률"]}%`,
         transaction: `${data[key]["거래량"]} 주`,
       }));
 
-      setStockData(formattedData);
+      const updatedData = await Promise.all(
+        formattedData.map(async (stock) => {
+          try {
+            const tickerResponse = await axios.get(
+              `http://43.203.154.25:8080/api/stock/ticker/${stock.code}`
+            );
+            const companyName = tickerResponse.data?.data?.companyName || "알 수 없음";
+            const stockId = tickerResponse.data?.data?.stockId || stock.num;            
+            return { ...stock, name: companyName, id: stockId, num: stockId };          
+          } catch (error) {
+            console.error(`Failed to fetch company name for ${stock.code}`, error);
+            return { ...stock, name: "알 수 없음" };
+          }
+        })
+      );
+
+      setStockData(updatedData);
     } catch (error) {
       console.error("Failed to fetch stock data:", error);
     }
@@ -130,28 +146,25 @@ const MainPage = () => {
     setCurrentSPage(1);
   }, [stockSortType]);
 
-  // 페이지 클릭 핸들러
   const handleSPageClick = (event, page) => {
     setCurrentSPage(page);
   };
 
-  // 정렬 변경 핸들러
   const handleStockSortChange = (key) => {
     setStockSortType(key);
   };
 
-  // 현재 페이지 데이터 계산
   const startIndex = (currentSPage - 1) * pageSSize;
   const endIndex = startIndex + pageSSize;
   const currentSData = stockData.slice(startIndex, endIndex);
 
   const stockHeaders = [
-    { key: "num", label: `검색된 주식${totalDisclosure}개` },
-    { key: "name", label: "종목명" },
-    { key: "code", label: "종목코드" },
-    { key: "price", label: "현재가" },
-    { key: "changeRate", label: "등락률" },
-    { key: "transaction", label: "거래량" },
+    { key: "num", label: `전체 ${stockData.length}개`, width: "10%" },
+    { key: "name", label: "종목명", width: "20%"  },
+    { key: "code", label: "종목코드",  width: "10%"  },
+    { key: "price", label: "현재가", width: "10%" },
+    { key: "changeRate", label: "등락률", width: "10%"  },
+    { key: "transaction", label: "거래량", width: "10%"  },
   ];
 
   const stockSortOptions = [
@@ -209,10 +222,9 @@ const MainPage = () => {
         headers={stockHeaders}
       />
 
-      {/* 페이지네이션 */}
       <div className="pagination-container">
         <Pagination
-          count={Math.ceil(stockData.length / pageSSize)} // 총 페이지 수
+          count={Math.ceil(stockData.length / pageSSize)} 
           page={currentSPage}
           onChange={handleSPageClick}
           color="primary"
