@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FormGroup, FormControlLabel, Checkbox } from "@mui/material";
 import { BASE_URL } from "../utils/api";
+import { toast } from "react-toastify";
 
 export default function SignupPage() {
   const navigate = useNavigate();
@@ -13,7 +14,6 @@ export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
   const [rePw, setRePw] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
 
   const handleSignup = async (e) => {
     e.preventDefault(); // 기본 폼 제출 방지
@@ -28,18 +28,14 @@ export default function SignupPage() {
     const passwordRegex =
       /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,12}$/;
     if (!passwordRegex.test(pw)) {
-      setErrorMessage(
-        "비밀번호는 8~12자 영문, 숫자, 특수문자 조합이어야 합니다."
-      );
+      toast.error("비밀번호는 8~12자 영문, 숫자, 특수문자 조합이어야 합니다.");
       return; // 유효성 검사 실패 시 함수 종료
     }
 
     if (pw !== rePw) {
-      setErrorMessage("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
+      toast.error("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
       return; // 비밀번호 불일치 시 함수 종료
     }
-
-    setErrorMessage("");
 
     try {
       const response = await fetch(`${BASE_URL}/api/user/signup`, {
@@ -52,16 +48,17 @@ export default function SignupPage() {
 
       if (response.ok) {
         const data = await response.json();
-        // 회원가입 성공 시 처리
-        console.log(data.message);
+        toast;
         navigate("/"); // 성공 후 이동
       } else {
         if (response.status === 409) {
-          alert("닉네임 또는 이메일 중복");
+          toast.error("닉네임 또는 이메일 중복");
+        } else {
+          toast.error("회원가입 중 오류 발생");
         }
       }
     } catch (error) {
-      alert("회원가입 중 오류 발생:", error);
+      toast.error("회원가입 중 오류 발생");
     }
   };
 
@@ -162,7 +159,6 @@ export default function SignupPage() {
             maxLength={12}
           />
         </div>
-        {errorMessage && <div className="text-red-500 m-1">{errorMessage}</div>}
         <FormGroup
           sx={{ display: "flex", width: 1 / 3, marginLeft: "15px", gap: 0 }}
         >

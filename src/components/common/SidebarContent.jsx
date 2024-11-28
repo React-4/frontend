@@ -16,7 +16,7 @@ export default function SidebarContent({ drawerTitle, data }) {
             <Typography variant="h6">{drawerTitle} 종목</Typography>
             <Divider sx={{ my: 2 }} />
             <div className="h-2/5">
-              <Typography variant="body1">
+              <Typography variant="body1" component="div">
                 <div className="max-h-60 min-h-60 overflow-auto p-2 mt-4 ">
                   {data.stock.length === 0 ? (
                     <div className="text-center">
@@ -48,7 +48,7 @@ export default function SidebarContent({ drawerTitle, data }) {
             <Typography variant="h6">{drawerTitle} 공시</Typography>
             <Divider sx={{ my: 2 }} />
             <div className="h-2/5">
-              <Typography variant="body1">
+              <Typography variant="body1" component="div">
                 <div className="max-h-60 min-h-6 overflow-auto p-2 mt-4">
                   {data.disclosure.length === 0 ? (
                     <div className="text-center">
