@@ -55,11 +55,14 @@ export default function ListTables({ type, data, headers }) {
 
   const navigate = useNavigate();
   const handleNavigate = (id) => {
+    console.log("id", id);
     if (!type) {
       console.error("Error: 'type' is undefined.");
       return;
     }
-    navigate(`/${type}/${id}`);
+    navigate(`/${type}/${id}`, {
+      state: { data: data.filter((d) => d.id === id) },
+    });
   };
   return (
     <div className="list-container">

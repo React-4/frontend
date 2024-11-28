@@ -9,7 +9,6 @@ function parseSectionContent(content) {
   let match;
   while ((match = regex.exec(content)) !== null) {
     if (match[1] && match[2]) {
-      // 제목과 설명이 있는 경우
       const title = match[1].trim(); // **안의 텍스트
       const desc = match[2].trim(); // 그 뒤의 내용
       result.push({ title, desc });
@@ -60,6 +59,7 @@ function convertToJSONWithDetails(text) {
 }
 
 export default function GptDisclosure({ announcement_id }) {
+  console.log("annn", announcement_id);
   const [announcement, setAnnouncement] = useState([]);
   const [summaryJSON, setSummaryJSON] = useState();
 

@@ -18,7 +18,7 @@ import { Cookies } from "react-cookie";
 
 import { BASE_URL } from "./../../utils/api";
 
-axios.defaults.baseURL = BASE_URL;
+// axios.defaults.baseURL = BASE_URL;
 axios.defaults.withCredentials = true;
 
 export default function EditInfo() {
