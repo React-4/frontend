@@ -117,9 +117,11 @@ export default function ListTables({ type, data, headers }) {
                     ) : header.key === "votes" ? (
                       <div className="votes-container">
                         <span className="votes-good">
-                          호재 {row.votes.good}
+                          호재 {row.votes?.good || 0}
                         </span>{" "}
-                        |<span className="votes-bad">악재 {row.votes.bad}</span>
+                        |<span className="votes-bad">
+                          악재 {row.votes?.bad || 0}
+                        </span>
                       </div>
                     ) : (
                       row[header.key]

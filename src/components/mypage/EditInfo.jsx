@@ -18,9 +18,6 @@ import { Cookies } from "react-cookie";
 
 import { BASE_URL } from "./../../utils/api";
 
-// axios.defaults.baseURL = BASE_URL;
-axios.defaults.withCredentials = true;
-
 export default function EditInfo() {
   const [open, setOpen] = useState(false);
   const [pwModalOpen, setPwModalOpen] = useState(false);
@@ -44,15 +41,15 @@ export default function EditInfo() {
   };
   const handleLeave = async () => {
     try {
-      const response = await axios.delete(BASE_URL + "/api/user", {
-        headers: {
-          Authorization: "Bearer " + cookies.get("token"),
-        },
-        withCredentials: true,
-        data: {
+      const response = await axios.delete(
+        BASE_URL + "/api/user",
+        {
           password: leavePassword,
         },
-      });
+        {
+          withCredentials: true,
+        }
+      );
 
       if (response.status === 200) {
         toast.success("회원 탈퇴 성공");
@@ -96,14 +93,15 @@ export default function EditInfo() {
 
   // 수정 핸들러
   const handleNicknameSave = async () => {
+    console.log(userInputNickname);
     try {
       const response = await axios.patch(
-        {
-          withCredentials: true,
-        },
         BASE_URL + "/api/user",
         {
           nickname: userInputNickname,
+        },
+        {
+          withCredentials: true,
         }
       );
 

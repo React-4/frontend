@@ -48,8 +48,8 @@ export default function SignupPage() {
 
       if (response.ok) {
         const data = await response.json();
-        toast;
-        navigate("/"); // 성공 후 이동
+        toast.success("회원가입 성공");
+        navigate("/login"); // 성공 후 이동
       } else {
         if (response.status === 409) {
           toast.error("닉네임 또는 이메일 중복");
