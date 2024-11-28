@@ -13,11 +13,12 @@ import "../css/ListTables.css"; // 추가된 CSS 파일
 import FavoriteIcon from "@mui/icons-material/Favorite"; //빨간 하트
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder"; //빈 하트
 import { useNavigate } from "react-router-dom";
+import { useDarkmode } from "../../hooks/useDarkmode";
 
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
+const StyledTableCell = styled(TableCell)(({ dark }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: "white",
-    color: "black",
+    backgroundColor: dark ? "#292929" : "white",
+    color: dark ? "#fafafb" : "black",
     fontWeight: "bold",
   },
   [`&.${tableCellClasses.body}`]: {
@@ -37,6 +38,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 export default function ListTables({ type, data, headers }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [favorites, setFavorites] = useState({});
+  const { handleDarkMode, dark } = useDarkmode();
   const itemsPerPage = 10;
 
   const handleFavoriteToggle = (id) => {
@@ -53,11 +55,14 @@ export default function ListTables({ type, data, headers }) {
 
   const navigate = useNavigate();
   const handleNavigate = (id) => {
+    console.log("id", id);
     if (!type) {
       console.error("Error: 'type' is undefined.");
       return;
     }
-    navigate(`/${type}/${id}`);
+    navigate(`/${type}/${id}`, {
+      state: { data: data.filter((d) => d.id === id) },
+    });
   };
   return (
     <div className="list-container">
@@ -70,12 +75,12 @@ export default function ListTables({ type, data, headers }) {
         >
           <TableHead>
             <TableRow>
-            {headers.map((header) => (
-              <StyledTableCell
-                key={header.key}
-                style={{ width: header.width }} // 열 너비를 동적으로 적용
-                align="center"
-              >
+              {headers.map((header) => (
+                <StyledTableCell
+                  key={header.key}
+                  style={{ width: header.width }} // 열 너비를 동적으로 적용
+                  align="center"
+                >
                   {header.label}
                 </StyledTableCell>
               ))}
