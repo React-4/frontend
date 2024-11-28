@@ -6,17 +6,15 @@ import search from "/img/Search.png";
 
 export default function Header() {
   const navigate = useNavigate();
-  const { loggedIn, setLoggedIn, profileColor } = useLogin();
+  const { nickname, profileColor, loggedIn, resetLoginState } = useLogin();
   const [showTooltip, setShowTooltip] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const location = useLocation();
   const searchInputRef = useRef(null);
 
   const handleLogout = () => {
-    localStorage.removeItem("login-token");
-    localStorage.removeItem("profileColor");
+    resetLoginState();
     setShowTooltip(false);
-    setLoggedIn(false);
     navigate("/");
   };
 
@@ -47,7 +45,7 @@ export default function Header() {
           className="absolute top-1/2 left-4 transform -translate-y-1/2 w-5 h-5"
         />
         <input
-          ref = {searchInputRef}
+          ref={searchInputRef}
           className="border-primary border-2 rounded-3xl h-10 w-full pl-10"
           placeholder="검색어를 입력하세요"
           value={searchQuery}
@@ -61,7 +59,7 @@ export default function Header() {
             className={`rounded-full w-10 h-10 bg-profile-${profileColor} text-white`}
             onClick={() => setShowTooltip(true)}
           >
-            {loggedIn.slice(0, 2)}
+            {nickname.slice(0, 2)}
           </button>
 
           {showTooltip && (
