@@ -27,7 +27,10 @@ export default function Header() {
 
   const handleSearchKeyDown = (e) => {
     if (e.key === "Enter" && searchQuery.trim()) {
-      navigate(`/search?query=${encodeURIComponent(searchQuery.trim())}`);
+      const currentPath = `/search?query=${encodeURIComponent(searchQuery.trim())}`;
+      // navigate(currentPath, { replace: true });
+      // window.location.reload();
+      navigate(currentPath);
     }
   };
 

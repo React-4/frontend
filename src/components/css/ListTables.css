@@ -152,3 +152,21 @@
 .votes-bad {
   color: #3182f6;
 }
+
+
+.no-results-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 300px;
+  border-radius: 8px;
+  margin-top: 20px; 
+}
+
+.no-results-text {
+  font-size: 24px; 
+  font-weight:500 ;
+  color: #0045B0; 
+  text-align: center;
+}
