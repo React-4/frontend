@@ -96,7 +96,7 @@ const MainPage = () => {
   ];
 
   //종목
-  const [stockSortType, setStockSortType] = useState("change_rate_up");
+  const [stockSortType, setStockSortType] = useState("amount");
   const [stockData, setStockData] = useState([]);
   const [currentSPage, setCurrentSPage] = useState(1);
   const pageSSize = 10;
@@ -119,7 +119,23 @@ const MainPage = () => {
         transaction: `${data[key]["거래량"]} 주`,
       }));
 
-      setStockData(formattedData);
+      const updatedData = await Promise.all(
+        formattedData.map(async (stock) => {
+          try {
+            const tickerResponse = await axios.get(
+              `http://43.203.154.25:8080/api/stock/ticker/${stock.code}`
+            );
+            const companyName = tickerResponse.data?.data?.companyName || "알 수 없음";
+            const stockId = tickerResponse.data?.data?.stockId || stock.num;            
+            return { ...stock, name: companyName, id: stockId, num: stockId };          
+          } catch (error) {
+            console.error(`Failed to fetch company name for ${stock.code}`, error);
+            return { ...stock, name: "알 수 없음" };
+          }
+        })
+      );
+
+      setStockData(updatedData);
     } catch (error) {
       console.error("Failed to fetch stock data:", error);
     }
@@ -143,12 +159,12 @@ const MainPage = () => {
   const currentSData = stockData.slice(startIndex, endIndex);
 
   const stockHeaders = [
-    { key: "num", label: `검색된 주식${totalDisclosure}개` },
-    { key: "name", label: "종목명" },
-    { key: "code", label: "종목코드" },
-    { key: "price", label: "현재가" },
-    { key: "changeRate", label: "등락률" },
-    { key: "transaction", label: "거래량" },
+    { key: "num", label: `전체 ${stockData.length}개`, width: "10%" },
+    { key: "name", label: "종목명", width: "20%"  },
+    { key: "code", label: "종목코드",  width: "10%"  },
+    { key: "price", label: "현재가", width: "10%" },
+    { key: "changeRate", label: "등락률", width: "10%"  },
+    { key: "transaction", label: "거래량", width: "10%"  },
   ];
 
   const stockSortOptions = [

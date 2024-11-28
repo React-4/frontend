@@ -1,7 +1,7 @@
 import logoImg from "/img/disclo_white.png";
 import { useLogin } from "../../hooks/useLogin";
-import { useNavigate } from "react-router-dom";
-import React, { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
 import search from "/img/Search.png";
 
 export default function Header() {
@@ -9,6 +9,8 @@ export default function Header() {
   const { loggedIn, setLoggedIn, profileColor } = useLogin();
   const [showTooltip, setShowTooltip] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const location = useLocation();
+  const searchInputRef = useRef(null);
 
   const handleLogout = () => {
     localStorage.removeItem("login-token");
@@ -18,11 +20,16 @@ export default function Header() {
     navigate("/");
   };
 
+  useEffect(() => {
+    setSearchQuery("");
+    if (searchInputRef.current) {
+      searchInputRef.current.blur();
+    }
+  }, [location.pathname]);
+
   const handleSearchKeyDown = (e) => {
     if (e.key === "Enter" && searchQuery.trim()) {
-      // navigate(`/search=${encodeURIComponent(searchQuery.trim())}`);
-      // console.log(encodeURIComponent(searchQuery.trim()));
-      navigate('/search');
+      navigate(`/search?query=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
 
@@ -40,6 +47,7 @@ export default function Header() {
           className="absolute top-1/2 left-4 transform -translate-y-1/2 w-5 h-5"
         />
         <input
+          ref = {searchInputRef}
           className="border-primary border-2 rounded-3xl h-10 w-full pl-10"
           placeholder="검색어를 입력하세요"
           value={searchQuery}
