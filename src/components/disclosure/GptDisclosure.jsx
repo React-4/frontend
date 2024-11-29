@@ -1,18 +1,31 @@
+/* eslint-disable react/prop-types */
+import { useEffect, useState } from "react";
+import { getGPTDisclosure } from "../../services/disclosureAPI";
+
 function parseSectionContent(content) {
   const result = [];
-  const regex = /\d+\.\s\*\*(.*?)\*\*:\s(.*?)(?=\d+\.\s|\s*$)/gs; // 각 항목 추출 정규식
+  const regex =
+    /(?:\d+\.\s\*\*(.*?)\*\*:\s(.*?)(?=\d+\.\s|\s*$))|(?:-\s(.*?)(?=\n|$))/gs;
 
   let match;
   while ((match = regex.exec(content)) !== null) {
-    const title = match[1].trim(); // **안의 텍스트
-    const desc = match[2].trim(); // 그 뒤의 내용
-    result.push({ title, desc }); // 객체로 배열에 추가
+    if (match[1] && match[2]) {
+      const title = match[1].trim(); // **안의 텍스트
+      const desc = match[2].trim(); // 그 뒤의 내용
+      result.push({ title, desc });
+    } else if (match[3]) {
+      // 제목 없이 설명만 있는 경우
+      const desc = match[3].trim(); // - 뒤의 텍스트
+      result.push({ desc });
+    }
   }
 
   return result;
 }
 
 function convertToJSONWithDetails(text) {
+  if (text === "test") return {}; // 방어 로직: 텍스트가 없는 경우 빈 객체 반환
+
   const sections = text
     .split("###")
     .map((section) => section.trim())
@@ -47,73 +60,98 @@ function convertToJSONWithDetails(text) {
   return result;
 }
 
-const disclosure = {
-  title: "삼성전자 해외주권상장 안내",
-  date: "2024.10.31",
-  author: "홍길동",
-  type: "공시종류",
-  url: "",
-  company: "삼성전자",
-  summary: `
-  ### 공시 내용 요약
-  한성기업의 임원 한병수는 2024년 11월 20일 기준으로 특정증권 소유상황을 보고했으며, 현재 5,136주(0.08%)의 주식을 보유하고 있습니다. 이는 이전 보고서(2023년 10월 24일) 대비 5,036주 증가한 수치로, 2024년 6월 17일에 100주를 매도한 후 11월 14일과 15일에 각각 4,840주를 매수한 결과입니다.
-  
-  ### 호재
-  1. **주식 매수**: 한병수가 대량의 주식을 매수한 것은 회사의 미래에 대한 긍정적인 전망을 나타낼 수 있으며, 이는 시장에 긍정적인 신호로 작용할 가능성이 있습니다.
-  2. **주식 보유 증가**: 임원의 주식 보유량 증가가 회사에 대한 신뢰도를 높이며, 다른 투자자들에게도 긍정적인 영향을 미칠 수 있습니다.
-  
-  ### 악재
-  1. **주식 매도**: 한병수가 100주를 매도한 부분은 다소 부정적인 신호로 해석될 수 있으며, 이는 임원이 일부 자금을 회수했음을 나타낼 수 있습니다.
-  2. **상대적으로 낮은 보유 비율**: 현재 보유 주식이 0.08%로 상대적으로 낮은 비율이며, 이는 회사에 대한 신뢰가 완전히 확고하지 않을 수 있음을 시사합니다.
-  
-  ### 투자 의견
-  한성기업에 대한 투자 의견은 **관망 또는 소량 매수**로 제안합니다. 임원의 대규모 주식 매수는 긍정적인 요소로 작용할 수 있으나, 매도 내역과 낮은 보유 비율은 주의가 필요합니다. 따라서, 추가적인 정보와 시장 반응을 지켜보면서 신중하게 접근하는 것이 바람직할 것입니다.
-  `,
-};
+export default function GptDisclosure({ announcement, company }) {
+  //const [announcement, setAnnouncement] = useState({});
+  const [summaryJSON, setSummaryJSON] = useState(null);
+  console.log("adddd", announcement);
+  // useEffect(() => {
+  //   getGPTDisclosure(announcement_id)
+  //     .then((data) => {
+  //       console.log("Fetched data:", data);
+  //       setAnnouncement(data);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error fetching announcement data:", error);
+  //     });
+  // }, [announcement_id]);
 
-export default function GptDisclosure() {
-  const summaryJSON = convertToJSONWithDetails(disclosure.summary);
-  console.log(summaryJSON.good[0].title);
+  useEffect(() => {
+    if (
+      announcement &&
+      announcement.content &&
+      announcement.content !== "test"
+    ) {
+      const json = convertToJSONWithDetails(announcement.content);
+      setSummaryJSON(json);
+    }
+  }, [announcement]);
+
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center w-full">
       <div className="w-9/12">
-        <div className="font-bold text-3xl text-center">{disclosure.title}</div>
-        <div className="flex flex-row gap-5 w-full justify-center mt-1">
-          <div>제출자 : {disclosure.author}</div>
-          <div>{disclosure.type}</div>
-          <div className="">{disclosure.date}</div>
+        {/* 제목 */}
+        <div className="font-bold text-3xl text-center">
+          {announcement?.title}
         </div>
+
+        <div className="flex flex-row gap-5 w-full justify-center mt-1">
+          <div>제출자 : {announcement?.submitter || "정보 없음"}</div>
+          <div>{announcement?.announcementDate || "날짜 정보 없음"}</div>
+          <div className="border-primary border-2 px-5 h-7 rounded-lg text-center cursor-pointer">
+            {announcement?.announcementType || "타입 정보 없음"}
+          </div>
+        </div>
+
         <div className="flex flex-row gap-3 w-full justify-end mt-3">
-          <div className="bg-primary text-white w-24 h-7 rounded-lg text-center cursor-pointer">
-            {disclosure.company}
+          <div className="bg-primary text-white px-5 h-7 rounded-lg text-center cursor-pointer">
+            {company || "회사 정보 없음"}
           </div>
           <div className="bg-primary text-white w-32 h-7 rounded-lg text-center cursor-pointer">
             원본 공시 내용
           </div>
         </div>
-        <div className="flex flex-col gap-5">
+
+        <div className="flex flex-col gap-5 full">
           <div className="font-bold text-xl">공시 내용 요약</div>
-          <div>{summaryJSON.summary}</div>
+          <div>{summaryJSON?.summary || "요약 정보가 없습니다."}</div>
+
+          {/* 호재 */}
           <div className="font-bold text-xl">호재</div>
-          <div>
-            {summaryJSON.good.map((item) => (
-              <div className="mb-2" key={item.title}>
-                <div className="font-semibold">{item.title}</div>
-                <li>{item.desc}</li>
-              </div>
-            ))}
-          </div>
+          {summaryJSON?.good?.length ? (
+            <div>
+              {summaryJSON.good.map((item, index) => (
+                <div className="mb-2" key={item.title || index}>
+                  {item.title && (
+                    <div className="font-semibold">{item.title}</div>
+                  )}
+                  <li>{item.desc || "설명 없음"}</li>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div>호재 정보가 없습니다.</div>
+          )}
+
+          {/* 악재 */}
           <div className="font-bold text-xl">악재</div>
-          <div>
-            {summaryJSON.bad.map((item) => (
-              <div className="mb-2" key={item.title}>
-                <div className="font-semibold">{item.title}</div>
-                <li>{item.desc}</li>
-              </div>
-            ))}
-          </div>
+          {summaryJSON?.bad?.length ? (
+            <div>
+              {summaryJSON.bad.map((item, index) => (
+                <div className="mb-2" key={item.title || index}>
+                  {item.title && (
+                    <div className="font-semibold">{item.title}</div>
+                  )}
+                  <li>{item.desc || "설명 없음"}</li>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div>악재 정보가 없습니다.</div>
+          )}
+
+          {/* 평가 의견 */}
           <div className="font-bold text-xl">평가 의견</div>
-          <div>{summaryJSON.opinion}</div>
+          <div>{summaryJSON?.opinion || "의견 정보가 없습니다."}</div>
         </div>
       </div>
     </div>
