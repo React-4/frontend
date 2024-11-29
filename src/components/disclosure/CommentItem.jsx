@@ -5,7 +5,12 @@ import edit from "/img/edit.png";
 import DoneIcon from "@mui/icons-material/Done";
 import CloseIcon from "@mui/icons-material/Close";
 
-export default function CommentItem({ username, comment, date }) {
+export default function CommentItem({
+  username,
+  comment,
+  date,
+  userProfileColor,
+}) {
   const [isOverflow, setIsOverflow] = useState(false);
   const commentRef = useRef();
   const { loggedIn } = useLogin();
@@ -17,7 +22,6 @@ export default function CommentItem({ username, comment, date }) {
     }
   }, []);
 
-  // Tailwind에서 사용할 색상 클래스를 미리 정의
   const colorClasses = [
     "bg-profile",
     "bg-profile-0",
@@ -31,8 +35,8 @@ export default function CommentItem({ username, comment, date }) {
     "bg-profile-8",
     "bg-profile-9",
   ];
-  const randomIndex = Math.floor(Math.random() * colorClasses.length);
-  const colorClass = colorClasses[randomIndex]; // 무작위 색상 선택
+
+  const colorClass = colorClasses[userProfileColor];
 
   const [editedComment, setEditedComment] = useState(comment);
   const [isEditing, setIsEditing] = useState(false);
