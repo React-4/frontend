@@ -137,16 +137,13 @@ const MainPage = () => {
             const stockId = tickerResponse.data?.data?.stockId || stock.num;
             return { ...stock, name: companyName, id: stockId, num: stockId };
           } catch (error) {
-            console.error(
-              `Failed to fetch company name for ${stock.code}`,
-              error
-            );
-            return { ...stock, name: "알 수 없음" };
+            return null;
           }
         })
       );
+      const filteredData = updatedData.filter((item) => item !== null);
 
-      setStockData(updatedData);
+      setStockData(filteredData);
     } catch (error) {
       console.error("Failed to fetch stock data:", error);
     }
