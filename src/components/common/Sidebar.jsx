@@ -10,6 +10,7 @@ import HistoryIcon from "@mui/icons-material/History";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import Button from "@mui/material/Button";
 import SidebarContent from "./SidebarContent";
+import { useDarkmode } from "../../hooks/useDarkmode";
 
 const favData = {
   stock: [
@@ -100,6 +101,7 @@ export default function SidebarWithDrawer() {
     disclosure: [],
   });
 
+  const { handleDarkMode, dark } = useDarkmode();
   useEffect(() => {
     if (drawerTitle === "관심") {
       setFavColor("primary");
@@ -178,7 +180,7 @@ export default function SidebarWithDrawer() {
                 <div
                   className={`flex flex-col items-center ${
                     favColor === "primary" ? "text-primary" : "text-primary-2"
-                  }`}
+                  }  dark:text-dark-1`}
                 >
                   <FavoriteBorderIcon />
                   관심
@@ -190,17 +192,17 @@ export default function SidebarWithDrawer() {
               <div
                 className={`flex flex-col items-center  ${
                   histColor === "primary" ? "text-primary" : "text-primary-2"
-                }`}
+                } dark:text-dark-1`}
               >
                 <HistoryIcon />
                 최근 본
               </div>
             </Button>
           </div>
-          <Button>
-            <div className="flex flex-col items-center text-primary-2">
+          <Button onClick={handleDarkMode}>
+            <div className="flex flex-col items-center text-primary-2 dark:text-dark-1">
               <ContrastIcon />
-              <div className="text-xs">다크모드</div>
+              <div className="text-xs">{dark ? "다크" : "라이트"}</div>
             </div>
           </Button>
         </List>

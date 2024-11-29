@@ -30,6 +30,16 @@
 * {
   font-family: "Noto Sans KR";
 }
+
+body {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dark * {
+  background-color: #292929;
+  color: #fafafb;
+}
+
 /* a {
   font-weight: 500;
   color: #646cff;

@@ -15,13 +15,16 @@ const MainPage = () => {
   const fetchDisclosureData = async (userPage, sortType) => {
     try {
       const apiPage = userPage - 1;
-      const response = await axios.get("http://43.203.154.25:8080/api/announcement", {
-        params: {
-          sortBy: sortType,
-          page: apiPage, 
-          size: pageDSize,
-        },
-      });
+      const response = await axios.get(
+        "http://43.203.154.25:8080/api/announcement",
+        {
+          params: {
+            sortBy: sortType,
+            page: apiPage,
+            size: pageDSize,
+          },
+        }
+      );
 
       const { announcementList, announcementCount } = response.data?.data || {};
 
@@ -54,18 +57,19 @@ const MainPage = () => {
             },
           }
         );
-        const lastPageData = lastPageResponse.data?.data?.announcementList || [];
-        const totalDataCount = (announcementCount - 1) * pageDSize + lastPageData.length;
+        const lastPageData =
+          lastPageResponse.data?.data?.announcementList || [];
+        const totalDataCount =
+          (announcementCount - 1) * pageDSize + lastPageData.length;
         setTotalDisclosure(totalDataCount);
       }
-
     } catch (error) {
       console.error("Failed to fetch disclosure data:", error);
     }
   };
 
   useEffect(() => {
-    fetchDisclosureData(1); 
+    fetchDisclosureData(1);
   }, [disclosureSortType]);
 
   const handleDPageClick = (event, userPage) => {
@@ -103,11 +107,14 @@ const MainPage = () => {
 
   const fetchStockData = async (sortType) => {
     try {
-      const response = await axios.get("http://43.203.154.25:8080/api/stockprice/rank", {
-        params: {
-          sort_by: sortType,
-        },
-      });
+      const response = await axios.get(
+        "http://43.203.154.25:8080/api/stockprice/rank",
+        {
+          params: {
+            sort_by: sortType,
+          },
+        }
+      );
 
       const data = response.data?.data || {};
       const formattedData = Object.keys(data).map((key, index) => ({
@@ -125,9 +132,10 @@ const MainPage = () => {
             const tickerResponse = await axios.get(
               `http://43.203.154.25:8080/api/stock/ticker/${stock.code}`
             );
-            const companyName = tickerResponse.data?.data?.companyName || "알 수 없음";
-            const stockId = tickerResponse.data?.data?.stockId || stock.num;            
-            return { ...stock, name: companyName, id: stockId, num: stockId };          
+            const companyName =
+              tickerResponse.data?.data?.companyName || "알 수 없음";
+            const stockId = tickerResponse.data?.data?.stockId || stock.num;
+            return { ...stock, name: companyName, id: stockId, num: stockId };
           } catch (error) {
             return null;
           }
@@ -160,11 +168,11 @@ const MainPage = () => {
 
   const stockHeaders = [
     { key: "num", label: `전체 ${stockData.length}개`, width: "10%" },
-    { key: "name", label: "종목명", width: "20%"  },
-    { key: "code", label: "종목코드",  width: "10%"  },
+    { key: "name", label: "종목명", width: "20%" },
+    { key: "code", label: "종목코드", width: "10%" },
     { key: "price", label: "현재가", width: "10%" },
-    { key: "changeRate", label: "등락률", width: "10%"  },
-    { key: "transaction", label: "거래량", width: "10%"  },
+    { key: "changeRate", label: "등락률", width: "10%" },
+    { key: "transaction", label: "거래량", width: "10%" },
   ];
 
   const stockSortOptions = [
@@ -197,9 +205,9 @@ const MainPage = () => {
 
       <div className="pagination-container">
         <Pagination
-          count={totalPages} 
+          count={totalPages}
           page={currentDPage}
-          onChange={handleDPageClick} 
+          onChange={handleDPageClick}
           color="primary"
         />
       </div>
@@ -216,20 +224,15 @@ const MainPage = () => {
           </button>
         ))}
       </div>
-      <ListTables
-        type="stock"
-        data={currentSData}
-        headers={stockHeaders}
-      />
+      <ListTables type="stock" data={currentSData} headers={stockHeaders} />
 
       <div className="pagination-container">
         <Pagination
-          count={Math.ceil(stockData.length / pageSSize)} 
+          count={Math.ceil(stockData.length / pageSSize)}
           page={currentSPage}
           onChange={handleSPageClick}
           color="primary"
         />
-
       </div>
     </div>
   );

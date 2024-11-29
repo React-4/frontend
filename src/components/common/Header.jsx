@@ -27,12 +27,30 @@ export default function Header() {
 
   const handleSearchKeyDown = (e) => {
     if (e.key === "Enter" && searchQuery.trim()) {
-      const currentPath = `/search?query=${encodeURIComponent(searchQuery.trim())}`;
+      const currentPath = `/search?query=${encodeURIComponent(
+        searchQuery.trim()
+      )}`;
       // navigate(currentPath, { replace: true });
       // window.location.reload();
       navigate(currentPath);
     }
   };
+
+  const colorClasses = [
+    "bg-profile",
+    "bg-profile-0",
+    "bg-profile-1",
+    "bg-profile-2",
+    "bg-profile-3",
+    "bg-profile-4",
+    "bg-profile-5",
+    "bg-profile-6",
+    "bg-profile-7",
+    "bg-profile-8",
+    "bg-profile-9",
+  ];
+
+  const colorClass = colorClasses[profileColor];
 
   return (
     <div className="hover:opacity-80 flex flex-row items-center justify-between p-3 h-16 w-full bg-white">
@@ -59,7 +77,7 @@ export default function Header() {
       {loggedIn ? (
         <div className="relative">
           <button
-            className={`rounded-full w-10 h-10 bg-profile-${profileColor} text-white`}
+            className={`rounded-full w-10 h-10 ${colorClass} text-white`}
             onClick={() => setShowTooltip(true)}
           >
             {nickname.slice(0, 2)}
