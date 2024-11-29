@@ -39,37 +39,43 @@ const SearchResultPage = () => {
             );
             const rankData = rankResponse.data?.data || {};
         
-            const updatedData = searchData.map((stockItem) => {
-                const rankItem = Object.values(rankData).find(
-                  (rank) => String(rank["종목코드"]) === String(stockItem.ticker)
-                );
-                
-                if (!rankItem) {
-                    return {
-                      id: stockItem.id,
-                      num: stockItem.id,
-                      code: stockItem.ticker,
-                      name: stockItem.companyName,
-                      price: "N/A", 
-                      changeRate: "N/A", 
-                      transaction: "N/A", 
-                    };
-                  }
-        
-                return {
-                  id: stockItem.id, 
-                  num: stockItem.id, 
-                  code: stockItem.ticker, 
-                  name: stockItem.companyName, 
-                  price: `${rankItem["현재가"]} 원`, 
-                  changeRate: `${rankItem["등락률"]}%`,
-                  transaction: `${rankItem["거래량"]} 주`, 
-                };
-            }).filter((item) => item !== null); 
-            
-            setAllStockData(updatedData);
-            setFilteredStockData(updatedData.slice(0, pageSize));
-            setCurrentStockPage(1);
+            const updatedData = await Promise.all(
+                searchData.map(async (stockItem) => {
+                    try {
+                        const stockResponse = await axios.get(
+                            `http://43.203.154.25:8080/api/stockprice/current/${stockItem.ticker}`
+                        );
+                        const stockData = stockResponse.data?.data || {};
+    
+                        // 데이터 매칭
+                        return {
+                            id: stockItem.id,
+                            num: stockItem.id,
+                            code: stockData.ticker || stockItem.ticker,
+                            name: stockData.name || stockItem.companyName,
+                            price: stockData.currentPrice
+                                ? `${stockData.currentPrice} 원`
+                                : "0원",
+                            changeRate: stockData.changeRate
+                                ? `${(stockData.changeRate * 100).toFixed(2)}%`
+                                : "0%",
+                            transaction: stockData.marketCap
+                                ? `${stockData.marketCap.toLocaleString()} 원`
+                                : "0원",
+                        };
+                    } catch (error) {
+                        console.error(`Failed to fetch stock details for ticker ${stockItem.ticker}`, error);
+                        return null; // 실패한 항목은 제외
+                    }
+                })
+            );
+    
+            // 유효한 데이터만 필터링
+            const validData = updatedData.filter((item) => item !== null);
+    
+            setAllStockData(validData);
+            setFilteredStockData(validData.slice(0, pageSize));
+            setCurrentStockPage(1); // 페이지 초기화
         } catch (error) {
             console.error("Failed to fetch stock data:", error);
         }
