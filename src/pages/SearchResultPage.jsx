@@ -34,12 +34,11 @@ const SearchResultPage = () => {
             const rankResponse = await axios.get(
               "http://43.203.154.25:8080/api/stockprice/rank",
               {
-                params: { sort_by: "change_rate_up" },
+                params: { sort_by: "amount" },
               }
             );
             const rankData = rankResponse.data?.data || {};
         
-            // 데이터 들어오고 다시 확인
             const updatedData = searchData.map((stockItem) => {
                 const rankItem = Object.values(rankData).find(
                   (rank) => String(rank["종목코드"]) === String(stockItem.ticker)
@@ -103,7 +102,7 @@ const SearchResultPage = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [filteredDisclosureData, setFilteredDisclosureData] = useState([]);
     const [filters, setFilters] = useState({
-        keyword: searchQuery,
+        keyword: "",
         sortBy: "latest",
         period: "",
         marketType: "",
@@ -112,105 +111,64 @@ const SearchResultPage = () => {
     const [currentDisclosurePage, setCurrentDisclosurePage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     
-    const fetchInitialDisclosureData = async () => {
+    const fetchDisclosureData = async (page=1) => {
         try {
             const response = await axios.get(
                 "http://43.203.154.25:8080/api/announcement/search",
                 {
                     params: {
-                        keyword: searchQuery, 
-                        sortBy: "change_up_rate", //DB확정지으면 수정할지 말지 정하기
-                        page: 0,
+                        keyword: searchQuery,
+                        sortBy: "latest",
+                        page: page - 1, // API 페이지는 0부터 시작
                         size: pageSize,
                     },
                 }
             );
-            const { announcementList = [] } = response.data?.data || {};
+
+            const { announcementList = [], announcementCount } = response.data?.data || {};
+            setTotalPages(announcementCount); 
+
             const formattedData = announcementList.map((item) => ({
                 id: item.announcementId,
                 num: item.announcementId,
                 report: item.title?.trim() || "N/A",
-                company: item.stockName || "Unknown", 
-                date: item.announcementDate || "Unknown", 
-                submitter: item.submitter || "Unknown", 
-                votes: {
-                    good: item.positiveVoteCount || 0,
-                    bad: item.negativeVoteCount || 0,
-                },
-                comments: item.commentCount || 0,
-            }));
-            setFilteredDisclosureData(formattedData);
-        
-        } catch (error) {
-            console.error("Failed to fetch initial disclosure data:", error);
-        }
-    };
-
-    useEffect(() => {
-        fetchInitialDisclosureData(1); 
-    }, [searchQuery]);
-
-    useEffect(() => {
-        if (searchQuery.trim()) {
-            setFilters((prevFilters) => ({
-                ...prevFilters,
-                keyword: searchQuery.trim(), 
-            }));
-            fetchDisclosureData(searchQuery.trim());
-        }
-    }, [searchQuery]);
-
-    const handleSearchClick = () => {
-        const keywordToUse = filters.keyword.trim() || searchQuery.trim(); 
-        setFilters((prevFilters) => ({
-            ...prevFilters,
-            keyword: keywordToUse,
-        }));
-
-        fetchDisclosureData(keywordToUse);
-    };
-
-    const fetchDisclosureData = async (keyword) => {
-        try {
-            const response = await axios.get(
-                "http://43.203.154.25:8080/api/announcement/search",
-                {
-                    params: {
-                        keyword: filters.keyword, 
-                        sortBy: filters.sortBy, 
-                        period: filters.period, 
-                        marketType: filters.marketType, 
-                        type: filters.type.length > 0 ? filters.type.join(",") : undefined, 
-                        page: currentDisclosurePage - 1,
-                        size: pageSize,
-                    },
-                }
-            );
-            
-            const { announcementList = [], announcementCount } = response.data?.data || {};
-            setTotalPages(announcementCount);
-            const formattedData = announcementList.map((item) => ({
-                id: item.announcementId,
-                num: item.announcementId,
-                report: item.title?.trim() || "N/A", 
-                company: item.stockName || "Unknown", 
+                company: item.stockName || "Unknown",
                 date: item.announcementDate || "Unknown",
-                submitter: item.submitter || "Unknown", 
+                submitter: item.submitter || "Unknown",
                 votes: {
                     good: item.positiveVoteCount || 0,
                     bad: item.negativeVoteCount || 0,
                 },
                 comments: item.commentCount || 0,
             }));
+
             setFilteredDisclosureData(formattedData);
         } catch (error) {
             console.error("Failed to fetch disclosure data:", error);
         }
     };
-    
     useEffect(() => {
-        fetchDisclosureData();
-    }, [filters.keyword, currentDisclosurePage]);
+        setCurrentDisclosurePage(1);
+    }, [searchQuery]);
+
+    useEffect(() => {
+        fetchDisclosureData(currentDisclosurePage);
+    }, [searchQuery, currentDisclosurePage]);
+
+    const handleSearchClick = () => {
+        const keywordToUse = filters.keyword.trim() || searchQuery.trim(); 
+        setCurrentDisclosurePage(1);
+        setFilters((prevFilters) => ({
+            ...prevFilters,
+            keyword: keywordToUse,
+        }));
+
+        fetchDisclosureData(1);
+    };
+
+    const handleDisclosurePageClick = (event, page) => {
+        setCurrentDisclosurePage(page);
+    };
 
     const handleFilterChange = (field, value) => {
         if (field === "keyword" && value.trim() === "") {
@@ -479,9 +437,9 @@ const SearchResultPage = () => {
             />
             <div className="pagination-container">
                 <Pagination
-                    count={Math.ceil(filteredDisclosureData.length / pageSize)}
+                    count={totalPages}
                     page={currentDisclosurePage}
-                    onChange={(e, page) => setCurrentDisclosurePage(page)}
+                    onChange={handleDisclosurePageClick}
                     color="primary"
                 />
             </div>

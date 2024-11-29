@@ -96,7 +96,7 @@ const MainPage = () => {
   ];
 
   //종목
-  const [stockSortType, setStockSortType] = useState("change_rate_up");
+  const [stockSortType, setStockSortType] = useState("amount");
   const [stockData, setStockData] = useState([]);
   const [currentSPage, setCurrentSPage] = useState(1);
   const pageSSize = 10;
