@@ -47,35 +47,33 @@ const SearchResultPage = () => {
                         );
                         const stockData = stockResponse.data?.data || {};
     
-                        // 데이터 매칭
                         return {
                             id: stockItem.id,
                             num: stockItem.id,
                             code: stockData.ticker || stockItem.ticker,
                             name: stockData.name || stockItem.companyName,
                             price: stockData.currentPrice
-                                ? `${stockData.currentPrice} 원`
+                                ? `${stockData.currentPrice}원`
                                 : "0원",
                             changeRate: stockData.changeRate
                                 ? `${(stockData.changeRate * 100).toFixed(2)}%`
                                 : "0%",
-                            transaction: stockData.marketCap
-                                ? `${stockData.marketCap.toLocaleString()} 원`
+                            transaction: stockData.accTradeVolume
+                                ? `${stockData.accTradeVolume.toLocaleString()}원`
                                 : "0원",
                         };
                     } catch (error) {
                         console.error(`Failed to fetch stock details for ticker ${stockItem.ticker}`, error);
-                        return null; // 실패한 항목은 제외
+                        return null;
                     }
                 })
             );
     
-            // 유효한 데이터만 필터링
             const validData = updatedData.filter((item) => item !== null);
     
             setAllStockData(validData);
             setFilteredStockData(validData.slice(0, pageSize));
-            setCurrentStockPage(1); // 페이지 초기화
+            setCurrentStockPage(1);
         } catch (error) {
             console.error("Failed to fetch stock data:", error);
         }
