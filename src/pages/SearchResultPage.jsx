@@ -71,10 +71,10 @@ const SearchResultPage = () => {
             setAllStockData(updatedData);
             setFilteredStockData(updatedData.slice(0, pageSize));
             setCurrentStockPage(1);
-            } catch (error) {
-          console.error("Failed to fetch stock data:", error);
+        } catch (error) {
+            console.error("Failed to fetch stock data:", error);
         }
-      };
+    };
       
     const stockHeaders = [
         { key: "num", label: `전체 ${filteredStockData.length}개`, width: "10%" },
@@ -99,22 +99,19 @@ const SearchResultPage = () => {
         setFilteredStockData(allStockData.slice(startIndex, endIndex));
     }, [currentStockPage, allStockData]);
 
-
     //공시
-
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [filteredDisclosureData, setFilteredDisclosureData] = useState([]);
     const [filters, setFilters] = useState({
-        keyword: "",
+        keyword: searchQuery,
         sortBy: "latest",
         period: "",
         marketType: "",
         type: [],
-      });
+    });
     const [currentDisclosurePage, setCurrentDisclosurePage] = useState(1);
-    const [totalDisclosurePages, setTotalDisclosurePages] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
     
-
     const fetchInitialDisclosureData = async () => {
         try {
             const response = await axios.get(
@@ -122,7 +119,7 @@ const SearchResultPage = () => {
                 {
                     params: {
                         keyword: searchQuery, 
-                        sortBy: "latest",
+                        sortBy: "change_up_rate", //DB확정지으면 수정할지 말지 정하기
                         page: 0,
                         size: pageSize,
                     },
@@ -190,8 +187,8 @@ const SearchResultPage = () => {
                 }
             );
             
-            const { announcementList = [] } = response.data?.data || {};
-
+            const { announcementList = [], announcementCount } = response.data?.data || {};
+            setTotalPages(announcementCount);
             const formattedData = announcementList.map((item) => ({
                 id: item.announcementId,
                 num: item.announcementId,
