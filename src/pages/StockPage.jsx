@@ -4,6 +4,7 @@ import ListTables from "../components/common/ListTables";
 import CommentList from "../components/disclosure/CommentList";
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { getCommentByStock } from "../services/commentAPI";
 const commentData = [
   {
     username: "유저1",
@@ -98,6 +99,12 @@ export default function StockPage() {
     stockData.changeRate
   );
   const [chartType, setChartType] = useState("day");
+  const [comment, setComment] = useState([]);
+  useEffect(() => {
+    getCommentByStock(stockData.id).then((data) => setComment(data));
+  }, []);
+
+  console.log("comm", comment);
   return (
     <div className="flex flex-col mb-12 m-3">
       <div className="flex flex-row w-full justify-between">
@@ -167,7 +174,7 @@ export default function StockPage() {
       <div>
         <div className="font-bold text-xl">댓글</div>
         <div className="mx-4">
-          <CommentList commentData={commentData} />
+          <CommentList commentData={comment} />
         </div>
       </div>
     </div>

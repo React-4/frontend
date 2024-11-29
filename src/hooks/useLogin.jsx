@@ -12,6 +12,7 @@ export function useLogin() {
     nickname,
     setNickname,
     resetLoginState,
+    token,
   } = useContext(loginContext);
 
   return {
@@ -24,5 +25,6 @@ export function useLogin() {
     nickname,
     setNickname,
     resetLoginState,
+    token,
   };
 }

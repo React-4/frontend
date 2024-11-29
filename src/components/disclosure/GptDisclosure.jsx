@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import { getGPTDisclosure } from "../../services/disclosureAPI";
+
 function parseSectionContent(content) {
   const result = [];
   const regex =
@@ -23,7 +24,8 @@ function parseSectionContent(content) {
 }
 
 function convertToJSONWithDetails(text) {
-  console.log("text", text);
+  if (text === "test") return {}; // 방어 로직: 텍스트가 없는 경우 빈 객체 반환
+
   const sections = text
     .split("###")
     .map((section) => section.trim())
@@ -58,70 +60,98 @@ function convertToJSONWithDetails(text) {
   return result;
 }
 
-export default function GptDisclosure({ announcement_id }) {
-  console.log("annn", announcement_id);
-  const [announcement, setAnnouncement] = useState([]);
-  const [summaryJSON, setSummaryJSON] = useState();
+export default function GptDisclosure({ announcement, company }) {
+  //const [announcement, setAnnouncement] = useState({});
+  const [summaryJSON, setSummaryJSON] = useState(null);
+  console.log("adddd", announcement);
+  // useEffect(() => {
+  //   getGPTDisclosure(announcement_id)
+  //     .then((data) => {
+  //       console.log("Fetched data:", data);
+  //       setAnnouncement(data);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error fetching announcement data:", error);
+  //     });
+  // }, [announcement_id]);
 
   useEffect(() => {
-    getGPTDisclosure(announcement_id).then((data) => setAnnouncement(data));
-  }, [announcement_id]);
-
-  useEffect(() => {
-    console.log("sum", announcement);
-    if (announcement && announcement.content) {
+    if (
+      announcement &&
+      announcement.content &&
+      announcement.content !== "test"
+    ) {
       const json = convertToJSONWithDetails(announcement.content);
       setSummaryJSON(json);
     }
   }, [announcement]);
 
-  //const summaryJSON = convertToJSONWithDetails(announcement.content);
-
-  //console.log(summaryJSON.good[0].title);
-  console.log("sum", summaryJSON);
-
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center w-full">
       <div className="w-9/12">
+        {/* 제목 */}
         <div className="font-bold text-3xl text-center">
-          {announcement.title}
+          {announcement?.title}
         </div>
+
         <div className="flex flex-row gap-5 w-full justify-center mt-1">
-          <div>제출자 : {announcement.submitter}</div>
-          <div>{announcement.type}</div>
-          <div className="">{announcement.date}</div>
+          <div>제출자 : {announcement?.submitter || "정보 없음"}</div>
+          <div>{announcement?.announcementDate || "날짜 정보 없음"}</div>
+          <div className="border-primary border-2 px-5 h-7 rounded-lg text-center cursor-pointer">
+            {announcement?.announcementType || "타입 정보 없음"}
+          </div>
         </div>
+
         <div className="flex flex-row gap-3 w-full justify-end mt-3">
-          <div className="bg-primary text-white w-24 h-7 rounded-lg text-center cursor-pointer">
-            {announcement.company}
+          <div className="bg-primary text-white px-5 h-7 rounded-lg text-center cursor-pointer">
+            {company || "회사 정보 없음"}
           </div>
           <div className="bg-primary text-white w-32 h-7 rounded-lg text-center cursor-pointer">
             원본 공시 내용
           </div>
         </div>
-        <div className="flex flex-col gap-5">
+
+        <div className="flex flex-col gap-5 full">
           <div className="font-bold text-xl">공시 내용 요약</div>
-          <div>{summaryJSON?.summary}</div>
+          <div>{summaryJSON?.summary || "요약 정보가 없습니다."}</div>
+
+          {/* 호재 */}
           <div className="font-bold text-xl">호재</div>
-          <div>
-            {summaryJSON?.good.map((item) => (
-              <div className="mb-2" key={item.title}>
-                <div className="font-semibold">{item.title}</div>
-                <li>{item.desc}</li>
-              </div>
-            ))}
-          </div>
+          {summaryJSON?.good?.length ? (
+            <div>
+              {summaryJSON.good.map((item, index) => (
+                <div className="mb-2" key={item.title || index}>
+                  {item.title && (
+                    <div className="font-semibold">{item.title}</div>
+                  )}
+                  <li>{item.desc || "설명 없음"}</li>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div>호재 정보가 없습니다.</div>
+          )}
+
+          {/* 악재 */}
           <div className="font-bold text-xl">악재</div>
-          <div>
-            {summaryJSON?.bad.map((item) => (
-              <div className="mb-2" key={item.title}>
-                <div className="font-semibold">{item.title}</div>
-                <li>{item.desc}</li>
-              </div>
-            ))}
-          </div>
+          {summaryJSON?.bad?.length ? (
+            <div>
+              {summaryJSON.bad.map((item, index) => (
+                <div className="mb-2" key={item.title || index}>
+                  {item.title && (
+                    <div className="font-semibold">{item.title}</div>
+                  )}
+                  <li>{item.desc || "설명 없음"}</li>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div>악재 정보가 없습니다.</div>
+          )}
+
+          {/* 평가 의견 */}
           <div className="font-bold text-xl">평가 의견</div>
-          <div>{summaryJSON?.opinion}</div>
+          <div>{summaryJSON?.opinion || "의견 정보가 없습니다."}</div>
         </div>
       </div>
     </div>

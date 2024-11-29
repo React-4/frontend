@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import ReactApexChart from "react-apexcharts";
 import axios from "axios";
+import { BASE_URL } from "../../utils/api";
 
 const ApexChart = ({ stockId, type }) => {
   const [stockData, setStockData] = useState([]);
@@ -20,7 +21,7 @@ const ApexChart = ({ stockId, type }) => {
   const getStockData = useCallback(async () => {
     try {
       const res = await axios.get(
-        `http://43.203.154.25:8080/api/stockprice/${stockId}?type=${type}&length=${length}`
+        `${BASE_URL}/api/stockprice/${stockId}?type=${type}&length=${length}`
       );
       const data = res.data.data;
       setStockData([...data]);
