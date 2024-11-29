@@ -2,7 +2,6 @@
 import { useLogin } from "../../hooks/useLogin";
 import { useState, useEffect } from "react";
 import CommentList from "./CommentList";
-import { getGPTDisclosure } from "../../services/disclosureAPI";
 import {
   getCommentByAnnouncement,
   postComment,
@@ -14,37 +13,10 @@ export default function Comment({ announcement, announcement_id }) {
   const [bad, setBad] = useState(announcement.negativeVoteCount);
   const [isEnd, setIsEnd] = useState(false);
   const { loggedIn, profileColor } = useLogin();
-  const [visibleComments, setVisibleComments] = useState(3);
   const [newComment, setNewComment] = useState("");
-  const [commentData, setCommentData] = useState([]);
-
-  useEffect(() => {
-    setGood(announcement.positiveVoteCount);
-    setGood(announcement.negativeVoteCount);
-  }, [announcement]);
+  const [localComment, setLocalComment] = useState([]); // 최종적으로 CommentList에 전달할 배열
   const nickname = localStorage.getItem("nickname");
-
-  console.log("comment", commentData);
-  useEffect(() => {
-    getCommentByAnnouncement(announcement_id, 0, 6).then((data) =>
-      setCommentData(data)
-    );
-  }, []);
-  const handlePostComment = () => {
-    postComment(announcement_id, newComment);
-  };
-
-  useEffect(() => {
-    console.log("page", page);
-    if (page > 1) {
-      getCommentByAnnouncement(announcement_id, page, 3).then((data) => {
-        setCommentData((prev) => [...prev, ...data]);
-        if (data.length == 3) {
-          setIsEnd(true);
-        }
-      });
-    }
-  }, [page, announcement_id]);
+  const [comment, setComment] = useState([]);
 
   const colorClasses = [
     "bg-profile",
@@ -59,12 +31,51 @@ export default function Comment({ announcement, announcement_id }) {
     "bg-profile-8",
     "bg-profile-9",
   ];
-
   const colorClass = colorClasses[profileColor];
+
+  // 초기값으로 댓글 데이터를 로드
+  useEffect(() => {
+    getCommentByAnnouncement(announcement_id, 0, 6).then((data) => {
+      setLocalComment(data); // 초기값 설정
+    });
+  }, [announcement_id]);
+
+  // 새로운 댓글 등록 처리
+  const handlePostComment = async () => {
+    if (!newComment.trim()) return; // 공백 방지
+    try {
+      const response = await postComment(announcement_id, newComment);
+      const newCommentData = {
+        // id: response.id, // 서버에서 반환한 고유 ID
+        username: nickname,
+        content: newComment,
+        createdAt: new Date().toISOString(), // 현재 시간
+        userProfileColor: profileColor,
+      };
+
+      // 기존 댓글 데이터에 새 댓글 추가
+      setLocalComment((prev) => [newCommentData, ...prev]); // 최신 댓글을 맨 앞에 추가
+      setNewComment(""); // 입력창 초기화
+    } catch (error) {
+      console.error("댓글 등록 실패:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (page > 0) {
+      getCommentByAnnouncement(announcement_id, page, 3).then((data) => {
+        if (data.length > 0) {
+          setComment((prev) => [...prev, ...data]);
+        }
+        if (data.length < 3) {
+          setIsEnd(true);
+        }
+      });
+    }
+  }, [page, announcement_id]);
 
   return (
     <div className="flex flex-col items-center">
-      {/* 투표 */}
       <div className="flex flex-row gap-4 w-full justify-end">
         <div
           className="bg-good text-good-1 w-20 h-8 rounded-lg text-center py-1 cursor-pointer"
@@ -79,8 +90,6 @@ export default function Comment({ announcement, announcement_id }) {
           악재 {bad}
         </div>
       </div>
-
-      {/* 댓글창 */}
 
       {loggedIn && (
         <div className="flex flex-row justify-between my-4 w-full ">
@@ -109,8 +118,10 @@ export default function Comment({ announcement, announcement_id }) {
           </div>
         </div>
       )}
+
+      {/* 댓글 리스트 */}
       <CommentList
-        commentData={commentData}
+        commentData={localComment} // 수정된 comment 상태 전달
         page={page}
         setPage={setPage}
         isEnd={isEnd}
