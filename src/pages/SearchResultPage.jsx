@@ -30,15 +30,7 @@ const SearchResultPage = () => {
               }
             );
             const searchData = searchResponse.data?.data || [];
-        
-            const rankResponse = await axios.get(
-              "http://43.203.154.25:8080/api/stockprice/rank",
-              {
-                params: { sort_by: "amount" },
-              }
-            );
-            const rankData = rankResponse.data?.data || {};
-        
+            
             const updatedData = await Promise.all(
                 searchData.map(async (stockItem) => {
                     try {

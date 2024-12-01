@@ -121,9 +121,9 @@ const MainPage = () => {
         id: index + 1,
         num: parseInt(key),
         code: data[key]["종목코드"],
-        price: `${data[key]["현재가"]} 원`,
+        price: `${data[key]["현재가"]}원`,
         changeRate: `${data[key]["등락률"]}%`,
-        transaction: `${data[key]["거래량"]} 주`,
+        transaction: `${data[key]["거래량"]}주`,
       }));
 
       const updatedData = await Promise.all(
