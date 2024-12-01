@@ -7,7 +7,6 @@ import personalCard from "/img/Personalcard.png";
 import { Input, InputAdornment, TextField } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useLogin } from "../hooks/useLogin";
-import { BASE_URL } from "../utils/api";
 import { toast } from "react-toastify";
 
 export default function LoginPage() {
@@ -17,6 +16,7 @@ export default function LoginPage() {
   const [longLogin, setLongLogin] = useState(false);
   const navigate = useNavigate();
   const { setLoggedIn, setProfileColor, setEmail, setNickname } = useLogin();
+  const BASE_URL = import.meta.env.VITE_BACK_URL;
 
   const handleLogin = async (e) => {
     e.preventDefault();

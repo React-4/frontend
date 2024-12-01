@@ -3,7 +3,6 @@ import logoImg from "/img/disclo_white.png";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FormGroup, FormControlLabel, Checkbox } from "@mui/material";
-import { BASE_URL } from "../utils/api";
 import { toast } from "react-toastify";
 
 export default function SignupPage() {
@@ -14,6 +13,7 @@ export default function SignupPage() {
   const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
   const [rePw, setRePw] = useState("");
+  const BASE_URL = import.meta.env.VITE_BACK_URL;
 
   const handleSignup = async (e) => {
     e.preventDefault(); // 기본 폼 제출 방지

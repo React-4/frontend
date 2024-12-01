@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import ReactApexChart from "react-apexcharts";
 import axios from "axios";
-import { BASE_URL } from "../../utils/api";
+const BASE_URL = import.meta.env.VITE_BACK_URL;
 
 const ApexChart = ({ stockId, type }) => {
   const [stockData, setStockData] = useState([]);

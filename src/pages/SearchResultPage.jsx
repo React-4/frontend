@@ -10,6 +10,7 @@ const SearchResultPage = () => {
     const queryParams = new URLSearchParams(location.search);
     const searchQuery = queryParams.get("query") || "";
     const pageSize = 10;
+    const BASE_URL = import.meta.env.VITE_BACK_URL;
 
     //종목
     const [filteredStockData, setFilteredStockData] = useState([]);
@@ -22,7 +23,7 @@ const SearchResultPage = () => {
             setFilteredStockData([]);
 
             const searchResponse = await axios.get(
-              `http://43.203.154.25:8080/api/stock/search`,
+                `${BASE_URL}/api/stock/search`,
               {
                 params: {
                   keyword: searchQuery,
@@ -30,12 +31,24 @@ const SearchResultPage = () => {
               }
             );
             const searchData = searchResponse.data?.data || [];
+<<<<<<< HEAD
             
+=======
+        
+            const rankResponse = await axios.get(
+              `${BASE_URL}/api/stockprice/rank`,
+              {
+                params: { sort_by: "amount" },
+              }
+            );
+            const rankData = rankResponse.data?.data || {};
+        
+>>>>>>> c5a83cbaad01ae86329ba411e83bb2aa68c0587c
             const updatedData = await Promise.all(
                 searchData.map(async (stockItem) => {
                     try {
                         const stockResponse = await axios.get(
-                            `http://43.203.154.25:8080/api/stockprice/current/${stockItem.ticker}`
+                            `${BASE_URL}/api/stockprice/current/${stockItem.ticker}`
                         );
                         const stockData = stockResponse.data?.data || {};
     
@@ -110,7 +123,7 @@ const SearchResultPage = () => {
     const fetchDisclosureData = async (page=1) => {
         try {
             const response = await axios.get(
-                "http://43.203.154.25:8080/api/announcement/search",
+                `${BASE_URL}/api/announcement/search`,
                 {
                     params: {
                         keyword: searchQuery,

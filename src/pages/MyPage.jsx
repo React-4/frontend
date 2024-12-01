@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { BASE_URL } from "../utils/api";
 import EditInfo from "./../components/mypage/EditInfo";
 import { useNavigate } from "react-router-dom";
 import MyComment from "./../components/mypage/MyComment";
@@ -16,6 +15,7 @@ export default function InfiniteScrollExample() {
   const observer = useRef();
   const navigate = useNavigate();
   const isFirstRender = useRef(true);
+  const BASE_URL = import.meta.env.VITE_BACK_URL;
 
   const fetchComments = async (page, size) => {
     try {
