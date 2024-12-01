@@ -23,62 +23,50 @@ const SearchResultPage = () => {
             setFilteredStockData([]);
 
             const searchResponse = await axios.get(
-                `http://43.203.154.25:8080/api/stock/search`,
-                {
-                  params: { 
-                    keyword: searchQuery,
-                    page: apiPage,
-                    size: pageSize,
-                  },
-                }
+                `${BASE_URL}/api/stock/search`,
+              {
+                params: {
+                  keyword: searchQuery,
+                },
+              }
             );
             const searchData = searchResponse.data?.data || [];
         
             const rankResponse = await axios.get(
-                "http://43.203.154.25:8080/api/stockprice/rank",
-                {
-                  params: { sort_by: "change_rate_up" }, //여기 수정해야함 지금 amount 데이터 없어서 안됨
-                }
+              `${BASE_URL}/api/stockprice/rank`,
+              {
+                params: { sort_by: "amount" },
+              }
             );
             const rankData = rankResponse.data?.data || {};
         
             const updatedData = await Promise.all(
-                searchData.map(async (stock) => {
-                  const ticker = stock.ticker;
-                  const priceData = Object.values(rankData).find(
-                    (item) => item["종목코드"] === ticker
-                  );
-          
-                  try {
-                    const tickerResponse = await axios.get(
-                      `http://43.203.154.25:8080/api/stock/ticker/${ticker}`
-                    );
-          
-                    const companyName = tickerResponse.data?.data?.companyName || "알 수 없음";
-                    const stockId = tickerResponse.data?.data?.stockId || stock.id;
-          
-                    return {
-                      id: stockId, 
-                      num: stockId, 
-                      code: ticker,
-                      name: companyName, 
-                      price: priceData?.현재가 ? `${priceData.현재가} 원` : "None", 
-                      changeRate: priceData?.등락률 ? `${priceData.등락률}%` : "None",
-                      transaction: priceData?.거래량 ? `${priceData.거래량} 주` : "None",
-                    };
-                  } catch (tickerError) {
-                    console.error(`Failed to fetch additional data for ticker ${ticker}`, tickerError);
-          
-                    return {
-                      id: stock.id,
-                      num: stock.id,
-                      code: ticker,
-                      name: stock.companyName,
-                      price: priceData?.현재가 ? `${priceData.현재가} 원` : "None", 
-                      changeRate: priceData?.등락률 ? `${priceData.등락률}%` : "None",
-                      transaction: priceData?.거래량 ? `${priceData.거래량} 주` : "None", 
-                    };
-                  }
+                searchData.map(async (stockItem) => {
+                    try {
+                        const stockResponse = await axios.get(
+                            `${BASE_URL}/api/stockprice/current/${stockItem.ticker}`
+                        );
+                        const stockData = stockResponse.data?.data || {};
+    
+                        return {
+                            id: stockItem.id,
+                            num: stockItem.id,
+                            code: stockData.ticker || stockItem.ticker,
+                            name: stockData.name || stockItem.companyName,
+                            price: stockData.currentPrice
+                                ? `${stockData.currentPrice}원`
+                                : "0원",
+                            changeRate: stockData.changeRate
+                                ? `${(stockData.changeRate * 100).toFixed(2)}%`
+                                : "0%",
+                            transaction: stockData.accTradeVolume
+                                ? `${stockData.accTradeVolume.toLocaleString()}원`
+                                : "0원",
+                        };
+                    } catch (error) {
+                        console.error(`Failed to fetch stock details for ticker ${stockItem.ticker}`, error);
+                        return null;
+                    }
                 })
             );
     
@@ -183,44 +171,8 @@ const SearchResultPage = () => {
         fetchDisclosureData(1);
     };
 
-    const fetchDisclosureData = async (keyword) => {
-        try {
-            console.log("Current Filters: ", filters);
-            
-            const response = await axios.get(
-                "http://43.203.154.25:8080/api/announcement/search",
-                {
-                    params: {
-                        keyword: effectiveKeyword, 
-                        sortBy: filters.sortBy, 
-                        period: filters.period, 
-                        marketType: filters.marketType, 
-                        type: filters.type.length > 0 ? filters.type.join(",") : undefined, 
-                        page: currentDisclosurePage - 1,
-                        size: pageSize,
-                    },
-                }
-            );
-            
-            const { announcementList = [] } = response.data?.data || {};
-
-            const formattedData = announcementList.map((item) => ({
-                id: item.announcementId,
-                num: item.announcementId,
-                report: item.title?.trim() || "N/A", 
-                company: item.stockName || "Unknown", 
-                date: item.announcementDate || "Unknown",
-                submitter: item.submitter || "Unknown", 
-                votes: {
-                    good: item.positiveVoteCount || 0,
-                    bad: item.negativeVoteCount || 0,
-                },
-                comments: item.commentCount || 0,
-            }));
-            setFilteredDisclosureData(formattedData);
-        } catch (error) {
-            console.error("Failed to fetch disclosure data:", error);
-        }
+    const handleDisclosurePageClick = (event, page) => {
+        setCurrentDisclosurePage(page);
     };
 
     const handleFilterChange = (field, value) => {
