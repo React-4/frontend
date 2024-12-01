@@ -9,29 +9,21 @@ const SearchResultPage = () => {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const searchQuery = queryParams.get("query") || "";
+    const pageSize = 10;
     const BASE_URL = import.meta.env.VITE_BACK_URL;
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    //종목
     const [filteredStockData, setFilteredStockData] = useState([]);
-    const [filteredDisclosureData, setFilteredDisclosureData] = useState([]);
-    const [filters, setFilters] = useState({
-        keyword: "",
-        sortBy: "latest",
-        period: "",
-        marketType: "",
-        type: [],
-      });
-    const pageSize = 10;
     const [currentStockPage, setCurrentStockPage] = useState(1);
-    const [currentDisclosurePage, setCurrentDisclosurePage] = useState(1);
-    const [totalStockPages, setTotalStockPages] = useState(1);
-    const [totalDisclosurePages, setTotalDisclosurePages] = useState(1);
-    
+    const [allStockData, setAllStockData] = useState([]);
+
     const fetchStockData = async (page) => {
         try {
-            const apiPage = page - 1;
+            setAllStockData([]);
+            setFilteredStockData([]);
+
             const searchResponse = await axios.get(
-                `${BASE_URL}/api/stock/search`,
+                `http://43.203.154.25:8080/api/stock/search`,
                 {
                   params: { 
                     keyword: searchQuery,
@@ -40,17 +32,16 @@ const SearchResultPage = () => {
                   },
                 }
             );
-            const { data: searchData = [], totalSCount = 0 } = searchResponse.data?.data || [];
-            setTotalStockPages(Math.ceil(totalSCount / pageSize));
+            const searchData = searchResponse.data?.data || [];
+        
             const rankResponse = await axios.get(
-                `${BASE_URL}/api/stockprice/rank`,
+                "http://43.203.154.25:8080/api/stockprice/rank",
                 {
                   params: { sort_by: "change_rate_up" }, //여기 수정해야함 지금 amount 데이터 없어서 안됨
                 }
             );
-
             const rankData = rankResponse.data?.data || {};
-
+        
             const updatedData = await Promise.all(
                 searchData.map(async (stock) => {
                   const ticker = stock.ticker;
@@ -60,7 +51,7 @@ const SearchResultPage = () => {
           
                   try {
                     const tickerResponse = await axios.get(
-                      `${BASE_URL}/api/stock/ticker/${ticker}`
+                      `http://43.203.154.25:8080/api/stock/ticker/${ticker}`
                     );
           
                     const companyName = tickerResponse.data?.data?.companyName || "알 수 없음";
@@ -89,18 +80,17 @@ const SearchResultPage = () => {
                     };
                   }
                 })
-              );
+            );
     
-          setFilteredStockData(updatedData);
-
-          const filtered = updatedData.filter((item) =>
-            item.name.includes(searchQuery)
-          );
-          setFilteredStockData(filtered);
+            const validData = updatedData.filter((item) => item !== null);
+    
+            setAllStockData(validData);
+            setFilteredStockData(validData.slice(0, pageSize));
+            setCurrentStockPage(1);
         } catch (error) {
-          console.error("Failed to fetch stock data:", error);
+            console.error("Failed to fetch stock data:", error);
         }
-      };
+    };
       
     const stockHeaders = [
         { key: "num", label: `전체 ${filteredStockData.length}개`, width: "10%" },
@@ -112,73 +102,85 @@ const SearchResultPage = () => {
     ];
 
     useEffect(() => {
-        fetchStockData(1);
+        fetchStockData();
     }, [searchQuery]);
 
     const handleStockPageClick = (event, page) => {
         setCurrentStockPage(page);
-        fetchStockData(page);
     };
 
-    //공시
+    useEffect(() => {
+        const startIndex = (currentStockPage - 1) * pageSize;
+        const endIndex = startIndex + pageSize;
+        setFilteredStockData(allStockData.slice(startIndex, endIndex));
+    }, [currentStockPage, allStockData]);
 
-    const fetchInitialDisclosureData = async () => {
+    //공시
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [filteredDisclosureData, setFilteredDisclosureData] = useState([]);
+    const [filters, setFilters] = useState({
+        keyword: "",
+        sortBy: "latest",
+        period: "",
+        marketType: "",
+        type: [],
+    });
+    const [currentDisclosurePage, setCurrentDisclosurePage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    
+    const fetchDisclosureData = async (page=1) => {
         try {
             const response = await axios.get(
                 `${BASE_URL}/api/announcement/search`,
                 {
                     params: {
-                        keyword: searchQuery, 
+                        keyword: searchQuery,
                         sortBy: "latest",
-                        page: 0,
+                        page: page - 1, // API 페이지는 0부터 시작
                         size: pageSize,
                     },
                 }
             );
-            const { announcementList = [] } = response.data?.data || {};
+
+            const { announcementList = [], announcementCount } = response.data?.data || {};
+            setTotalPages(announcementCount); 
+
             const formattedData = announcementList.map((item) => ({
                 id: item.announcementId,
                 num: item.announcementId,
                 report: item.title?.trim() || "N/A",
-                company: item.stockName || "Unknown", 
-                date: item.announcementDate || "Unknown", 
-                submitter: item.submitter || "Unknown", 
+                company: item.stockName || "Unknown",
+                date: item.announcementDate || "Unknown",
+                submitter: item.submitter || "Unknown",
                 votes: {
                     good: item.positiveVoteCount || 0,
                     bad: item.negativeVoteCount || 0,
                 },
                 comments: item.commentCount || 0,
             }));
+
             setFilteredDisclosureData(formattedData);
-        
         } catch (error) {
-            console.error("Failed to fetch initial disclosure data:", error);
+            console.error("Failed to fetch disclosure data:", error);
         }
     };
-
     useEffect(() => {
-        fetchInitialDisclosureData(1); 
+        setCurrentDisclosurePage(1);
     }, [searchQuery]);
 
     useEffect(() => {
-        if (searchQuery.trim()) {
-            // searchQuery 변경 시 필터 초기화 후 데이터 갱신
-            setFilters((prevFilters) => ({
-                ...prevFilters,
-                keyword: searchQuery.trim(), // URL에서 가져온 query를 filters.keyword에 설정
-            }));
-            fetchDisclosureData(searchQuery.trim());
-        }
-    }, [searchQuery]);
+        fetchDisclosureData(currentDisclosurePage);
+    }, [searchQuery, currentDisclosurePage]);
 
     const handleSearchClick = () => {
         const keywordToUse = filters.keyword.trim() || searchQuery.trim(); 
+        setCurrentDisclosurePage(1);
         setFilters((prevFilters) => ({
             ...prevFilters,
             keyword: keywordToUse,
         }));
 
-        fetchDisclosureData(keywordToUse);
+        fetchDisclosureData(1);
     };
 
     const fetchDisclosureData = async (keyword) => {
@@ -186,7 +188,7 @@ const SearchResultPage = () => {
             console.log("Current Filters: ", filters);
             
             const response = await axios.get(
-                `${BASE_URL}/api/announcement/search`,
+                "http://43.203.154.25:8080/api/announcement/search",
                 {
                     params: {
                         keyword: effectiveKeyword, 
@@ -220,10 +222,6 @@ const SearchResultPage = () => {
             console.error("Failed to fetch disclosure data:", error);
         }
     };
-    
-    useEffect(() => {
-        fetchDisclosureData();
-    }, [filters.keyword, currentDisclosurePage]);
 
     const handleFilterChange = (field, value) => {
         if (field === "keyword" && value.trim() === "") {
@@ -299,7 +297,6 @@ const SearchResultPage = () => {
             </div>
 
             <h2 className="list-title">종목명</h2>
-
             {filteredStockData.length > 0 ? (
                 <>
                     <ListTables
@@ -309,9 +306,9 @@ const SearchResultPage = () => {
                     />
                     <div className="pagination-container">
                         <Pagination
-                            count={Math.ceil(stockData.length / pageSize)}
+                            count={Math.ceil(allStockData.length / pageSize)}
                             page={currentStockPage}
-                            onChange={handleStockPageChange}
+                            onChange={handleStockPageClick}
                             color="primary"
                         />
                     </div>
@@ -493,9 +490,9 @@ const SearchResultPage = () => {
             />
             <div className="pagination-container">
                 <Pagination
-                    count={Math.ceil(filteredDisclosureData.length / pageSize)}
+                    count={totalPages}
                     page={currentDisclosurePage}
-                    onChange={(e, page) => setCurrentDisclosurePage(page)}
+                    onChange={handleDisclosurePageClick}
                     color="primary"
                 />
             </div>
