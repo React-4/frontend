@@ -9,6 +9,7 @@ const SearchResultPage = () => {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const searchQuery = queryParams.get("query") || "";
+    const BASE_URL = import.meta.env.VITE_BACK_URL;
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [filteredStockData, setFilteredStockData] = useState([]);
@@ -30,7 +31,7 @@ const SearchResultPage = () => {
         try {
             const apiPage = page - 1;
             const searchResponse = await axios.get(
-                `http://43.203.154.25:8080/api/stock/search`,
+                `${BASE_URL}/api/stock/search`,
                 {
                   params: { 
                     keyword: searchQuery,
@@ -42,7 +43,7 @@ const SearchResultPage = () => {
             const { data: searchData = [], totalSCount = 0 } = searchResponse.data?.data || [];
             setTotalStockPages(Math.ceil(totalSCount / pageSize));
             const rankResponse = await axios.get(
-                "http://43.203.154.25:8080/api/stockprice/rank",
+                `${BASE_URL}/api/stockprice/rank`,
                 {
                   params: { sort_by: "change_rate_up" }, //여기 수정해야함 지금 amount 데이터 없어서 안됨
                 }
@@ -59,7 +60,7 @@ const SearchResultPage = () => {
           
                   try {
                     const tickerResponse = await axios.get(
-                      `http://43.203.154.25:8080/api/stock/ticker/${ticker}`
+                      `${BASE_URL}/api/stock/ticker/${ticker}`
                     );
           
                     const companyName = tickerResponse.data?.data?.companyName || "알 수 없음";
@@ -124,7 +125,7 @@ const SearchResultPage = () => {
     const fetchInitialDisclosureData = async () => {
         try {
             const response = await axios.get(
-                "http://43.203.154.25:8080/api/announcement/search",
+                `${BASE_URL}/api/announcement/search`,
                 {
                     params: {
                         keyword: searchQuery, 
@@ -185,7 +186,7 @@ const SearchResultPage = () => {
             console.log("Current Filters: ", filters);
             
             const response = await axios.get(
-                "http://43.203.154.25:8080/api/announcement/search",
+                `${BASE_URL}/api/announcement/search`,
                 {
                     params: {
                         keyword: effectiveKeyword, 

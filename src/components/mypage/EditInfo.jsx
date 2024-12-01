@@ -16,7 +16,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Cookies } from "react-cookie";
 
-import { BASE_URL } from "./../../utils/api";
+const BASE_URL = import.meta.env.VITE_BACK_URL;
 
 export default function EditInfo() {
   const [open, setOpen] = useState(false);

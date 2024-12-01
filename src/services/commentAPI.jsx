@@ -1,11 +1,11 @@
 import axios from "axios";
-import { BASE_URL } from "../utils/api";
 import { Cookies } from "react-cookie";
 import { useLogin } from "../hooks/useLogin";
+const BASE_URL = import.meta.env.VITE_BACK_URL;
 
 export async function getCommentByStock(stock_id) {
   const res = await axios.get(
-    `${BASE_URL}/api/comments/stock/${stock_id}?page=0&size=10`
+    `/api/comments/stock/${stock_id}?page=0&size=10`
   );
   const data = await res.data.data;
   return data;

@@ -3,6 +3,7 @@ import ListTables from "../components/common/ListTables";
 import Pagination from "@mui/material/Pagination";
 import axios from "axios";
 
+
 const MainPage = () => {
   //공시
   const [disclosureSortType, setDisclosureSortType] = useState("latest");
@@ -11,12 +12,13 @@ const MainPage = () => {
   const [totalDisclosure, setTotalDisclosure] = useState(0);
   const [currentDPage, setCurrentDPage] = useState(1);
   const pageDSize = 10;
+  const BASE_URL = import.meta.env.VITE_BACK_URL;
 
   const fetchDisclosureData = async (userPage, sortType) => {
     try {
       const apiPage = userPage - 1;
       const response = await axios.get(
-        "http://43.203.154.25:8080/api/announcement",
+        `${BASE_URL}/api/announcement`,
         {
           params: {
             sortBy: sortType,
@@ -48,7 +50,7 @@ const MainPage = () => {
 
       if (userPage === 1) {
         const lastPageResponse = await axios.get(
-          "http://43.203.154.25:8080/api/announcement",
+          `${BASE_URL}/api/announcement`,
           {
             params: {
               sortBy: disclosureSortType,
@@ -108,7 +110,7 @@ const MainPage = () => {
   const fetchStockData = async (sortType) => {
     try {
       const response = await axios.get(
-        "http://43.203.154.25:8080/api/stockprice/rank",
+        `${BASE_URL}/api/stockprice/rank`,
         {
           params: {
             sort_by: sortType,
@@ -130,7 +132,7 @@ const MainPage = () => {
         formattedData.map(async (stock) => {
           try {
             const tickerResponse = await axios.get(
-              `http://43.203.154.25:8080/api/stock/ticker/${stock.code}`
+              `${BASE_URL}/api/stock/ticker/${stock.code}`
             );
             const companyName =
               tickerResponse.data?.data?.companyName || "알 수 없음";

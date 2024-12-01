@@ -1,5 +1,5 @@
 import axios from "axios";
-import { BASE_URL } from "../utils/api";
+const BASE_URL = import.meta.env.VITE_BACK_URL;
 
 export async function getGPTDisclosure(announcement_id) {
   console.log("id", announcement_id);
