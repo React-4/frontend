@@ -48,8 +48,6 @@ export default function Header() {
       const currentPath = `/search?query=${encodeURIComponent(
         searchQuery.trim()
       )}`;
-      // navigate(currentPath, { replace: true });
-      // window.location.reload();
       navigate(currentPath);
       setSearchQuery("");
     }
@@ -90,7 +88,7 @@ export default function Header() {
           placeholder="검색어를 입력하세요"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          onKeyDown={handleSearchKeyDown}
+          onKeyUp={handleSearchKeyDown}
         />
       </div>
       {loggedIn ? (
