@@ -137,23 +137,24 @@ const SearchResultPage = () => {
         }
     };
 
-    const handleSearchClick = () => {
-        setCurrentDisclosurePage(1);
-        fetchDisclosureData(1);
-    };
-
     const applySecondaryFilters = () => {
-        const filteredData = allDisclosureData.fillter((item) => {
+        const filteredData = allDisclosureData.filter((item) => {
             const matchesCompany = filters.keyword ? item.company.includes(filters.keyword.trim()) : true;
-
-        const matchesPeriod = filters.period ? item.date.includes(filters.period) : true;
-        const matchesMarketType = filters.marketType ? item.marketType === filters.marketType : true;
-        const matchesType = filters.type.length > 0 ? filters.type.includes(item.type) : true;
+            const matchesPeriod = filters.period ? item.date.includes(filters.period) : true;
+            const matchesMarketType = filters.marketType ? item.marketType === filters.marketType : true;
+            const matchesType = filters.type.length > 0 ? filters.type.includes(item.type) : true;
 
         return matchesCompany && matchesPeriod && matchesMarketType && matchesType 
 
         });
+        console.log(filteredData);
         setFilteredDisclosureData(filteredData);
+    };
+
+     const handleSearchClick = () => {
+        applySecondaryFilters();
+        setCurrentDisclosurePage(1);
+        fetchDisclosureData(1);
     };
 
     useEffect(() => {

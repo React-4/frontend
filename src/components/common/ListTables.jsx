@@ -121,6 +121,16 @@ export default function ListTables({ type, data, headers }) {
                           악재 {row.votes?.bad || 0}
                         </span>
                       </div>
+                    ) : header.key === "changeRate" ? (
+                      <span
+                        className={
+                          parseFloat(row[header.key]) > 0
+                            ? "change-rate-positive"
+                            : "change-rate-negative"
+                        }
+                      >
+                        {row[header.key]}
+                      </span>
                     ) : (
                       row[header.key]
                     )}
