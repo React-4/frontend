@@ -15,7 +15,7 @@ export default function LoginPage() {
   const [pw, setPw] = useState("");
   const [longLogin, setLongLogin] = useState(false);
   const navigate = useNavigate();
-  const { setLoggedIn, setProfileColor, setEmail, setNickname } = useLogin();
+  const { setLoggedIn, setProfileColor, setEmail, setNickname,setFavoriteAnnouncementIds,setFavoriteStockIds } = useLogin();
   const BASE_URL = import.meta.env.VITE_BACK_URL;
 
   const handleLogin = async (e) => {
@@ -45,6 +45,12 @@ export default function LoginPage() {
         setNickname(data.data.nickname);
         localStorage.setItem("email", data.data.email);
         setEmail(data.data.email);
+        localStorage.setItem("favoriteAnnouncementIds", JSON.stringify(data.data.favoriteAnnouncementIds));
+        setFavoriteAnnouncementIds(data.data.favoriteAnnouncementIds);
+        localStorage.setItem("favoriteStockIds", JSON.stringify(data.data.favoriteStockIds));
+        setFavoriteStockIds(data.data.favoriteStockIds);
+
+
         const from = location.state?.from || "/"; // 원래 위치가 없으면 기본 경로로 이동
         navigate(from);
         toast.success("로그인 성공");
