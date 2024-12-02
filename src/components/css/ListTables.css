@@ -170,3 +170,19 @@
   color: #0045B0; 
   text-align: center;
 }
+
+
+.change-rate-positive {
+  color: red;
+  font-weight: bold;
+}
+
+.change-rate-neutral {
+  color: black;
+  font-weight: bold;
+}
+
+.change-rate-negative {
+  color: blue;
+  font-weight: bold;
+}

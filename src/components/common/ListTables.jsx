@@ -8,17 +8,15 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import Pagination from "@mui/material/Pagination";
-import "../css/ListTables.css"; // 추가된 CSS 파일
-import FavoriteIcon from "@mui/icons-material/Favorite"; //빨간 하트
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder"; //빈 하트
+import "../css/ListTables.css";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { useNavigate } from "react-router-dom";
-import { useDarkmode } from "../../hooks/useDarkmode";
 
-const StyledTableCell = styled(TableCell)(({ dark }) => ({
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: dark ? "#292929" : "white",
-    color: dark ? "#fafafb" : "black",
+    backgroundColor: "white",
+    color: "black",
     fontWeight: "bold",
   },
   [`&.${tableCellClasses.body}`]: {
@@ -38,13 +36,12 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 export default function ListTables({ type, data, headers }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [favorites, setFavorites] = useState({});
-  const { handleDarkMode, dark } = useDarkmode();
   const itemsPerPage = 10;
 
   const handleFavoriteToggle = (id) => {
     setFavorites((prevFavorites) => ({
       ...prevFavorites,
-      [id]: !prevFavorites[id], // 고유 id의 상태를 토글
+      [id]: !prevFavorites[id],
     }));
   };
 
@@ -66,7 +63,6 @@ export default function ListTables({ type, data, headers }) {
   };
   return (
     <div className="list-container">
-      {/* 테이블 */}
       <TableContainer component={Paper}>
         <Table
           sx={{ minWidth: 700 }}
@@ -78,7 +74,7 @@ export default function ListTables({ type, data, headers }) {
               {headers.map((header) => (
                 <StyledTableCell
                   key={header.key}
-                  style={{ width: header.width }} // 열 너비를 동적으로 적용
+                  style={{ width: header.width }}
                   align="center"
                 >
                   {header.label}
@@ -96,7 +92,7 @@ export default function ListTables({ type, data, headers }) {
               >
                 {headers.map((header, i) => (
                   <StyledTableCell key={i} align="center">
-                    {header.key === "num" ? (
+                    {header.key === "id" ? (
                       <div className="heart-number">
                         <span
                           className="heart"
@@ -119,10 +115,23 @@ export default function ListTables({ type, data, headers }) {
                         <span className="votes-good">
                           호재 {row.votes?.good || 0}
                         </span>{" "}
-                        |<span className="votes-bad">
+                        |
+                        <span className="votes-bad">
                           악재 {row.votes?.bad || 0}
                         </span>
                       </div>
+                    ) : header.key === "changeRate" ? (
+                      <span
+                        className={
+                          parseFloat(row[header.key]) > 0
+                            ? "change-rate-positive"
+                            : parseFloat(row[header.key]) < 0
+                            ? "change-rate-negative"
+                            : "change-rate-neutral"
+                        }
+                      >
+                        {row[header.key]}
+                      </span>
                     ) : (
                       row[header.key]
                     )}
@@ -133,16 +142,6 @@ export default function ListTables({ type, data, headers }) {
           </TableBody>
         </Table>
       </TableContainer>
-
-      {/* 페이지네이션 */}
-      {/* <div className="pagination-container">
-        <Pagination
-          count={totalPages}
-          page={currentPage}
-          onChange={handlePageChange}
-          color="primary"
-        />
-      </div> */}
     </div>
   );
 }

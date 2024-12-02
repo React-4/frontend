@@ -32,45 +32,24 @@ const SearchResultPage = () => {
             );
             const searchData = searchResponse.data?.data || [];
         
-            const rankResponse = await axios.get(
-              `${BASE_URL}/api/stockprice/rank`,
-              {
-                params: { sort_by: "amount" },
-              }
-            );
-            const rankData = rankResponse.data?.data || {};
-        
-            const updatedData = await Promise.all(
-                searchData.map(async (stockItem) => {
-                    try {
-                        const stockResponse = await axios.get(
-                            `${BASE_URL}/api/stockprice/current/${stockItem.ticker}`
-                        );
-                        const stockData = stockResponse.data?.data || {};
+            const formattedData = searchData.map((stockItem) => ({
+                id: stockItem.id,
+                code: stockItem.ticker,
+                name: stockItem.companyName,
+                price: stockItem.currentPrice
+                    ? `${stockItem.currentPrice.toLocaleString()}원`
+                    : "0원",
+                changeRate: stockItem.changeRate
+                    ? `${(stockItem.changeRate * 100).toFixed(2)}%`
+                    : "0%",
+                transaction: stockItem.volume
+                    ? `${stockItem.volume.toLocaleString()}주`
+                    : "0주",
+            }));
     
-                        return {
-                            id: stockItem.id,
-                            num: stockItem.id,
-                            code: stockData.ticker || stockItem.ticker,
-                            name: stockData.name || stockItem.companyName,
-                            price: stockData.currentPrice
-                                ? `${stockData.currentPrice}원`
-                                : "0원",
-                            changeRate: stockData.changeRate
-                                ? `${(stockData.changeRate * 100).toFixed(2)}%`
-                                : "0%",
-                            transaction: stockData.accTradeVolume
-                                ? `${stockData.accTradeVolume.toLocaleString()}원`
-                                : "0원",
-                        };
-                    } catch (error) {
-                        console.error(`Failed to fetch stock details for ticker ${stockItem.ticker}`, error);
-                        return null;
-                    }
-                })
+            const validData = formattedData.filter((item) =>
+                Object.values(item).every((value) => value !== null)
             );
-    
-            const validData = updatedData.filter((item) => item !== null);
     
             setAllStockData(validData);
             setFilteredStockData(validData.slice(0, pageSize));
@@ -81,7 +60,7 @@ const SearchResultPage = () => {
     };
       
     const stockHeaders = [
-        { key: "num", label: `전체 ${filteredStockData.length}개`, width: "10%" },
+        { key: "id", label: `전체 ${allStockData.length}개`, width: "10%" },
         { key: "name", label: "종목명", width: "20%"  },
         { key: "code", label: "종목코드",  width: "10%"  },
         { key: "price", label: "현재가", width: "10%" },
@@ -115,16 +94,21 @@ const SearchResultPage = () => {
     });
     const [currentDisclosurePage, setCurrentDisclosurePage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [companyKeyword, setCompanyKeyword] = useState("");
+    const [activeQuery, setActiveQuery] = useState(searchQuery);
     
-    const fetchDisclosureData = async (page=1) => {
+    const fetchDisclosureData = async (page=1, keyword = searchQuery, filters={}) => {
         try {
             const response = await axios.get(
                 `${BASE_URL}/api/announcement/search`,
                 {
                     params: {
-                        keyword: searchQuery,
+                        keyword,
                         sortBy: "latest",
-                        page: page - 1, // API 페이지는 0부터 시작
+                        period: filters.period || "",
+                        marketType: filters.marketType || "",
+                        type: filters.type || "",
+                        page: page - 1, 
                         size: pageSize,
                     },
                 }
@@ -135,7 +119,6 @@ const SearchResultPage = () => {
 
             const formattedData = announcementList.map((item) => ({
                 id: item.announcementId,
-                num: item.announcementId,
                 report: item.title?.trim() || "N/A",
                 company: item.stockName || "Unknown",
                 date: item.announcementDate || "Unknown",
@@ -152,28 +135,39 @@ const SearchResultPage = () => {
             console.error("Failed to fetch disclosure data:", error);
         }
     };
+
+    // 데이터 초기 로드 및 검색어 검색어 변경 시 처리
     useEffect(() => {
         setCurrentDisclosurePage(1);
+        fetchDisclosureData(1, searchQuery);
+        setActiveQuery(searchQuery);
     }, [searchQuery]);
-
-    useEffect(() => {
-        fetchDisclosureData(currentDisclosurePage);
-    }, [searchQuery, currentDisclosurePage]);
-
-    const handleSearchClick = () => {
-        const keywordToUse = filters.keyword.trim() || searchQuery.trim(); 
-        setCurrentDisclosurePage(1);
-        setFilters((prevFilters) => ({
-            ...prevFilters,
-            keyword: keywordToUse,
-        }));
-
-        fetchDisclosureData(1);
-    };
 
     const handleDisclosurePageClick = (event, page) => {
         setCurrentDisclosurePage(page);
     };
+
+    //2차 필터링 검색 버튼 클릭
+     const handleSearchClick = () => {
+        const periodMap = { "1개월": "1m", "6개월": "6m", "1년": "1y", "3년": "3y" };
+        const marketTypeMap = { "코스피": "KOSPI", "코스닥": "KOSDAQ" };
+
+        const apiFilters = {
+            keyword: companyKeyword,
+            period: periodMap[filters.period] || "",
+            marketType: marketTypeMap[filters.marketType] || "",
+            type: filters.type,
+        }
+
+        if (!companyKeyword.trim()) return;
+        fetchDisclosureData(1, companyKeyword, apiFilters);; // 공시대상 검색
+        setCurrentDisclosurePage(1); // 페이지 초기화
+    };
+
+     // 페이지가 변경될 때 데이터를 새로 가져옴
+     useEffect(() => {
+        fetchDisclosureData(currentDisclosurePage, activeQuery);
+    }, [currentDisclosurePage, activeQuery]);
 
     const handleFilterChange = (field, value) => {
         if (field === "keyword" && value.trim() === "") {
@@ -183,21 +177,16 @@ const SearchResultPage = () => {
             }));
             return;
         }
-        setFilters((prevFilters) => ({
-          ...prevFilters,
-          [field]: value,
-        }));
-    };
-
-    const handleTypeToggle = (type) => {
         setFilters((prevFilters) => {
-            const updatedTypes = prevFilters.type.includes(type)
-                ? prevFilters.type.filter((t) => t !== type) 
-                : [...prevFilters.type, type];
-            return { ...prevFilters, type: updatedTypes };
+            if (prevFilters[field] === value) {
+                // 동일한 값 클릭 시 해제
+                return { ...prevFilters, [field]: "" };
+            }
+            // 값 변경
+            return { ...prevFilters, [field]: value };
         });
     };
-
+    
     const resetFilters = () => {
         setFilters({
             keyword: searchQuery,
@@ -206,12 +195,14 @@ const SearchResultPage = () => {
             marketType: "",
             type: [],
         });
+        setCompanyKeyword(""); // 회사 검색어 초기화
+        setActiveQuery(searchQuery); // 기본 검색어로 리셋
         setCurrentDisclosurePage(1);
-        fetchDisclosureData(searchQuery.trim());
+        fetchDisclosureData(1, searchQuery);
     };
-      
+    
     const disclosureHeaders = [
-        { key: "num", label: `전체 ${filteredDisclosureData.length}개`, width: "10%"},
+        { key: "id", label: `전체 ${filteredDisclosureData.length}개`, width: "10%"},
         { key: "company", label: "공시 대상 회사", width: "18%" },
         { key: "report", label: "보고서명", width: "25%" },
         { key: "submitter", label: "제출인", width: "18%" },
@@ -286,21 +277,8 @@ const SearchResultPage = () => {
                                     <input
                                         type="text"
                                         placeholder="회사명 | 티커"
-                                        value={filters.keyword === searchQuery ? "" : filters.keyword}
-                                        onChange={(e) => {
-                                            const value = e.target.value;
-                                            if (value.trim() === "") {
-                                                setFilters((prevFilters) => ({
-                                                    ...prevFilters,
-                                                    keyword: searchQuery,
-                                                }));
-                                            } else {
-                                                setFilters((prevFilters) => ({
-                                                    ...prevFilters,
-                                                    keyword: value,
-                                                }));
-                                            }
-                                        }}
+                                        value={companyKeyword}
+                                        onChange={e => setCompanyKeyword(e.target.value)} //검색어 변경
                                     />
                                 </div>                    
                             </div>
@@ -343,7 +321,7 @@ const SearchResultPage = () => {
                             <div className="filter-group market-group">
                                 <label>시장</label>
                                 <div className="market-buttons">
-                                    {["전체", "코스피", "코스닥"].map((marketType) => (
+                                    {["코스피", "코스닥"].map((marketType) => (
                                     <button
                                         key={marketType}
                                         className={filters.marketType === marketType ? "active" : ""}
@@ -378,7 +356,8 @@ const SearchResultPage = () => {
                         ].map((type) => (
                             <button
                         key={type}
-                        onClick={() => handleTypeToggle(type)}
+                        className={filters.type === type ? "active" : ""}
+                        onClick={() => handleFilterChange("type", type)}
                     >
                         {type}
                     </button>
@@ -433,8 +412,6 @@ const SearchResultPage = () => {
             </div>
             
         )}
-
-
             <ListTables
                 type="disclosure"
                 data={filteredDisclosureData}

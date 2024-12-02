@@ -51,6 +51,7 @@ export default function Header() {
       // navigate(currentPath, { replace: true });
       // window.location.reload();
       navigate(currentPath);
+      setSearchQuery("");
     }
   };
 
@@ -71,7 +72,7 @@ export default function Header() {
   const colorClass = colorClasses[profileColor];
 
   return (
-    <div className="hover:opacity-80 flex flex-row items-center justify-between p-3 h-16 w-full bg-white">
+    <div className="hover:opacity-80 flex flex-row items-center justify-between p-3 h-16 w-full bg-white z-50">
       <img
         src={logoImg}
         className="w-1/12 cursor-pointer hover:opacity-80 transition-opacity duration-200" // hover 효과 및 커서 변경
