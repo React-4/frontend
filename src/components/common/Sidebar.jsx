@@ -147,7 +147,7 @@ export default function SidebarWithDrawer() {
                 <div
                   className={`flex flex-col items-center ${
                     favColor === "primary" ? "text-primary" : "text-primary-2"
-                  }  dark:text-dark-1`}
+                  } `}
                 >
                   <FavoriteBorderIcon />
                   관심
@@ -159,7 +159,7 @@ export default function SidebarWithDrawer() {
               <div
                 className={`flex flex-col items-center  ${
                   histColor === "primary" ? "text-primary" : "text-primary-2"
-                } dark:text-dark-1`}
+                } `}
               >
                 <HistoryIcon />
                 최근 본
