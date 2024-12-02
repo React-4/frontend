@@ -162,7 +162,6 @@ const SearchResultPage = () => {
         if (!companyKeyword.trim()) return;
         fetchDisclosureData(1, companyKeyword, apiFilters);; // 공시대상 검색
         setCurrentDisclosurePage(1); // 페이지 초기화
-        setCompanyKeyword("");
     };
 
      // 페이지가 변경될 때 데이터를 새로 가져옴
