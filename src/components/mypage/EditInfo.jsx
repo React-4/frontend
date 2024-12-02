@@ -14,7 +14,6 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Cookies } from "react-cookie";
 
 const BASE_URL = import.meta.env.VITE_BACK_URL;
 
@@ -24,7 +23,6 @@ export default function EditInfo() {
   const { profileColor, email, nickname, setNickname, resetLoginState } =
     useLogin();
   const navigate = useNavigate();
-  const cookies = new Cookies();
 
   // 각 항목에 대한 상태 관리
   const [userInputNickname, setUserInputNickname] = useState(nickname);
