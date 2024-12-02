@@ -14,10 +14,8 @@ export default function Comment({ announcement, announcement_id }) {
   const [isEnd, setIsEnd] = useState(false);
   const { loggedIn, profileColor } = useLogin();
   const [newComment, setNewComment] = useState("");
-  const [localComment, setLocalComment] = useState([]); // 최종적으로 CommentList에 전달할 배열
+  const [localComment, setLocalComment] = useState([]);
   const nickname = localStorage.getItem("nickname");
-  const [comment, setComment] = useState([]);
-
   const colorClasses = [
     "bg-profile",
     "bg-profile-0",
@@ -33,31 +31,39 @@ export default function Comment({ announcement, announcement_id }) {
   ];
   const colorClass = colorClasses[profileColor];
 
-  // 초기값으로 댓글 데이터를 로드
+  // 초기 댓글 가져오기
   useEffect(() => {
     getCommentByAnnouncement(announcement_id, 0, 6).then((data) => {
-      setLocalComment(data); // 초기값 설정
+      setLocalComment(data);
     });
   }, [announcement_id]);
 
-  // 새로운 댓글 등록 처리
+  // 댓글 등록
   const handlePostComment = async () => {
-    if (!newComment.trim()) return; // 공백 방지
+    if (!newComment.trim()) return;
     try {
       const response = await postComment(announcement_id, newComment);
+      console.log("rr", response);
       const newCommentData = {
-        // id: response.id, // 서버에서 반환한 고유 ID
+        commentId: response.commentId,
         username: nickname,
         content: newComment,
-        createdAt: new Date().toISOString(), // 현재 시간
+        createdAt: new Date().toISOString(),
         userProfileColor: profileColor,
       };
-
-      // 기존 댓글 데이터에 새 댓글 추가
-      setLocalComment((prev) => [newCommentData, ...prev]); // 최신 댓글을 맨 앞에 추가
-      setNewComment(""); // 입력창 초기화
+      setLocalComment((prev) => [newCommentData, ...prev]);
+      setNewComment("");
     } catch (error) {
       console.error("댓글 등록 실패:", error);
+    }
+  };
+
+  const refreshComments = async () => {
+    try {
+      const data = await getCommentByAnnouncement(announcement_id, 0, 6);
+      setLocalComment(data);
+    } catch (error) {
+      console.error("댓글 리스트 새로고침 실패:", error);
     }
   };
 
@@ -65,7 +71,7 @@ export default function Comment({ announcement, announcement_id }) {
     if (page > 0) {
       getCommentByAnnouncement(announcement_id, page, 3).then((data) => {
         if (data.length > 0) {
-          setComment((prev) => [...prev, ...data]);
+          setLocalComment((prev) => [...prev, ...data]);
         }
         if (data.length < 3) {
           setIsEnd(true);
@@ -119,12 +125,13 @@ export default function Comment({ announcement, announcement_id }) {
         </div>
       )}
 
-      {/* 댓글 리스트 */}
       <CommentList
-        commentData={localComment} // 수정된 comment 상태 전달
+        announcementId={announcement_id}
+        commentData={localComment}
         page={page}
         setPage={setPage}
         isEnd={isEnd}
+        refreshComments={refreshComments} // 새로고침 콜백 전달
       />
     </div>
   );
