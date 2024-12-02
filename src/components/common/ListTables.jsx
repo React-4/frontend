@@ -9,15 +9,14 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import "../css/ListTables.css";
-import FavoriteIcon from "@mui/icons-material/Favorite"; 
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder"; 
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { useNavigate } from "react-router-dom";
-// import { useDarkmode } from "../../hooks/useDarkmode";
 
-const StyledTableCell = styled(TableCell)(({ dark }) => ({
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: dark ? "#292929" : "white",
-    color: dark ? "#fafafb" : "black",
+    backgroundColor: "white",
+    color: "black",
     fontWeight: "bold",
   },
   [`&.${tableCellClasses.body}`]: {
@@ -37,7 +36,6 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 export default function ListTables({ type, data, headers }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [favorites, setFavorites] = useState({});
-  // const { handleDarkMode, dark } = useDarkmode();
   const itemsPerPage = 10;
 
   const handleFavoriteToggle = (id) => {
@@ -76,7 +74,7 @@ export default function ListTables({ type, data, headers }) {
               {headers.map((header) => (
                 <StyledTableCell
                   key={header.key}
-                  style={{ width: header.width }} 
+                  style={{ width: header.width }}
                   align="center"
                 >
                   {header.label}
@@ -126,10 +124,10 @@ export default function ListTables({ type, data, headers }) {
                       <span
                         className={
                           parseFloat(row[header.key]) > 0
-                          ? "change-rate-positive"
-                          : parseFloat(row[header.key]) < 0
-                          ? "change-rate-negative"
-                          : "change-rate-neutral"
+                            ? "change-rate-positive"
+                            : parseFloat(row[header.key]) < 0
+                            ? "change-rate-negative"
+                            : "change-rate-neutral"
                         }
                       >
                         {row[header.key]}
