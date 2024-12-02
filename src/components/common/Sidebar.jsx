@@ -177,7 +177,7 @@ export default function SidebarWithDrawer() {
         variant="persistent"
         sx={{
           "& .MuiDrawer-paper": {
-            width: 380,
+            width: 330,
             marginRight: "4%",
             height: "100vh",
             boxShadow: "none",
