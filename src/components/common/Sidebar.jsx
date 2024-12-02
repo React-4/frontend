@@ -10,7 +10,7 @@ import HistoryIcon from "@mui/icons-material/History";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import Button from "@mui/material/Button";
 import SidebarContent from "./SidebarContent";
-import { useDarkmode } from "../../hooks/useDarkmode";
+// import { useDarkmode } from "../../hooks/useDarkmode";
 
 const favData = {
   stock: [
@@ -101,7 +101,7 @@ export default function SidebarWithDrawer() {
     disclosure: [],
   });
 
-  const { handleDarkMode, dark } = useDarkmode();
+  // const { handleDarkMode, dark } = useDarkmode();
   useEffect(() => {
     if (drawerTitle === "관심") {
       setFavColor("primary");
@@ -128,7 +128,14 @@ export default function SidebarWithDrawer() {
   };
 
   return (
-    <Box sx={{ display: "flex", height: "100vh", position: "relative" }}>
+    <Box
+      sx={{
+        display: "flex",
+        height: "100vh",
+        position: "relative",
+        zIndex: "50",
+      }}
+    >
       {drawerOpen && (
         <Box
           onClick={handleDrawerClose}
@@ -199,12 +206,12 @@ export default function SidebarWithDrawer() {
               </div>
             </Button>
           </div>
-          <Button onClick={handleDarkMode}>
+          {/* <Button onClick={handleDarkMode}>
             <div className="flex flex-col items-center text-primary-2 dark:text-dark-1">
               <ContrastIcon />
               <div className="text-xs">{dark ? "다크" : "라이트"}</div>
             </div>
-          </Button>
+          </Button> */}
         </List>
       </Box>
 

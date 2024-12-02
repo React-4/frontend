@@ -6,11 +6,14 @@ import {
   getCommentByAnnouncement,
   postComment,
 } from "../../services/commentAPI";
+import { postVote, deleteVote } from "../../services/voteAPI";
 
 export default function Comment({ announcement, announcement_id }) {
   const [page, setPage] = useState(0);
-  const [good, setGood] = useState(announcement.positiveVoteCount);
-  const [bad, setBad] = useState(announcement.negativeVoteCount);
+  const [good, setGood] = useState(0);
+  const [bad, setBad] = useState(0);
+  const [voted, setVoted] = useState(false); // 투표 상태
+  const [voteType, setVoteType] = useState(null); // 투표한 종류 (POSITIVE 또는 NEGATIVE)
   const [isEnd, setIsEnd] = useState(false);
   const { loggedIn, profileColor } = useLogin();
   const [newComment, setNewComment] = useState("");
@@ -31,7 +34,88 @@ export default function Comment({ announcement, announcement_id }) {
   ];
   const colorClass = colorClasses[profileColor];
 
-  // 초기 댓글 가져오기
+  // 페이지가 로드될 때 로컬 스토리지에서 이전 투표 정보를 불러오기
+  useEffect(() => {
+    const savedVote = JSON.parse(
+      localStorage.getItem(`vote_${announcement_id}`)
+    );
+    if (savedVote) {
+      setVoted(true);
+      setVoteType(savedVote.voteType);
+    }
+  }, [announcement_id]);
+
+  useEffect(() => {
+    setGood(announcement.positiveVoteCount);
+    setBad(announcement.negativeVoteCount);
+  }, [announcement.negativeVoteCount, announcement.positiveVoteCount]);
+
+  const handleVote = async (e) => {
+    if (loggedIn === true) {
+      // 투표한 상태일 경우
+      if (voted) {
+        const confirmCancel = window.confirm(
+          "이미 투표한 내용이 있습니다. 투표를 취소하시겠습니까?"
+        );
+        if (confirmCancel) {
+          try {
+            const res = await deleteVote(announcement_id); // 투표 취소 요청
+            console.log(res);
+            if (res.status === 200) {
+              localStorage.removeItem(`vote_${announcement_id}`);
+              if (voteType === "POSITIVE") {
+                setGood((prev) => prev - 1);
+              } else if (voteType === "NEGATIVE") {
+                setBad((prev) => prev - 1);
+              }
+              setVoted(false);
+              setVoteType(null);
+            }
+          } catch (err) {
+            alert("투표 취소 실패: " + err.message);
+          }
+        }
+      } else {
+        // 투표하지 않은 상태에서 새로운 투표 진행
+        if (e.target.innerHTML.slice(0, 2) === "호재") {
+          try {
+            const res = await postVote(announcement_id, "POSITIVE");
+            if (res.status === 201) {
+              setGood((prev) => prev + 1);
+              setVoted(true);
+              setVoteType("POSITIVE");
+              // 로컬 스토리지에 투표 정보 저장
+              localStorage.setItem(
+                `vote_${announcement_id}`,
+                JSON.stringify({ voteType: "POSITIVE" })
+              );
+            }
+          } catch (err) {
+            alert("호재 투표 실패: " + err.message);
+          }
+        } else {
+          try {
+            const res = await postVote(announcement_id, "NEGATIVE");
+            if (res.status === 201) {
+              setBad((prev) => prev + 1);
+              setVoted(true);
+              setVoteType("NEGATIVE");
+              // 로컬 스토리지에 투표 정보 저장
+              localStorage.setItem(
+                `vote_${announcement_id}`,
+                JSON.stringify({ voteType: "NEGATIVE" })
+              );
+            }
+          } catch (err) {
+            alert("악재 투표 실패: " + err.message);
+          }
+        }
+      }
+    } else {
+      alert("로그인 후 투표할 수 있어요");
+    }
+  };
+
   useEffect(() => {
     getCommentByAnnouncement(announcement_id, 0, 6).then((data) => {
       setLocalComment(data);
@@ -83,14 +167,32 @@ export default function Comment({ announcement, announcement_id }) {
     <div className="flex flex-col items-center">
       <div className="flex flex-row gap-4 w-full justify-end">
         <div
-          className="bg-good text-good-1 w-20 h-8 rounded-lg text-center py-1 cursor-pointer"
-          onClick={() => setGood(good + 1)}
+          className={`w-20 h-8 rounded-lg text-center py-1 cursor-pointer ${
+            voted && voteType === "NEGATIVE"
+              ? "bg-primary-2"
+              : "bg-good text-good-1"
+          } ${
+            voted && voteType !== "POSITIVE"
+              ? "opacity-50 cursor-not-allowed"
+              : ""
+          }`}
+          onClick={(e) => handleVote(e)}
+          disabled={voted && voteType !== "POSITIVE"}
         >
           호재 {good}
         </div>
         <div
-          className="bg-bad text-bad-1 w-20 h-8 rounded-lg text-center py-1 cursor-pointer"
-          onClick={() => setBad(bad + 1)}
+          className={`w-20 h-8 rounded-lg text-center py-1 cursor-pointer ${
+            voted && voteType === "POSITIVE"
+              ? "bg-primary-2"
+              : "bg-bad text-bad-1"
+          } ${
+            voted && voteType !== "NEGATIVE"
+              ? "opacity-50 cursor-not-allowed"
+              : ""
+          }`}
+          onClick={(e) => handleVote(e)}
+          disabled={voted && voteType !== "NEGATIVE"}
         >
           악재 {bad}
         </div>

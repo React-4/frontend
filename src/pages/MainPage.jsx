@@ -3,7 +3,6 @@ import ListTables from "../components/common/ListTables";
 import Pagination from "@mui/material/Pagination";
 import axios from "axios";
 
-
 const MainPage = () => {
   //공시
   const [disclosureSortType, setDisclosureSortType] = useState("latest");
@@ -17,16 +16,13 @@ const MainPage = () => {
   const fetchDisclosureData = async (userPage, sortType) => {
     try {
       const apiPage = userPage - 1;
-      const response = await axios.get(
-        `${BASE_URL}/api/announcement`,
-        {
-          params: {
-            sortBy: sortType,
-            page: apiPage,
-            size: pageDSize,
-          },
-        }
-      );
+      const response = await axios.get(`${BASE_URL}/api/announcement`, {
+        params: {
+          sortBy: sortType,
+          page: apiPage,
+          size: pageDSize,
+        },
+      });
 
       const { announcementList, announcementCount } = response.data?.data || {};
 
@@ -109,14 +105,11 @@ const MainPage = () => {
 
   const fetchStockData = async (sortType) => {
     try {
-      const response = await axios.get(
-        `${BASE_URL}/api/stockprice/rank`,
-        {
-          params: {
-            sort_by: sortType,
-          },
-        }
-      );
+      const response = await axios.get(`${BASE_URL}/api/stockprice/rank`, {
+        params: {
+          sort_by: sortType,
+        },
+      });
 
       const data = response.data?.data || {};
       const formattedData = Object.keys(data).map((key, index) => ({
@@ -205,7 +198,7 @@ const MainPage = () => {
         headers={disclosureHeaders}
       />
 
-      <div className="pagination-container">
+      <div className="pagination-container z-0">
         <Pagination
           count={totalPages}
           page={currentDPage}

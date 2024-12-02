@@ -3,12 +3,14 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 import ReactApexChart from "react-apexcharts";
 import axios from "axios";
 const BASE_URL = import.meta.env.VITE_BACK_URL;
+import { getChartDisclosure } from "../../services/disclosureAPI";
 
 const ApexChart = ({ stockId, type }) => {
   const [stockData, setStockData] = useState([]);
   const [chartData, setChartData] = useState([]);
   const [markerData, setMarkerData] = useState([]);
   const [length, setLength] = useState(100);
+  const [disclosure, setDisclosure] = useState([]);
 
   // type 변경에 따라 length 조정
   useEffect(() => {
@@ -99,26 +101,62 @@ const ApexChart = ({ stockId, type }) => {
     return processStockData(sortedData);
   }, [stockData]);
 
-  // 공시 데이터 생성
-  const generatedMarkerData = useMemo(() => {
-    if (stockData.length === 0) return [];
+  useEffect(() => {
+    getChartDisclosure(stockId, type).then((data) => setDisclosure(data));
+    console.log(type, disclosure);
+  }, [stockId, type]);
 
-    return stockData
-      .filter((_, index) => index % 10 === 0)
-      .map((stock, index) => {
-        const currentDate = new Date(
+  // 공시 데이터를 기반으로 markerData 생성
+  const generatedMarkerData = useMemo(() => {
+    if (
+      !disclosure ||
+      disclosure.length === 0 ||
+      !stockData ||
+      stockData.length === 0
+    )
+      return [];
+
+    // 날짜별 공시 제목과 중간값 리스트 생성
+    const markerDataMap = new Map();
+
+    disclosure.forEach((item) => {
+      const announcementDate = new Date(
+        item.date.slice(0, 4),
+        item.date.slice(5, 7) - 1,
+        item.date.slice(8, 10)
+      ).getTime();
+
+      // 해당 날짜의 주가 데이터 검색
+      const stockForDate = stockData.find((stock) => {
+        const stockDate = new Date(
           stock.date.slice(0, 4),
           stock.date.slice(5, 7) - 1,
           stock.date.slice(8, 10)
-        );
-
-        return {
-          x: currentDate.getTime(),
-          y: stock.closePrice,
-          announcement: `공시 제목 ${Math.floor(index / 10) + 1}`,
-        };
+        ).getTime();
+        return stockDate === announcementDate;
       });
-  }, [stockData]);
+
+      if (stockForDate) {
+        const midPrice = (stockForDate.highPrice + stockForDate.lowPrice) / 2;
+
+        item.announcementList.forEach((announcement) => {
+          if (!markerDataMap.has(announcementDate)) {
+            markerDataMap.set(announcementDate, {
+              x: announcementDate,
+              y: midPrice,
+              announcements: [],
+            });
+          }
+          markerDataMap.get(announcementDate).announcements.push({
+            title: announcement.title,
+            id: announcement.announcementId, // 공시 ID 추가
+          });
+        });
+      }
+    });
+
+    return Array.from(markerDataMap.values());
+  }, [disclosure, stockData]);
 
   // 차트 옵션 생성
   const chartOptions = useMemo(() => {
@@ -180,13 +218,35 @@ const ApexChart = ({ stockId, type }) => {
           shared: false,
           custom: ({ seriesIndex, dataPointIndex, w }) => {
             if (seriesIndex === 1) {
-              const announcement =
-                w.config.series[seriesIndex].data[dataPointIndex].announcement;
-              return `<div style="padding: 5px; background: #fff; border: 1px solid #ccc;">
-                        <strong>${announcement}</strong>
-                      </div>`;
+              const announcements =
+                w.config.series[seriesIndex].data[dataPointIndex].announcements;
+
+              const announcementList = announcements
+                .map(
+                  ({ title, id }) =>
+                    `<li style="margin: 5px 0;">
+                      <a href="/disclosure/${id}"
+                         style="text-decoration: none; color: #007bff;"
+                         target="_blank"
+                         rel="noopener noreferrer">
+                        ${title}
+                      </a>
+                    </li>`
+                )
+                .join("");
+
+              return `
+                <div style="padding: 10px; background: #fff; border: 1px solid #ccc; border-radius: 5px;">
+                  <strong style="display: block; margin-bottom: 5px;">공시 목록</strong>
+                  <ul style="margin: 0; padding: 0; list-style: none;">
+                    ${announcementList}
+                  </ul>
+                </div>`;
             }
             return null;
+          },
+          customPosition: function ({ x, y }) {
+            return { bottom: y - 100000, left: x };
           },
         },
       },

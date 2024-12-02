@@ -15,7 +15,6 @@ export default function DisclosurePage() {
   useEffect(() => {
     getGPTDisclosure(params.id)
       .then((data) => {
-        console.log("Fetched data:", data);
         setAnnouncement(data);
       })
       .catch((error) => {
