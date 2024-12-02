@@ -353,7 +353,7 @@ const SearchResultPage = () => {
                     </div>
                 </div>
     
-                <section className="separator"></section>
+                <section className="separator1"></section>
     
                 <div className="filter-group type-group">
                     <label>공시 유형</label>
@@ -381,7 +381,7 @@ const SearchResultPage = () => {
                     </div>
                 </div>
     
-                <section className="separator"></section>
+                <section className="separator2"></section>
     
                 <div className="sector2">
                     <div className="filter-actions">
