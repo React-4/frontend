@@ -50,14 +50,14 @@ export function StockSidebarItem({
   };
 
   return (
-    <div className="flex flex-row justify-between items-start mx-1 my-3">
+    <div className="flex flex-row justify-between items-start mx-1 my-3 cursor-pointer">
       <div
-        className="font-semibold max-w-20 min-w-20 cursor-pointer"
+        className="font-semibold max-w-25 min-w-20 cursor-pointer"
         onClick={handleNavigate}
       >
         {name}
       </div>
-      <div className="flex flex-col items-end  mr-2">
+      <div className="flex flex-col items-end  mr-2" onClick={handleNavigate}>
         <div className="font-semibold">{price}</div>
         <div
           className={`flex flex-row text-xs items-end ${
@@ -125,15 +125,12 @@ export function DisclosureSidebarItem({
   };
   const navigate = useNavigate();
   return (
-    <div className="flex flex-row mx-1 my-3">
-      <div className="font-semibold max-w-20 min-w-20">{company}</div>
-      <div className="flex flex-col items-start">
-        <div
-          className="font-semibold text-xs cursor-pointer"
-          onClick={handleNavigate}
-        >
-          {title}
-        </div>
+    <div className="flex flex-row justify-between items-start mx-1 my-3 h-18 cursor-pointer">
+      <div className="font-semibold max-w-25 min-w-20" onClick={handleNavigate}>
+        {company}
+      </div>
+      <div className="flex flex-col items-start" onClick={handleNavigate}>
+        <div className="font-semibold text-xs cursor-pointer">{title}</div>
         <div className=" text-xs text-primary-2"> {desc} </div>
       </div>
       {drawerTitle === "최근 본" ? (

@@ -21,11 +21,29 @@ export default function SidebarContent({ drawerTitle, data }) {
       {loggedIn ? (
         <div className="flex flex-col gap-12">
           <div>
-            <Typography variant="h6">{drawerTitle} 종목</Typography>
+            <Typography
+              variant="h6"
+              style={{
+                fontWeight: "bold",
+                color: "#333",
+                fontSize: "1.5rem",
+              }}
+            >
+              {drawerTitle} 종목
+            </Typography>
             <Divider sx={{ my: 2 }} />
             <div className="h-2/5">
               <Typography variant="body1" component="div">
-                <div className="max-h-60 min-h-60 overflow-auto p-2 mt-4 ">
+                <div
+                  className="max-h-60 min-h-60 overflow-auto p-2 mt-4 
+                  [&::-webkit-scrollbar]:w-2
+                  [&::-webkit-scrollbar-track]:rounded-full
+                  [&::-webkit-scrollbar-track]:bg-gray-100
+                  [&::-webkit-scrollbar-thumb]:rounded-full
+                  [&::-webkit-scrollbar-thumb]:bg-gray-300
+                  dark:[&::-webkit-scrollbar-track]:bg-neutral-700
+                  dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500"
+                >
                   {stockHisList.length === 0 ? (
                     <div className="text-center">
                       아직 {drawerTitle} 종목이 없어요
@@ -56,11 +74,25 @@ export default function SidebarContent({ drawerTitle, data }) {
             </div>
           </div>
           <div>
-            <Typography variant="h6">{drawerTitle} 공시</Typography>
+            <Typography
+              variant="h6"
+              style={{ fontWeight: "bold", color: "#333", fontSize: "1.5rem" }}
+            >
+              {drawerTitle} 공시
+            </Typography>
             <Divider sx={{ my: 2 }} />
             <div className="h-2/5">
               <Typography variant="body1" component="div">
-                <div className="max-h-60 min-h-6 overflow-auto p-2 mt-4">
+                <div
+                  className="max-h-60 min-h-60 overflow-auto p-2 mt-4 
+                  [&::-webkit-scrollbar]:w-2
+                  [&::-webkit-scrollbar-track]:rounded-full
+                  [&::-webkit-scrollbar-track]:bg-gray-100
+                  [&::-webkit-scrollbar-thumb]:rounded-full
+                  [&::-webkit-scrollbar-thumb]:bg-gray-300
+                  dark:[&::-webkit-scrollbar-track]:bg-neutral-700
+                  dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500"
+                >
                   {discloHisList.length === 0 ? (
                     <div className="text-center">
                       아직 {drawerTitle} 공시가 없어요
