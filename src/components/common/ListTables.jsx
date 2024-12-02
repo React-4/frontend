@@ -10,6 +10,8 @@ import Paper from "@mui/material/Paper";
 import "../css/ListTables.css";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { useNavigate } from "react-router-dom";
 import { useDarkmode } from "../../hooks/useDarkmode";
 import {
@@ -19,10 +21,10 @@ import {
   removeFavoriteStockAPI,
 } from "../../services/stockAPI";
 
-const StyledTableCell = styled(TableCell)(({ dark }) => ({
+const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: dark ? "#292929" : "white",
-    color: dark ? "#fafafb" : "black",
+    backgroundColor: "white",
+    color: "black",
     fontWeight: "bold",
   },
   [`&.${tableCellClasses.body}`]: {
@@ -154,7 +156,8 @@ export default function ListTables({ type, data, headers }) {
                         <span className="votes-good">
                           호재 {row.votes?.good || 0}
                         </span>{" "}
-                        |<span className="votes-bad">
+                        |
+                        <span className="votes-bad">
                           악재 {row.votes?.bad || 0}
                         </span>
                       </div>
@@ -162,6 +165,10 @@ export default function ListTables({ type, data, headers }) {
                       <span
                         className={
                           parseFloat(row[header.key]) > 0
+                            ? "change-rate-positive"
+                            : parseFloat(row[header.key]) < 0
+                            ? "change-rate-negative"
+                            : "change-rate-neutral"
                             ? "change-rate-positive"
                             : parseFloat(row[header.key]) < 0
                             ? "change-rate-negative"

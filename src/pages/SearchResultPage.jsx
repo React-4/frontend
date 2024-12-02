@@ -37,13 +37,13 @@ const SearchResultPage = () => {
                 code: stockItem.ticker,
                 name: stockItem.companyName,
                 price: stockItem.currentPrice
-                    ? `${stockItem.currentPrice.toLocaleString()}원`
+                    ? `${Number(stockItem.currentPrice).toLocaleString()}원`
                     : "0원",
                 changeRate: stockItem.changeRate
                     ? `${(stockItem.changeRate * 100).toFixed(2)}%`
                     : "0%",
                 transaction: stockItem.volume
-                    ? `${stockItem.volume.toLocaleString()}주`
+                    ? `${Num(stockItem.volume).toLocaleString()}주`
                     : "0주",
             }));
     
@@ -148,21 +148,24 @@ const SearchResultPage = () => {
     };
 
     //2차 필터링 검색 버튼 클릭
-     const handleSearchClick = () => {
+    const handleSearchClick = () => {
         const periodMap = { "1개월": "1m", "6개월": "6m", "1년": "1y", "3년": "3y" };
         const marketTypeMap = { "코스피": "KOSPI", "코스닥": "KOSDAQ" };
 
-        const apiFilters = {
-            keyword: companyKeyword,
-            period: periodMap[filters.period] || "",
-            marketType: marketTypeMap[filters.marketType] || "",
-            type: filters.type,
-        }
+        const customPeriod =
+        filters.startDate && filters.endDate
+            ? `${filters.startDate}~${filters.endDate}`
+            : "";
 
-        if (!companyKeyword.trim()) return;
-        fetchDisclosureData(1, companyKeyword, apiFilters);; // 공시대상 검색
+        const apiFilters = {
+            period: filters.period === "지정" ? customPeriod : periodMap[filters.period] || "",            
+            marketType: marketTypeMap[filters.marketType] || "",
+            type: filters.type || "",
+        }
+         // 검색어가 없으면 searchQuery를 기반으로 요청
+        const keyword = companyKeyword.trim() || searchQuery;
+        fetchDisclosureData(1, keyword, apiFilters);; // 공시대상 검색
         setCurrentDisclosurePage(1); // 페이지 초기화
-        setCompanyKeyword("");
     };
 
      // 페이지가 변경될 때 데이터를 새로 가져옴
@@ -312,7 +315,7 @@ const SearchResultPage = () => {
                             
                                 {filters.startDate && filters.endDate && (
                                     <span className="selected-dates">
-                                        {filters.startDate} ~ {filters.endDate}
+                                        {filters.startDate}~{filters.endDate}
                                     </span>
                                 )}
                             </div>

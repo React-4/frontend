@@ -6,56 +6,6 @@ import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { getCommentByStock } from "../services/commentAPI";
 import { addToHistory } from "../utils/history";
-const commentData = [
-  {
-    username: "유저1",
-    date: "2024.10.12",
-    comment:
-      "일봉 기준 기울기 각도가 거진 80-90도가 되면패닉셀 및 바닥권이 머지 않았다는걸 의미 합니다.그래서 오늘 좀 매수질을 했습니다.",
-  },
-  {
-    username: "asdf",
-    date: "2024.10.12",
-    comment:
-      "일봉 기준 기울기 각도가 거진 80-90도가 되면패닉셀 및 바닥권이 머지 않았다는걸 의미 합니다.그래서 오늘 좀 매수질을 했습니다.일봉 기준 기울기 각도가 거진 80-90도가 되면패닉셀 및 바닥권이 머지 않았다는걸 의미 합니다.그래서 오늘 좀 매수질을 했습니다.일봉 기준 기울기 각도가 거진 80-90도가 되면패닉셀 및 바닥권이 머지 않았다는걸 의미 합니다.그래서 오늘 좀 매수질을 했습니다.",
-  },
-  {
-    username: "유저3",
-    date: "2024.10.12",
-    comment:
-      "일봉 기준 기울기 각도가 거진 80-90도가 되면패닉셀 및 바닥권이 머지 않았다는걸 의미 합니다.그래서 오늘 좀 매수질을 했습니다.",
-  },
-  {
-    username: "유저4",
-    date: "2024.10.12",
-    comment:
-      "일봉 기준 기울기 각도가 거진 80-90도가 되면패닉셀 및 바닥권이 머지 않았다는걸 의미 합니다.그래서 오늘 좀 매수질을 했습니다.",
-  },
-  {
-    username: "유저5",
-    date: "2024.10.12",
-    comment:
-      "일봉 기준 기울기 각도가 거진 80-90도가 되면패닉셀 및 바닥권이 머지 않았다는걸 의미 합니다.그래서 오늘 좀 매수질을 했습니다.",
-  },
-  {
-    username: "유저6",
-    date: "2024.10.12",
-    comment:
-      "일봉 기준 기울기 각도가 거진 80-90도가 되면패닉셀 및 바닥권이 머지 않았다는걸 의미 합니다.그래서 오늘 좀 매수질을 했습니다.",
-  },
-  {
-    username: "유저7",
-    date: "2024.10.12",
-    comment:
-      "일봉 기준 기울기 각도가 거진 80-90도가 되면패닉셀 및 바닥권이 머지 않았다는걸 의미 합니다.그래서 오늘 좀 매수질을 했습니다.",
-  },
-  {
-    username: "유저8",
-    date: "2024.10.12",
-    comment:
-      "일봉 기준 기울기 각도가 거진 80-90도가 되면패닉셀 및 바닥권이 머지 않았다는걸 의미 합니다.그래서 오늘 좀 매수질을 했습니다.",
-  },
-];
 
 const disclosureData = Array.from({ length: 50 }, (_, index) => ({
   id: index + 1,
@@ -92,7 +42,6 @@ export default function StockPage() {
         (1 + Number(changeRate.slice(0, -1)) / 100)) *
         (Number(changeRate.slice(0, -1)) / 100)
     );
-    console.log(changeRate.slice(0, 1));
 
     return price;
   };
@@ -106,7 +55,6 @@ export default function StockPage() {
     getCommentByStock(stockData.id).then((data) => setComment(data));
   }, []);
 
-  console.log("comm", comment);
   const stockItem = {
     id: stockData.id,
     company: stockData.name,
@@ -121,10 +69,22 @@ export default function StockPage() {
   return (
     <div className="flex flex-col mb-12 m-3">
       <div className="flex flex-row w-full justify-between">
-        <div className="flex flex-row gap-2">
-          <div className="font-semibold text-xl">{stockData.name}</div>
-          <div className="text-primary-2 font-semibold text-lg ">
-            {stockData.code}
+        <div className="flex flex-row items-center">
+          <img
+            src={`https://thumb.tossinvest.com/image/resized/96x0/https%3A%2F%2Fstatic.toss.im%2Fpng-icons%2Fsecurities%2Ficn-sec-fill-${stockData.code}.png`}
+            alt={`${stockData.code} 아이콘`}
+            style={{
+              width: "50px",
+              height: "50px",
+              marginRight: "0.3em",
+            }} // 크기 및 여백 조정
+            className="rounded-xl"
+          />
+          <div className="flex flex-row gap-2">
+            <div className="font-semibold text-xl">{stockData.name}</div>
+            <div className="text-primary-2 font-semibold text-lg ">
+              {stockData.code}
+            </div>
           </div>
         </div>
         <div className="flex flex-row gap-2">

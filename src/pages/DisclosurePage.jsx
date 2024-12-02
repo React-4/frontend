@@ -12,9 +12,6 @@ export default function DisclosurePage() {
 
   const data = location.state?.data[0];
   const params = useParams();
-  console.log("data", data);
-  console.log("params.id", params.id);
-  console.log("stockId ", location.state?.data[0].stockId);
 
   useEffect(() => {
     getGPTDisclosure(params.id)

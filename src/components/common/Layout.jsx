@@ -6,8 +6,8 @@ import ScrollToTop from "./ScrollToTop";
 export default function Layout() {
   return (
     <div className="flex flex-row">
-      <div className="flex flex-col w-94%">
-        <div className="fixed w-94%">
+      <div className="flex flex-col w-94% ">
+        <div className="fixed w-94% z-30">
           <Header />
         </div>
         <div className="mx-10 mt-16 h-full ">
