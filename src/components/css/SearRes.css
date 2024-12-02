@@ -1,32 +1,6 @@
-@media (max-width: 768px) {
-  .filter-group button {
-    padding: 5px 10px; /* 버튼 여백 축소 */
-    font-size: 10px; /* 글씨 크기 축소 */
-  }
-
-  .period-buttons,
-  .type-buttons {
-    gap: 5px; /* 버튼 간 간격 축소 */
-  }
-}
-
-@media (max-width: 480px) {
-  .filter-group button {
-    padding: 4px 8px; /* 더 작은 여백 */
-    font-size: 8px; /* 더 작은 글씨 */
-  }
-
-  .period-buttons,
-  .type-buttons {
-    grid-template-columns: repeat(auto-fit, minmax(50px, 1fr)); /* 버튼 최소 크기 축소 */
-    gap: 4px; /* 간격 축소 */
-  }
-}
-
-
 .filters {
     border: 1px solid #0045B0;
-    padding: 10px 60px 10px 60px;
+    padding: 10px 45px 10px 45px;
     margin: 0 20px 20px 20px;
     border-radius: 20px;
     display: flex;
@@ -126,8 +100,7 @@
 }
 
 .separator1 {
-  margin-left: 20px;
-  margin-right: 20px;
+  margin-right: 5px;
   display: flex;
   width: 1px;
   height: auto;
@@ -137,8 +110,8 @@
 }
 
 .separator2 {
-  margin-left: 20px;
-  margin-right: 20px;
+  margin-left: 5px;
+  margin-right: 15px;
   display: flex;
   width: 1px;
   height: auto;
@@ -211,7 +184,8 @@
   justify-content: center;
   align-items: center;
   height: 100%;
-  gap: 27px;
+  margin-top: 10px;
+  gap: 10px;
 }
 
 
