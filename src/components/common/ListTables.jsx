@@ -1,5 +1,4 @@
-/* eslint-disable react/prop-types */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -9,10 +8,16 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import "../css/ListTables.css";
-import FavoriteIcon from "@mui/icons-material/Favorite"; 
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder"; 
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { useNavigate } from "react-router-dom";
 import { useDarkmode } from "../../hooks/useDarkmode";
+import {
+  addFavoriteAnnouncementAPI,
+  removeFavoriteAnnouncementAPI,
+  addFavoriteStockAPI,
+  removeFavoriteStockAPI,
+} from "../../services/stockAPI";
 
 const StyledTableCell = styled(TableCell)(({ dark }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -36,15 +41,49 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 export default function ListTables({ type, data, headers }) {
   const [currentPage, setCurrentPage] = useState(1);
-  const [favorites, setFavorites] = useState({});
+  const [favorites, setFavorites] = useState([]);
   const { handleDarkMode, dark } = useDarkmode();
   const itemsPerPage = 10;
 
-  const handleFavoriteToggle = (id) => {
-    setFavorites((prevFavorites) => ({
-      ...prevFavorites,
-      [id]: !prevFavorites[id],
-    }));
+  const navigate = useNavigate();
+
+  // 로컬 스토리지에서 초기화
+  useEffect(() => {
+    const storedFavorites = JSON.parse(
+      localStorage.getItem(
+        type === "disclosure" ? "favoriteAnnouncementIds" : "favoriteStockIds"
+      ) || "[]"
+    );
+    setFavorites(storedFavorites);
+  }, [type]);
+
+  // 상태가 변경되면 로컬 스토리지에 동기화
+  // useEffect(() => {
+  //   const key =
+  //     type === "disclosure" ? "favoriteAnnouncementIds" : "favoriteStockIds";
+  //   localStorage.setItem(key, JSON.stringify(favorites));
+  // }, [favorites, type]);
+
+  const handleFavoriteToggle = async (id) => {
+    try {
+      if (favorites.includes(id)) {
+        if (type === "disclosure") {
+          await removeFavoriteAnnouncementAPI(id);
+        } else {
+          await removeFavoriteStockAPI(id);
+        }
+        setFavorites((prev) => prev.filter((favId) => favId !== id));
+      } else {
+        if (type === "disclosure") {
+          await addFavoriteAnnouncementAPI(id);
+        } else {
+          await addFavoriteStockAPI(id);
+        }
+        setFavorites((prev) => [...prev, id]);
+      }
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
+    }
   };
 
   const currentData = data.slice(
@@ -52,9 +91,7 @@ export default function ListTables({ type, data, headers }) {
     currentPage * itemsPerPage
   );
 
-  const navigate = useNavigate();
   const handleNavigate = (id) => {
-    console.log("id", id);
     if (!type) {
       console.error("Error: 'type' is undefined.");
       return;
@@ -63,6 +100,7 @@ export default function ListTables({ type, data, headers }) {
       state: { data: data.filter((d) => d.id === id) },
     });
   };
+
   return (
     <div className="list-container">
       <TableContainer component={Paper}>
@@ -76,7 +114,7 @@ export default function ListTables({ type, data, headers }) {
               {headers.map((header) => (
                 <StyledTableCell
                   key={header.key}
-                  style={{ width: header.width }} 
+                  style={{ width: header.width }}
                   align="center"
                 >
                   {header.label}
@@ -88,9 +126,8 @@ export default function ListTables({ type, data, headers }) {
             {currentData.map((row) => (
               <StyledTableRow
                 key={row.id}
-                onClick={() => {
-                  handleNavigate(row.id);
-                }}
+                onClick={() => handleNavigate(row.id)} // 행 클릭 시 이동
+                style={{ cursor: "pointer" }}
               >
                 {headers.map((header, i) => (
                   <StyledTableCell key={i} align="center">
@@ -99,12 +136,12 @@ export default function ListTables({ type, data, headers }) {
                         <span
                           className="heart"
                           onClick={(e) => {
+                            e.stopPropagation(); // 좋아요 클릭 시 행 이동 이벤트 중단
                             handleFavoriteToggle(row.id);
-                            e.stopPropagation();
                           }}
                           style={{ cursor: "pointer" }}
                         >
-                          {favorites[row.id] ? (
+                          {favorites.includes(row.id) ? (
                             <FavoriteIcon style={{ color: "#F04452" }} />
                           ) : (
                             <FavoriteBorderIcon />
@@ -125,10 +162,10 @@ export default function ListTables({ type, data, headers }) {
                       <span
                         className={
                           parseFloat(row[header.key]) > 0
-                          ? "change-rate-positive"
-                          : parseFloat(row[header.key]) < 0
-                          ? "change-rate-negative"
-                          : "change-rate-neutral"
+                            ? "change-rate-positive"
+                            : parseFloat(row[header.key]) < 0
+                            ? "change-rate-negative"
+                            : "change-rate-neutral"
                         }
                       >
                         {row[header.key]}

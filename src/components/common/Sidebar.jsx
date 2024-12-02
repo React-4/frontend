@@ -11,37 +11,8 @@ import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import Button from "@mui/material/Button";
 import SidebarContent from "./SidebarContent";
 import { useDarkmode } from "../../hooks/useDarkmode";
+import { fetchStockPricesAPI, fetchAnnouncementListAPI } from "../../services/stockAPI";
 
-const favData = {
-  stock: [
-    { id: "1", company: "카카오", price: "51,100", gap: "-1300", rate: "3.5" },
-    { id: "2", company: "카카오2", price: "51,100", gap: "-1390", rate: "3.5" },
-    { id: "3", company: "카카오3", price: "51,100", gap: "10", rate: "3.5" },
-    { id: "4", company: "카카오4", price: "51,100", gap: "1300", rate: "3.5" },
-    { id: "5", company: "카카오1", price: "51,100", gap: "-1300", rate: "3.5" },
-    {
-      id: "6",
-      company: "카카오5카카오카카오",
-      price: "51,100",
-      gap: "1300",
-      rate: "3.5",
-    },
-  ],
-  disclosure: [
-    {
-      id: "1",
-      company: "카카오",
-      title: "기업설명회 안내",
-      desc: "(주)카카오 기업설명회(IR) 개최(안내공시)",
-    },
-    {
-      id: "2",
-      company: "카카오2zkzkdh",
-      title: "기업설명회 안내2dkssodksso",
-      desc: "(주)카카오 기업설명회(IR) 개최(안내공시)주)카카오 기업설명회(IR) 개최(안내공시)",
-    },
-  ],
-};
 
 const initialHistoryData = {
   stock: [],
@@ -65,20 +36,55 @@ export default function SidebarWithDrawer() {
     return storedHistory ? JSON.parse(storedHistory) : initialHistoryData;
   };
 
-  useEffect(() => {
-    if (drawerTitle === "관심") {
-      setFavColor("primary");
-      setData(favData);
-    } else {
-      setFavColor("primary-2");
-    }
+  const getFavoriteIdsFromStorage = () => {
+    const stockIds = JSON.parse(localStorage.getItem("favoriteStockIds") || "[]");
+    const announcementIds = JSON.parse(localStorage.getItem("favoriteAnnouncementIds") || "[]");
+    return { stockIds, announcementIds };
+  };
+  
 
-    if (drawerTitle === "최근 본") {
-      setHistColor("primary");
-      setData(getHistoryFromStorage());
-    } else {
-      setHistColor("primary-2");
+  const fetchData = async () => {
+    try {
+      if (drawerTitle === "관심") {
+        const { stockIds, announcementIds } = getFavoriteIdsFromStorage();
+        console.log("Favorite stock IDs:", stockIds);
+        console.log("Favorite announcement IDs:", announcementIds);
+  
+        const favoriteStocksResponse = await fetchStockPricesAPI(stockIds);
+        const favoriteDisclosuresResponse = await fetchAnnouncementListAPI(announcementIds);
+  
+        const favoriteStocks = Object.values(favoriteStocksResponse.data || {});
+        const favoriteDisclosures = favoriteDisclosuresResponse.data || [];
+  
+        console.log("Transformed favorite stocks:", favoriteStocks);
+        console.log("Favorite disclosures:", favoriteDisclosures);
+  
+        setData({
+          stock: favoriteStocks,
+          disclosure: favoriteDisclosures,
+        });
+  
+        setFavColor("primary");
+        setHistColor("primary-2");
+      } else if (drawerTitle === "최근 본") {
+        const historyData = getHistoryFromStorage();
+        console.log("History data:", historyData);
+  
+        setData(historyData);
+        setHistColor("primary");
+        setFavColor("primary-2");
+      } else {
+        setFavColor("primary-2");
+        setHistColor("primary-2");
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
     }
+  };
+  
+  
+  useEffect(() => {
+    fetchData();
   }, [drawerTitle]);
 
   const handleDrawerOpen = (content) => {
