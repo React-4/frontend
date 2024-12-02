@@ -125,8 +125,10 @@ export default function ListTables({ type, data, headers }) {
                       <span
                         className={
                           parseFloat(row[header.key]) > 0
-                            ? "change-rate-positive"
-                            : "change-rate-negative"
+                          ? "change-rate-positive"
+                          : parseFloat(row[header.key]) < 0
+                          ? "change-rate-negative"
+                          : "change-rate-neutral"
                         }
                       >
                         {row[header.key]}
