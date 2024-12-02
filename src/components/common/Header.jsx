@@ -3,8 +3,11 @@ import { useLogin } from "../../hooks/useLogin";
 import { useNavigate, useLocation } from "react-router-dom";
 import React, { useState, useEffect, useRef } from "react";
 import search from "/img/Search.png";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 export default function Header() {
+  const BASE_URL = import.meta.env.VITE_BACK_URL;
   const navigate = useNavigate();
   const { nickname, profileColor, loggedIn, resetLoginState } = useLogin();
   const [showTooltip, setShowTooltip] = useState(false);
@@ -13,9 +16,24 @@ export default function Header() {
   const searchInputRef = useRef(null);
 
   const handleLogout = () => {
-    resetLoginState();
-    setShowTooltip(false);
-    navigate("/");
+    const setCookieDis = async () => {
+      try {
+        const response = await axios.post(BASE_URL + "/api/user/logout", {
+          withCredentials: true,
+        });
+
+        if (response.status === 200) {
+          resetLoginState();
+          setShowTooltip(false);
+          navigate("/");
+        }
+      } catch (error) {
+        if (error.response) {
+          toast.error("잘못된 요청입니다");
+        }
+      }
+    };
+    setCookieDis();
   };
 
   useEffect(() => {
