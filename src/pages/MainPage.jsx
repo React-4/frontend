@@ -35,7 +35,6 @@ const MainPage = () => {
       setDisclosureData(
         announcementList.map((item) => ({
           id: item.announcementId,
-          num: item.announcementId,
           company: item.stockName,
           report: item.title?.trim() || "N/A",
           submitter: item.submitter || "Unknown",
@@ -86,7 +85,7 @@ const MainPage = () => {
   };
 
   const disclosureHeaders = [
-    { key: "num", label: `전체 ${totalDisclosure}개`, width: "10%" },
+    { key: "id", label: `전체 ${totalDisclosure}개`, width: "10%" },
     { key: "company", label: "공시 대상 회사", width: "18%" },
     { key: "report", label: "보고서명", width: "25%" },
     { key: "submitter", label: "제출인", width: "18%" },

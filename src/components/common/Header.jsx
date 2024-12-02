@@ -33,6 +33,7 @@ export default function Header() {
       // navigate(currentPath, { replace: true });
       // window.location.reload();
       navigate(currentPath);
+      setSearchQuery("");
     }
   };
 

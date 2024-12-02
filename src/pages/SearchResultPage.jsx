@@ -103,8 +103,11 @@ const SearchResultPage = () => {
                 `${BASE_URL}/api/announcement/search`,
                 {
                     params: {
-                        keyword: searchQuery,
+                        keyword: filters.keyword || searchQuery,
                         sortBy: "latest",
+                        period: filters.period || "",
+                        marketType: filters.marketType || "",
+                        type: filters.type.join(",") || "",
                         page: page - 1, 
                         size: pageSize,
                     },
@@ -116,7 +119,6 @@ const SearchResultPage = () => {
 
             const formattedData = announcementList.map((item) => ({
                 id: item.announcementId,
-                num: item.announcementId,
                 report: item.title?.trim() || "N/A",
                 company: item.stockName || "Unknown",
                 date: item.announcementDate || "Unknown",
@@ -128,29 +130,35 @@ const SearchResultPage = () => {
                 comments: item.commentCount || 0,
             }));
 
+            setAllDisclosureData(formattedData);
             setFilteredDisclosureData(formattedData);
         } catch (error) {
             console.error("Failed to fetch disclosure data:", error);
         }
     };
+
+    const handleSearchClick = () => {
+        setCurrentDisclosurePage(1);
+        fetchDisclosureData(1);
+    };
+
+    const applySecondaryFilters = () => {
+        const filteredData = allDisclosureData.fillter((item) => {
+            const matchesCompany = filters.keyword ? item.company.includes(filters.keyword.trim()) : true;
+
+        const matchesPeriod = filters.period ? item.date.includes(filters.period) : true;
+        const matchesMarketType = filters.marketType ? item.marketType === filters.marketType : true;
+        const matchesType = filters.type.length > 0 ? filters.type.includes(item.type) : true;
+
+        return matchesCompany && matchesPeriod && matchesMarketType && matchesType 
+
+        });
+        setFilteredDisclosureData(filteredData);
+    };
+
     useEffect(() => {
         setCurrentDisclosurePage(1);
     }, [searchQuery]);
-
-    useEffect(() => {
-        fetchDisclosureData(currentDisclosurePage);
-    }, [searchQuery, currentDisclosurePage]);
-
-    const handleSearchClick = () => {
-        const keywordToUse = filters.keyword.trim() || searchQuery.trim(); 
-        setCurrentDisclosurePage(1);
-        setFilters((prevFilters) => ({
-            ...prevFilters,
-            keyword: keywordToUse,
-        }));
-
-        fetchDisclosureData(1);
-    };
 
     const handleDisclosurePageClick = (event, page) => {
         setCurrentDisclosurePage(page);
@@ -188,11 +196,15 @@ const SearchResultPage = () => {
             type: [],
         });
         setCurrentDisclosurePage(1);
-        fetchDisclosureData(searchQuery.trim());
+        fetchDisclosureData(1);
     };
+    
+    useEffect(() => {
+        fetchDisclosureData(currentDisclosurePage);
+    }, [searchQuery, currentDisclosurePage]);
       
     const disclosureHeaders = [
-        { key: "num", label: `전체 ${filteredDisclosureData.length}개`, width: "10%"},
+        { key: "id", label: `전체 ${filteredDisclosureData.length}개`, width: "10%"},
         { key: "company", label: "공시 대상 회사", width: "18%" },
         { key: "report", label: "보고서명", width: "25%" },
         { key: "submitter", label: "제출인", width: "18%" },
@@ -414,8 +426,6 @@ const SearchResultPage = () => {
             </div>
             
         )}
-
-
             <ListTables
                 type="disclosure"
                 data={filteredDisclosureData}
