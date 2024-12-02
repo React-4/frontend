@@ -1,5 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { getGPTDisclosure } from "../../services/disclosureAPI";
 
 function parseSectionContent(content) {
   const result = [];
@@ -60,6 +62,8 @@ function convertToJSONWithDetails(text) {
 }
 
 export default function GptDisclosure({ announcement, company }) {
+  const navigate = useNavigate();
+  //const [announcement, setAnnouncement] = useState({});
   const [summaryJSON, setSummaryJSON] = useState(null);
 
   useEffect(() => {
@@ -72,6 +76,25 @@ export default function GptDisclosure({ announcement, company }) {
       setSummaryJSON(json);
     }
   }, [announcement]);
+
+  const handleNavigate = () => {
+    console.log(announcement);
+    // navigate(`/stock/${announcement.stockId}`, {
+    //   state: {
+    //     data: [
+    //       {
+    //         id: id,
+    //         name: name,
+    //         price: price, // 가격
+    //         changeRate: changeRate, // 변동률
+    //         transaction: transaction, // 거래량
+    //         code: code, // 주식 코드
+    //         // 필요한 다른 데이터가 있다면 여기에 추가
+    //       },
+    //     ],
+    //   },
+    // });
+  };
 
   return (
     <div className="flex flex-col items-center w-full">
@@ -90,7 +113,10 @@ export default function GptDisclosure({ announcement, company }) {
         </div>
 
         <div className="flex flex-row gap-3 w-full justify-end mt-3">
-          <div className="bg-primary text-white px-5 h-7 rounded-lg text-center cursor-pointer">
+          <div
+            className="bg-primary text-white px-5 h-7 rounded-lg text-center cursor-pointer"
+            onClick={handleNavigate}
+          >
             {company || "회사 정보 없음"}
           </div>
           <div

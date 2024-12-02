@@ -43,51 +43,8 @@ const favData = {
   ],
 };
 
-const histData = {
-  stock: [
-    {
-      id: "1",
-      company: "방문카카오",
-      price: "51,100",
-      gap: "-1300",
-      rate: "3.5",
-    },
-    {
-      id: "2",
-      company: "방문카카오2",
-      price: "51,100",
-      gap: "-1390",
-      rate: "3.5",
-    },
-    {
-      id: "3",
-      company: "방문카카오3",
-      price: "51,100",
-      gap: "10",
-      rate: "3.5",
-    },
-    {
-      id: "4",
-      company: "방문카카오4",
-      price: "51,100",
-      gap: "1300",
-      rate: "3.5",
-    },
-    {
-      id: "5",
-      company: "방문카카오1",
-      price: "51,100",
-      gap: "-1300",
-      rate: "3.5",
-    },
-    {
-      id: "6",
-      company: "방문카카오5",
-      price: "51,100",
-      gap: "1300",
-      rate: "3.5",
-    },
-  ],
+const initialHistoryData = {
+  stock: [],
   disclosure: [],
 };
 
@@ -102,6 +59,12 @@ export default function SidebarWithDrawer() {
   });
 
   const { handleDarkMode, dark } = useDarkmode();
+
+  const getHistoryFromStorage = () => {
+    const storedHistory = sessionStorage.getItem("viewHistory");
+    return storedHistory ? JSON.parse(storedHistory) : initialHistoryData;
+  };
+
   useEffect(() => {
     if (drawerTitle === "관심") {
       setFavColor("primary");
@@ -112,11 +75,12 @@ export default function SidebarWithDrawer() {
 
     if (drawerTitle === "최근 본") {
       setHistColor("primary");
-      setData(histData);
+      setData(getHistoryFromStorage());
     } else {
       setHistColor("primary-2");
     }
   }, [drawerTitle]);
+
   const handleDrawerOpen = (content) => {
     setDrawerTitle(content);
     setDrawerOpen(true);
