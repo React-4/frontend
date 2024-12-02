@@ -5,6 +5,7 @@ import CommentList from "../components/disclosure/CommentList";
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { getCommentByStock } from "../services/commentAPI";
+import { addToHistory } from "../utils/history";
 const commentData = [
   {
     username: "유저1",
@@ -82,8 +83,9 @@ const disclosureHeaders = [
 
 export default function StockPage() {
   const location = useLocation();
+  console.log(location.state);
   const stockData = location.state.data[0];
-  console.log(stockData);
+  console.log("stockData ", stockData);
   const calculatePriceChange = (currentPrice, changeRate) => {
     let price = Math.round(
       (Number(currentPrice.slice(0, -2)) /
@@ -105,6 +107,17 @@ export default function StockPage() {
   }, []);
 
   console.log("comm", comment);
+  const stockItem = {
+    id: stockData.id,
+    company: stockData.name,
+    price: stockData.price,
+    gap: changePrice,
+    rate: stockData.changeRate,
+    code: stockData.code,
+    transaction: stockData.transaction,
+  };
+  addToHistory("stock", stockItem);
+
   return (
     <div className="flex flex-col mb-12 m-3">
       <div className="flex flex-row w-full justify-between">
