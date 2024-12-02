@@ -65,10 +65,10 @@ export default function InfiniteScrollExample() {
   );
 
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
+    // if (isFirstRender.current) {
+    //   isFirstRender.current = false;
+    //   return;
+    // }
     fetchComments(page, ITEMS_PER_PAGE);
   }, [page]);
 
