@@ -43,7 +43,7 @@ export default function Header() {
     }
   }, [location.pathname]);
 
-  const handleSearchKeyDown = (e) => {
+  const handleSearchKeyUp = (e) => {
     if (e.key === "Enter" && searchQuery.trim()) {
       const currentPath = `/search?query=${encodeURIComponent(
         searchQuery.trim()
@@ -90,7 +90,7 @@ export default function Header() {
           placeholder="검색어를 입력하세요"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          onKeyDown={handleSearchKeyDown}
+          onKeyUp={handleSearchKeyUp}
         />
       </div>
       {loggedIn ? (

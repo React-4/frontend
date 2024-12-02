@@ -153,14 +153,15 @@ const SearchResultPage = () => {
         const marketTypeMap = { "코스피": "KOSPI", "코스닥": "KOSDAQ" };
 
         const apiFilters = {
-            keyword: companyKeyword,
             period: periodMap[filters.period] || "",
             marketType: marketTypeMap[filters.marketType] || "",
-            type: filters.type,
+            type: filters.type || "",
         }
+         // 검색어가 없으면 searchQuery를 기반으로 요청
+        const keyword = companyKeyword.trim() || searchQuery;
 
         if (!companyKeyword.trim()) return;
-        fetchDisclosureData(1, companyKeyword, apiFilters);; // 공시대상 검색
+        fetchDisclosureData(1, keyword, apiFilters);; // 공시대상 검색
         setCurrentDisclosurePage(1); // 페이지 초기화
     };
 

@@ -115,9 +115,9 @@ const MainPage = () => {
         id: data[key]["종목id"],
         name: data[key]["종목명"],
         code: data[key]["종목코드"],
-        price: `${data[key]["현재가"]}원`,
+        price: `${Number(data[key]["현재가"]).toLocaleString()}원`,
         changeRate: `${data[key]["등락률"]}%`,
-        transaction: `${data[key]["거래량"]}주`,
+        transaction: `${Number(data[key]["거래량"]).toLocaleString()}주`,
       }))
       
       const filteredData = formattedData.filter((item) =>
