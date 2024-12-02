@@ -8,13 +8,19 @@ import { useNavigate } from "react-router-dom";
 export default function SidebarContent({ drawerTitle, data }) {
   const { loggedIn } = useLogin();
   const navigate = useNavigate();
-  const [stockHisList, setStockHisList] = useState(data.stock);
-  const [discloHisList, setDiscloHisList] = useState(data.disclosure);
+
+  const [stockHisList, setStockHisList] = useState([]);
+  const [discloHisList, setDiscloHisList] = useState([]);
 
   useEffect(() => {
-    setStockHisList(data.stock);
-    setDiscloHisList(data.disclosure);
-  }, [data]); // data가 변경될 때마다 실행
+    if (drawerTitle === "최근 본") {
+      setStockHisList(data.stock || []);
+      setDiscloHisList(data.disclosure || []);
+    } else if (drawerTitle === "관심") {
+      setStockHisList(Object.values(data.stock || {}));
+      setDiscloHisList(data.disclosure || []);
+    }
+  }, [data, drawerTitle]);
 
   return (
     <Box sx={{ p: 2, height: "100%", mt: 1 }}>
@@ -33,44 +39,28 @@ export default function SidebarContent({ drawerTitle, data }) {
             </Typography>
             <Divider sx={{ my: 2 }} />
             <div className="h-2/5">
-              <Typography variant="body1" component="div">
-                <div
-                  className="max-h-60 min-h-60 overflow-auto p-2 mt-4 
-                  [&::-webkit-scrollbar]:w-2
-                  [&::-webkit-scrollbar-track]:rounded-full
-                  [&::-webkit-scrollbar-track]:bg-gray-100
-                  [&::-webkit-scrollbar-thumb]:rounded-full
-                  [&::-webkit-scrollbar-thumb]:bg-gray-300
-                  dark:[&::-webkit-scrollbar-track]:bg-neutral-700
-                  dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500"
-                >
-                  {stockHisList.length === 0 ? (
-                    <div className="text-center">
-                      아직 {drawerTitle} 종목이 없어요
-                    </div>
-                  ) : (
-                    <>
-                      {" "}
-                      {stockHisList.map((d) => {
-                        return (
-                          <StockSidebarItem
-                            key={d.id}
-                            id={d.id}
-                            drawerTitle={drawerTitle}
-                            code={d.code}
-                            name={d.company}
-                            price={d.price}
-                            transaction={d.transaction}
-                            changeRate={d.rate}
-                            gap={d.gap}
-                            setStockHisList={setStockHisList}
-                          />
-                        );
-                      })}
-                    </>
-                  )}
-                </div>
-              </Typography>
+              {stockHisList.length > 0 ? (
+                stockHisList.map((d, index) => (
+                  <StockSidebarItem
+                    key={drawerTitle === "최근 본" ? d.id : d.종목id || index}
+                    id={drawerTitle === "최근 본" ? d.id : d.종목id}
+                    drawerTitle={drawerTitle}
+                    code={drawerTitle === "최근 본" ? d.code : d.종목코드}
+                    name={drawerTitle === "최근 본" ? d.company : d.종목명}
+                    price={drawerTitle === "최근 본" ? d.price : d.현재가}
+                    transaction={
+                      drawerTitle === "최근 본" ? d.transaction : d.거래량 || "N/A"
+                    }
+                    changeRate={
+                      drawerTitle === "최근 본" ? d.rate : d.등락률
+                    }
+                    gap={drawerTitle === "최근 본" ? d.gap : d.gap || 0}
+                    setStockHisList={setStockHisList}
+                  />
+                ))
+              ) : (
+                <Typography align="center">아직 {drawerTitle} 종목이 없어요</Typography>
+              )}
             </div>
           </div>
           <div>
@@ -82,59 +72,39 @@ export default function SidebarContent({ drawerTitle, data }) {
             </Typography>
             <Divider sx={{ my: 2 }} />
             <div className="h-2/5">
-              <Typography variant="body1" component="div">
-                <div
-                  className="max-h-60 min-h-60 overflow-auto p-2 mt-4 
-                  [&::-webkit-scrollbar]:w-2
-                  [&::-webkit-scrollbar-track]:rounded-full
-                  [&::-webkit-scrollbar-track]:bg-gray-100
-                  [&::-webkit-scrollbar-thumb]:rounded-full
-                  [&::-webkit-scrollbar-thumb]:bg-gray-300
-                  dark:[&::-webkit-scrollbar-track]:bg-neutral-700
-                  dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500"
-                >
-                  {discloHisList.length === 0 ? (
-                    <div className="text-center">
-                      아직 {drawerTitle} 공시가 없어요
-                    </div>
-                  ) : (
-                    <>
-                      {discloHisList.map((d) => {
-                        return (
-                          <DisclosureSidebarItem
-                            key={d.id}
-                            id={d.id}
-                            drawerTitle={drawerTitle}
-                            company={d.company}
-                            title={d.title}
-                            date={d.date}
-                            stockId={d.stockId}
-                            setDiscloHisList={setDiscloHisList}
-                          />
-                        );
-                      })}
-                    </>
-                  )}
-                </div>
-              </Typography>
+              {discloHisList.length > 0 ? (
+                discloHisList.map((d, index) => (
+                  <DisclosureSidebarItem
+                    key={d.id || index}
+                    id={d.id}
+                    drawerTitle={drawerTitle}
+                    company={
+                      drawerTitle === "최근 본" ? d.company : d.stockName
+                    }
+                    title={d.title}
+                    date={d.date}
+                    setDiscloHisList={setDiscloHisList}
+                  />
+                ))
+              ) : (
+                <Typography align="center">아직 {drawerTitle} 공시가 없어요</Typography>
+              )}
             </div>
           </div>
         </div>
       ) : (
-        <div className="flex flex-col gap-4 ">
+        <div className="flex flex-col gap-4">
           <Typography variant="h6">관심 목록</Typography>
           <Divider sx={{ my: 1 }} />
-          <div className="flex flex-col items-center gap-10">
-            <div className="text-center">
-              목록을 저장하려면 <br /> 로그인이 필요해요
-            </div>
-            <button
-              className="bg-primary w-2/3 p-1 text-white rounded-lg font-bold"
-              onClick={() => navigate("/login")}
-            >
-              로그인 하러가기
-            </button>
-          </div>
+          <Typography align="center">
+            목록을 저장하려면 <br /> 로그인이 필요해요
+          </Typography>
+          <button
+            className="bg-primary w-2/3 p-1 text-white rounded-lg font-bold"
+            onClick={() => navigate("/login")}
+          >
+            로그인 하러가기
+          </button>
         </div>
       )}
     </Box>
