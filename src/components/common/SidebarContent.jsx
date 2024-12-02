@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Typography, Divider } from "@mui/material";
 import { StockSidebarItem, DisclosureSidebarItem } from "./SidebarItem";
 import { useLogin } from "../../hooks/useLogin";
@@ -8,6 +8,14 @@ import { useNavigate } from "react-router-dom";
 export default function SidebarContent({ drawerTitle, data }) {
   const { loggedIn } = useLogin();
   const navigate = useNavigate();
+  const [stockHisList, setStockHisList] = useState(data.stock);
+  const [discloHisList, setDiscloHisList] = useState(data.disclosure);
+
+  useEffect(() => {
+    setStockHisList(data.stock);
+    setDiscloHisList(data.disclosure);
+  }, [data]); // data가 변경될 때마다 실행
+
   return (
     <Box sx={{ p: 2, height: "100%", mt: 1 }}>
       {loggedIn ? (
@@ -18,23 +26,26 @@ export default function SidebarContent({ drawerTitle, data }) {
             <div className="h-2/5">
               <Typography variant="body1" component="div">
                 <div className="max-h-60 min-h-60 overflow-auto p-2 mt-4 ">
-                  {data.stock.length === 0 ? (
+                  {stockHisList.length === 0 ? (
                     <div className="text-center">
                       아직 {drawerTitle} 종목이 없어요
                     </div>
                   ) : (
                     <>
                       {" "}
-                      {data?.stock.map((d) => {
+                      {stockHisList.map((d) => {
                         return (
                           <StockSidebarItem
                             key={d.id}
                             id={d.id}
                             drawerTitle={drawerTitle}
-                            company={d.company}
+                            code={d.code}
+                            name={d.company}
                             price={d.price}
+                            transaction={d.transaction}
+                            changeRate={d.rate}
                             gap={d.gap}
-                            rate={d.rate}
+                            setStockHisList={setStockHisList}
                           />
                         );
                       })}
@@ -50,13 +61,13 @@ export default function SidebarContent({ drawerTitle, data }) {
             <div className="h-2/5">
               <Typography variant="body1" component="div">
                 <div className="max-h-60 min-h-6 overflow-auto p-2 mt-4">
-                  {data.disclosure.length === 0 ? (
+                  {discloHisList.length === 0 ? (
                     <div className="text-center">
                       아직 {drawerTitle} 공시가 없어요
                     </div>
                   ) : (
                     <>
-                      {data?.disclosure.map((d) => {
+                      {discloHisList.map((d) => {
                         return (
                           <DisclosureSidebarItem
                             key={d.id}
@@ -64,7 +75,9 @@ export default function SidebarContent({ drawerTitle, data }) {
                             drawerTitle={drawerTitle}
                             company={d.company}
                             title={d.title}
-                            desc={d.desc}
+                            date={d.date}
+                            stockId={d.stockId}
+                            setDiscloHisList={setDiscloHisList}
                           />
                         );
                       })}

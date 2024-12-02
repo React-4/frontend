@@ -5,12 +5,10 @@ import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import ContrastIcon from "@mui/icons-material/Contrast";
 import HistoryIcon from "@mui/icons-material/History";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import Button from "@mui/material/Button";
 import SidebarContent from "./SidebarContent";
-// import { useDarkmode } from "../../hooks/useDarkmode";
 
 const favData = {
   stock: [
@@ -43,51 +41,8 @@ const favData = {
   ],
 };
 
-const histData = {
-  stock: [
-    {
-      id: "1",
-      company: "방문카카오",
-      price: "51,100",
-      gap: "-1300",
-      rate: "3.5",
-    },
-    {
-      id: "2",
-      company: "방문카카오2",
-      price: "51,100",
-      gap: "-1390",
-      rate: "3.5",
-    },
-    {
-      id: "3",
-      company: "방문카카오3",
-      price: "51,100",
-      gap: "10",
-      rate: "3.5",
-    },
-    {
-      id: "4",
-      company: "방문카카오4",
-      price: "51,100",
-      gap: "1300",
-      rate: "3.5",
-    },
-    {
-      id: "5",
-      company: "방문카카오1",
-      price: "51,100",
-      gap: "-1300",
-      rate: "3.5",
-    },
-    {
-      id: "6",
-      company: "방문카카오5",
-      price: "51,100",
-      gap: "1300",
-      rate: "3.5",
-    },
-  ],
+const initialHistoryData = {
+  stock: [],
   disclosure: [],
 };
 
@@ -101,7 +56,11 @@ export default function SidebarWithDrawer() {
     disclosure: [],
   });
 
-  // const { handleDarkMode, dark } = useDarkmode();
+  const getHistoryFromStorage = () => {
+    const storedHistory = sessionStorage.getItem("viewHistory");
+    return storedHistory ? JSON.parse(storedHistory) : initialHistoryData;
+  };
+
   useEffect(() => {
     if (drawerTitle === "관심") {
       setFavColor("primary");
@@ -112,11 +71,12 @@ export default function SidebarWithDrawer() {
 
     if (drawerTitle === "최근 본") {
       setHistColor("primary");
-      setData(histData);
+      setData(getHistoryFromStorage());
     } else {
       setHistColor("primary-2");
     }
   }, [drawerTitle]);
+
   const handleDrawerOpen = (content) => {
     setDrawerTitle(content);
     setDrawerOpen(true);
@@ -206,12 +166,6 @@ export default function SidebarWithDrawer() {
               </div>
             </Button>
           </div>
-          {/* <Button onClick={handleDarkMode}>
-            <div className="flex flex-col items-center text-primary-2 dark:text-dark-1">
-              <ContrastIcon />
-              <div className="text-xs">{dark ? "다크" : "라이트"}</div>
-            </div>
-          </Button> */}
         </List>
       </Box>
 
