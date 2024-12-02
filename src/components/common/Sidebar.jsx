@@ -5,12 +5,10 @@ import Drawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import ContrastIcon from "@mui/icons-material/Contrast";
 import HistoryIcon from "@mui/icons-material/History";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import Button from "@mui/material/Button";
 import SidebarContent from "./SidebarContent";
-import { useDarkmode } from "../../hooks/useDarkmode";
 
 const favData = {
   stock: [
@@ -58,8 +56,6 @@ export default function SidebarWithDrawer() {
     disclosure: [],
   });
 
-  const { handleDarkMode, dark } = useDarkmode();
-
   const getHistoryFromStorage = () => {
     const storedHistory = sessionStorage.getItem("viewHistory");
     return storedHistory ? JSON.parse(storedHistory) : initialHistoryData;
@@ -92,7 +88,14 @@ export default function SidebarWithDrawer() {
   };
 
   return (
-    <Box sx={{ display: "flex", height: "100vh", position: "relative" }}>
+    <Box
+      sx={{
+        display: "flex",
+        height: "100vh",
+        position: "relative",
+        zIndex: "50",
+      }}
+    >
       {drawerOpen && (
         <Box
           onClick={handleDrawerClose}
@@ -163,12 +166,6 @@ export default function SidebarWithDrawer() {
               </div>
             </Button>
           </div>
-          <Button onClick={handleDarkMode}>
-            <div className="flex flex-col items-center text-primary-2 dark:text-dark-1">
-              <ContrastIcon />
-              <div className="text-xs">{dark ? "다크" : "라이트"}</div>
-            </div>
-          </Button>
         </List>
       </Box>
 

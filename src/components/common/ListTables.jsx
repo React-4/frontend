@@ -12,7 +12,7 @@ import "../css/ListTables.css";
 import FavoriteIcon from "@mui/icons-material/Favorite"; 
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder"; 
 import { useNavigate } from "react-router-dom";
-import { useDarkmode } from "../../hooks/useDarkmode";
+// import { useDarkmode } from "../../hooks/useDarkmode";
 
 const StyledTableCell = styled(TableCell)(({ dark }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -37,7 +37,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 export default function ListTables({ type, data, headers }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [favorites, setFavorites] = useState({});
-  const { handleDarkMode, dark } = useDarkmode();
+  // const { handleDarkMode, dark } = useDarkmode();
   const itemsPerPage = 10;
 
   const handleFavoriteToggle = (id) => {
@@ -117,7 +117,8 @@ export default function ListTables({ type, data, headers }) {
                         <span className="votes-good">
                           호재 {row.votes?.good || 0}
                         </span>{" "}
-                        |<span className="votes-bad">
+                        |
+                        <span className="votes-bad">
                           악재 {row.votes?.bad || 0}
                         </span>
                       </div>
