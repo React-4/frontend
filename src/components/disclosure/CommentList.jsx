@@ -2,7 +2,13 @@
 import { useState } from "react";
 import CommentItem from "./CommentItem";
 
-export default function CommentList({ commentData, page, setPage, isEnd }) {
+export default function CommentList({
+  commentData,
+  page,
+  setPage,
+  isEnd,
+  refreshComments,
+}) {
   const [visibleComments, setVisibleComments] = useState(3);
   const handleShowMore = () => {
     setPage((prev) => prev + 1);
@@ -14,11 +20,13 @@ export default function CommentList({ commentData, page, setPage, isEnd }) {
       {/* 댓글 리스트 */}
       {commentData.slice(0, visibleComments).map((data) => (
         <CommentItem
-          key={data.id}
+          key={data.commentId}
+          commentId={data.commentId}
           username={data.username}
           comment={data.content}
           date={data.createdAt}
           userProfileColor={data.userProfileColor}
+          refreshComments={refreshComments}
         />
       ))}
 

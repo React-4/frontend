@@ -1,12 +1,11 @@
 /* eslint-disable react/prop-types */
 import { useRef, useEffect, useState } from "react";
 import { useLogin } from "../../hooks/useLogin";
-import edit from "/img/edit.png";
-import DoneIcon from "@mui/icons-material/Done";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import CloseIcon from "@mui/icons-material/Close";
+import { patchComment, deleteComment } from "../../services/commentAPI";
 
 function formatDate(inputDate) {
-  console.log("ii", inputDate);
   const now = new Date();
   const date = new Date(inputDate);
 
@@ -30,14 +29,16 @@ function formatDate(inputDate) {
 }
 
 export default function CommentItem({
+  commentId,
   username,
   comment,
   date,
   userProfileColor,
+  refreshComments,
 }) {
   const [isOverflow, setIsOverflow] = useState(false);
   const commentRef = useRef();
-  const { loggedIn } = useLogin();
+  const { nickname } = useLogin();
 
   useEffect(() => {
     if (commentRef.current) {
@@ -66,12 +67,23 @@ export default function CommentItem({
   const [editedComment, setEditedComment] = useState(comment);
   const [isEditing, setIsEditing] = useState(false);
 
-  const handleRemove = () => {
-    // API 삭제 요청
+  const handleRemove = async () => {
+    try {
+      await deleteComment(commentId);
+      refreshComments();
+    } catch (error) {
+      console.error("댓글 삭제 중 오류 발생:", error);
+    }
   };
 
-  const handleEdit = () => {
-    // API 수정 요청
+  const handleEdit = async () => {
+    try {
+      await patchComment(commentId, editedComment);
+      setIsEditing(false);
+      refreshComments();
+    } catch (error) {
+      console.error("댓글 수정 중 오류 발생:", error);
+    }
   };
 
   return (
@@ -120,16 +132,17 @@ export default function CommentItem({
           </div>
         )}
 
-        {loggedIn === username && !isEditing && (
-          <div className="flex flex-row h-3 items-center gap-3 p-1">
-            <img
-              src={edit}
-              className="w-3 cursor-pointer"
-              onClick={() => setIsEditing(true)}
+        {nickname === username && !isEditing && (
+          <div className="flex flex-row h-2 items-center gap-1 py-5 text-primary-2">
+            <EditOutlinedIcon
+              sx={{ width: "1.2rem", cursor: "pointer" }}
+              onClick={() => {
+                setIsEditing(true);
+              }}
             />
 
             <CloseIcon
-              sx={{ width: "1.2rem", cursor: "pointer" }}
+              sx={{ width: "1.4rem", cursor: "pointer" }}
               onClick={handleRemove}
             />
           </div>
