@@ -61,19 +61,7 @@ function convertToJSONWithDetails(text) {
 }
 
 export default function GptDisclosure({ announcement, company }) {
-  //const [announcement, setAnnouncement] = useState({});
   const [summaryJSON, setSummaryJSON] = useState(null);
-  console.log("adddd", announcement);
-  // useEffect(() => {
-  //   getGPTDisclosure(announcement_id)
-  //     .then((data) => {
-  //       console.log("Fetched data:", data);
-  //       setAnnouncement(data);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error fetching announcement data:", error);
-  //     });
-  // }, [announcement_id]);
 
   useEffect(() => {
     if (
@@ -106,7 +94,12 @@ export default function GptDisclosure({ announcement, company }) {
           <div className="bg-primary text-white px-5 h-7 rounded-lg text-center cursor-pointer">
             {company || "회사 정보 없음"}
           </div>
-          <div className="bg-primary text-white w-32 h-7 rounded-lg text-center cursor-pointer">
+          <div
+            className="bg-primary text-white w-32 h-7 rounded-lg text-center cursor-pointer"
+            onClick={() => {
+              window.open(announcement?.originalAnnouncementUrl);
+            }}
+          >
             원본 공시 내용
           </div>
         </div>

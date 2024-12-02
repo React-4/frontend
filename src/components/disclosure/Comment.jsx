@@ -43,9 +43,8 @@ export default function Comment({ announcement, announcement_id }) {
     if (!newComment.trim()) return;
     try {
       const response = await postComment(announcement_id, newComment);
-      console.log("rr", response);
       const newCommentData = {
-        commentId: response.commentId,
+        commentId: response.data,
         username: nickname,
         content: newComment,
         createdAt: new Date().toISOString(),
