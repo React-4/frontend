@@ -119,32 +119,18 @@ const MainPage = () => {
       );
 
       const data = response.data?.data || {};
-      const formattedData = Object.keys(data).map((key, index) => ({
-        id: index + 1,
-        num: parseInt(key),
+      const formattedData = Object.keys(data).map((key) => ({
+        id: data[key]["종목id"],
+        name: data[key]["종목명"],
         code: data[key]["종목코드"],
         price: `${data[key]["현재가"]}원`,
         changeRate: `${data[key]["등락률"]}%`,
         transaction: `${data[key]["거래량"]}주`,
-      }));
-
-      const updatedData = await Promise.all(
-        formattedData.map(async (stock) => {
-          try {
-            const tickerResponse = await axios.get(
-              `${BASE_URL}/api/stock/ticker/${stock.code}`
-            );
-            const companyName =
-              tickerResponse.data?.data?.companyName || "알 수 없음";
-            const stockId = tickerResponse.data?.data?.stockId || stock.num;
-            return { ...stock, name: companyName, id: stockId, num: stockId };
-          } catch (error) {
-            return null;
-          }
-        })
+      }))
+      
+      const filteredData = formattedData.filter((item) =>
+        Object.values(item).every((value) => value !== null)
       );
-      const filteredData = updatedData.filter((item) => item !== null);
-
       setStockData(filteredData);
     } catch (error) {
       console.error("Failed to fetch stock data:", error);
@@ -169,7 +155,7 @@ const MainPage = () => {
   const currentSData = stockData.slice(startIndex, endIndex);
 
   const stockHeaders = [
-    { key: "num", label: `전체 ${stockData.length}개`, width: "10%" },
+    { key: "id", label: `전체 ${stockData.length}개`, width: "10%" },
     { key: "name", label: "종목명", width: "20%" },
     { key: "code", label: "종목코드", width: "10%" },
     { key: "price", label: "현재가", width: "10%" },

@@ -31,50 +31,25 @@ const SearchResultPage = () => {
               }
             );
             const searchData = searchResponse.data?.data || [];
-<<<<<<< HEAD
-            
-=======
         
-            const rankResponse = await axios.get(
-              `${BASE_URL}/api/stockprice/rank`,
-              {
-                params: { sort_by: "amount" },
-              }
-            );
-            const rankData = rankResponse.data?.data || {};
-        
->>>>>>> c5a83cbaad01ae86329ba411e83bb2aa68c0587c
-            const updatedData = await Promise.all(
-                searchData.map(async (stockItem) => {
-                    try {
-                        const stockResponse = await axios.get(
-                            `${BASE_URL}/api/stockprice/current/${stockItem.ticker}`
-                        );
-                        const stockData = stockResponse.data?.data || {};
+            const formattedData = searchData.map((stockItem) => ({
+                id: stockItem.id,
+                code: stockItem.ticker,
+                name: stockItem.companyName,
+                price: stockItem.currentPrice
+                    ? `${stockItem.currentPrice.toLocaleString()}원`
+                    : "0원",
+                changeRate: stockItem.changeRate
+                    ? `${(stockItem.changeRate * 100).toFixed(2)}%`
+                    : "0%",
+                transaction: stockItem.volume
+                    ? `${stockItem.volume.toLocaleString()}주`
+                    : "0주",
+            }));
     
-                        return {
-                            id: stockItem.id,
-                            num: stockItem.id,
-                            code: stockData.ticker || stockItem.ticker,
-                            name: stockData.name || stockItem.companyName,
-                            price: stockData.currentPrice
-                                ? `${stockData.currentPrice}원`
-                                : "0원",
-                            changeRate: stockData.changeRate
-                                ? `${(stockData.changeRate * 100).toFixed(2)}%`
-                                : "0%",
-                            transaction: stockData.accTradeVolume
-                                ? `${stockData.accTradeVolume.toLocaleString()}원`
-                                : "0원",
-                        };
-                    } catch (error) {
-                        console.error(`Failed to fetch stock details for ticker ${stockItem.ticker}`, error);
-                        return null;
-                    }
-                })
+            const validData = formattedData.filter((item) =>
+                Object.values(item).every((value) => value !== null)
             );
-    
-            const validData = updatedData.filter((item) => item !== null);
     
             setAllStockData(validData);
             setFilteredStockData(validData.slice(0, pageSize));
@@ -85,7 +60,7 @@ const SearchResultPage = () => {
     };
       
     const stockHeaders = [
-        { key: "num", label: `전체 ${filteredStockData.length}개`, width: "10%" },
+        { key: "id", label: `전체 ${allStockData.length}개`, width: "10%" },
         { key: "name", label: "종목명", width: "20%"  },
         { key: "code", label: "종목코드",  width: "10%"  },
         { key: "price", label: "현재가", width: "10%" },
@@ -119,6 +94,8 @@ const SearchResultPage = () => {
     });
     const [currentDisclosurePage, setCurrentDisclosurePage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [allDisclosureData, setAllDisclosureData] = useState([]);
+
     
     const fetchDisclosureData = async (page=1) => {
         try {
@@ -128,7 +105,7 @@ const SearchResultPage = () => {
                     params: {
                         keyword: searchQuery,
                         sortBy: "latest",
-                        page: page - 1, // API 페이지는 0부터 시작
+                        page: page - 1, 
                         size: pageSize,
                     },
                 }
