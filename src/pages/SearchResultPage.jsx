@@ -43,7 +43,7 @@ const SearchResultPage = () => {
                     ? `${(stockItem.changeRate * 100).toFixed(2)}%`
                     : "0%",
                 transaction: stockItem.volume
-                    ? `${Num(stockItem.volume).toLocaleString()}주`
+                    ? `${Number(stockItem.volume).toLocaleString()}주`
                     : "0주",
             }));
     
@@ -238,11 +238,20 @@ const SearchResultPage = () => {
         <div>
             <div className="search-result-title">
                 <h1 className="result-title">
-                    <span style={{ color: "#0045B0", fontSize: "30px", fontWeight: "bold", marginLeft: "20px"}}>'{searchQuery}'</span>
-                    <span style={{ color: "black", fontSize: "20px"}}> 검색결과</span>
+                    <span
+                        style={{
+                            color: "#0045B0",
+                            fontSize: "30px",
+                            fontWeight: "bold",
+                            marginLeft: "20px",
+                        }}
+                    >
+                        '{searchQuery}'
+                    </span>
+                    <span style={{ color: "black", fontSize: "20px" }}> 검색결과</span>
                 </h1>
             </div>
-
+    
             <h2 className="list-title">종목명</h2>
             {filteredStockData.length > 0 ? (
                 <>
@@ -259,21 +268,20 @@ const SearchResultPage = () => {
                             color="primary"
                         />
                     </div>
-                
                 </>
             ) : (
                 <div className="no-results-box">
-                    <p className="no-results-text">종목 검색 결과가 없습니다.</p> 
+                    <p className="no-results-text">종목 검색 결과가 없습니다.</p>
                 </div>
             )}
-            
-            
+    
             <h2 className="list-title">공시</h2>
-            {filteredDisclosureData.length > 0 ? (
-            <>
+    
+            {/* 필터링 UI는 항상 표시 */}
             <div className="filters">
                 <div className="sec">
                     <div className="sector1">
+                        {/* 필터링 관련 UI */}
                         <div className="row">
                             <div className="filter-group search-group">
                                 <label>공시대상 회사</label>
@@ -282,37 +290,38 @@ const SearchResultPage = () => {
                                         type="text"
                                         placeholder="회사명 | 티커"
                                         value={companyKeyword}
-                                        onChange={e => setCompanyKeyword(e.target.value)} //검색어 변경
+                                        onChange={(e) => setCompanyKeyword(e.target.value)}
                                     />
-                                </div>                    
+                                </div>
                             </div>
                         </div>
-                    
+    
                         <div className="row">
                             <div className="filter-group period-group">
                                 <label>기간</label>
                                 <div className="period-buttons">
                                     {["1개월", "6개월", "1년", "3년"].map((period) => (
-                                    <button
-                                        key={period}
-                                        className={filters.period === period ? "active" : ""}
-                                        onClick={() => handleFilterChange("period", period)}
+                                        <button
+                                            key={period}
+                                            className={filters.period === period ? "active" : ""}
+                                            onClick={() => handleFilterChange("period", period)}
                                         >
-                                        {period}
-                                    </button>
+                                            {period}
+                                        </button>
                                     ))}
-                                    <button 
+                                    <button
                                         className={filters.period === "지정" ? "active" : ""}
                                         onClick={() => {
                                             openModal();
-                                            setFilters((prev) => ({ ...prev, period: "지정" })); // 지정 버튼 상태 설정
+                                            setFilters((prev) => ({
+                                                ...prev,
+                                                period: "지정",
+                                            }));
                                         }}
-                                    
                                     >
                                         지정
                                     </button>
                                 </div>
-                            
                                 {filters.startDate && filters.endDate && (
                                     <span className="selected-dates">
                                         {filters.startDate}~{filters.endDate}
@@ -320,123 +329,130 @@ const SearchResultPage = () => {
                                 )}
                             </div>
                         </div>
-
+    
                         <div className="row">
                             <div className="filter-group market-group">
                                 <label>시장</label>
                                 <div className="market-buttons">
                                     {["코스피", "코스닥"].map((marketType) => (
-                                    <button
-                                        key={marketType}
-                                        className={filters.marketType === marketType ? "active" : ""}
-                                        onClick={() => handleFilterChange("marketType", marketType)}
+                                        <button
+                                            key={marketType}
+                                            className={
+                                                filters.marketType === marketType ? "active" : ""
+                                            }
+                                            onClick={() =>
+                                                handleFilterChange("marketType", marketType)
+                                            }
                                         >
-                                        {marketType}
-                                    </button>
+                                            {marketType}
+                                        </button>
                                     ))}
                                 </div>
                             </div>
                         </div>
-
                     </div>
                 </div>
-
+    
                 <section className="separator"></section>
-                    
+    
                 <div className="filter-group type-group">
-                <label>공시 유형</label>
+                    <label>공시 유형</label>
                     <div className="type-buttons">
                         {[
-                        "정기공시",
-                        "주요사항보고",
-                        "발행공시",
-                        "지분공시",
-                        "기타공시",
-                        "외부감사관련",
-                        "펀드공시",
-                        "자산유동화",
-                        "거래소공시",
-                        "공정위공시",
+                            "정기공시",
+                            "주요사항보고",
+                            "발행공시",
+                            "지분공시",
+                            "기타공시",
+                            "외부감사관련",
+                            "펀드공시",
+                            "자산유동화",
+                            "거래소공시",
+                            "공정위공시",
                         ].map((type) => (
                             <button
-                        key={type}
-                        className={filters.type === type ? "active" : ""}
-                        onClick={() => handleFilterChange("type", type)}
-                    >
-                        {type}
-                    </button>
+                                key={type}
+                                className={filters.type === type ? "active" : ""}
+                                onClick={() => handleFilterChange("type", type)}
+                            >
+                                {type}
+                            </button>
                         ))}
                     </div>
                 </div>
-                
+    
                 <section className="separator"></section>
-
+    
                 <div className="sector2">
                     <div className="filter-actions">
-                    <button className="fibut" onClick={handleSearchClick}>
-                        검색
-                    </button>
+                        <button className="fibut" onClick={handleSearchClick}>
+                            검색
+                        </button>
                     </div>
-
+    
                     <div className="filter-actions">
-                    <button className="fibut" onClick={resetFilters}>
-                        초기화
-                    </button>
+                        <button className="fibut" onClick={resetFilters}>
+                            초기화
+                        </button>
                     </div>
                 </div>
             </div>
-
+    
             {isModalOpen && (
-            <div className="modal-overlay">
-            <div className="modal-content">
-                <h3>날짜 선택</h3>
-                <label>
-                시작 날짜:
-                <input
-                    type="date"
-                    value={filters.startDate || ""}
-                    max={new Date().toISOString().split("T")[0]}
-                    onChange={handleStartDateChange}
-                />
-                </label>
-                <label>
-                종료 날짜:
-                <input
-                    type="date"
-                    value={filters.endDate || ""}
-                    min={filters.startDate || ""}
-                    max={new Date().toISOString().split("T")[0]}
-                    onChange={handleEndDateChange}
-                />
-                </label>
-                <div className="modal-actions">
-                <button onClick={closeModal}>확인</button>
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <h3>날짜 선택</h3>
+                        <label>
+                            시작 날짜:
+                            <input
+                                type="date"
+                                value={filters.startDate || ""}
+                                max={new Date().toISOString().split("T")[0]}
+                                onChange={handleStartDateChange}
+                            />
+                        </label>
+                        <label>
+                            종료 날짜:
+                            <input
+                                type="date"
+                                value={filters.endDate || ""}
+                                min={filters.startDate || ""}
+                                max={new Date().toISOString().split("T")[0]}
+                                onChange={handleEndDateChange}
+                            />
+                        </label>
+                        <div className="modal-actions">
+                            <button onClick={closeModal}>확인</button>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            </div>
-            
-        )}
-            <ListTables
-                type="disclosure"
-                data={filteredDisclosureData}
-                headers={disclosureHeaders}
-            />
-            <div className="pagination-container">
-                <Pagination
-                    count={totalPages}
-                    page={currentDisclosurePage}
-                    onChange={handleDisclosurePageClick}
-                    color="primary"
-                />
-            </div>
-            </>
-        ) : (
-            <div className="no-results-box">
-                <p className="no-results-text">공시 검색 결과가 없습니다.</p> 
-            </div>
-        )}
+            )}
+    
+            {/* 테이블은 조건부 렌더링 */}
+            {filteredDisclosureData.length > 0 ? (
+                <>
+                    <ListTables
+                        type="disclosure"
+                        data={filteredDisclosureData}
+                        headers={disclosureHeaders}
+                    />
+                    <div className="pagination-container">
+                        <Pagination
+                            count={totalPages}
+                            page={currentDisclosurePage}
+                            onChange={handleDisclosurePageClick}
+                            color="primary"
+                        />
+                    </div>
+                </>
+            ) : (
+                <div className="no-results-box">
+                    <p className="no-results-text">공시 검색 결과가 없습니다.</p>
+                </div>
+            )}
         </div>
     );
+    
 };
 
 export default SearchResultPage;
