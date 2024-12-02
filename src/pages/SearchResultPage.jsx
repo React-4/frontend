@@ -115,7 +115,7 @@ const SearchResultPage = () => {
             );
 
             const { announcementList = [], announcementCount } = response.data?.data || {};
-            setTotalPages(announcementCount); 
+            setTotalPages(announcementCount);
 
             const formattedData = announcementList.map((item) => ({
                 id: item.announcementId,

@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 import ApexChart from "../components/chart/ApexChart";
 import ListTables from "../components/common/ListTables";
 import CommentList from "../components/disclosure/CommentList";
@@ -6,36 +7,78 @@ import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { getCommentByStock } from "../services/commentAPI";
 import { addToHistory } from "../utils/history";
+import { Pagination } from "@mui/material";
+import '../components/css/SearRes.css';
 
-const disclosureData = Array.from({ length: 50 }, (_, index) => ({
-  id: index + 1,
-  num: index + 1,
-  company: `회사 ${index + 1}`,
-  report: `보고서 ${index + 1}`,
-  submitter: `제출자 ${index + 1}`,
-  date: `2024-11-${(index % 30) + 1}`,
-  votes: {
-    good: Math.floor(Math.random() * 11),
-    bad: Math.floor(Math.random() * 11),
-  },
-  comments: Math.floor(Math.random() * 50),
-}));
-
-const disclosureHeaders = [
-  { key: "num", label: `전체 리스트 ${disclosureData.length}개` },
-  { key: "company", label: "공시 대상 회사" },
-  { key: "report", label: "보고서명" },
-  { key: "submitter", label: "제출인" },
-  { key: "date", label: "접수일자" },
-  { key: "votes", label: "투표" },
-  { key: "comments", label: "댓글수" },
-];
+const BASE_URL = import.meta.env.VITE_BACK_URL;
 
 export default function StockPage() {
+  const [stockData, setStockData] = useState([]);
+  const [totalAnnouncements, setTotalAnnouncements] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [chartType, setChartType] = useState("day");
+  const [comment, setComment] = useState([]);
+  const pageSize = 10;
+
+  const getStockIdFromUrl = () => {
+    const path = window.location.pathname;
+    const match = path.match(/\/stock\/(\d+)/); // "/stock/:stock_id" 패턴 매칭
+    return match ? match[1] : null; 
+  };
+  
+  const stock_id = getStockIdFromUrl();
+
+  const fetchAnnouncementData = async (page = 1) => {
+    try {
+      const response = await axios.get(
+        `${BASE_URL}/api/announcement/stock/${stock_id}`, // stock_id를 URL 경로에 포함
+        {
+          params: {
+            sortBy: "latest",
+            page,
+            size: pageSize,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        const {announcementList = [], announcementCount} = response.data?.data || {};
+        setStockData(announcementList);
+        setTotalAnnouncements(announcementCount);
+      } else {
+        console.error("Failed to fetch announcement data:", response.data?.message);
+      }
+    } catch (error) {
+      console.error("Error fetching announcement data:", error);
+    }
+  };
+
+  // 페이지 변경 핸들러
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+    fetchAnnouncementData(value);
+  };
+
+  // 최초 렌더링 시 공시 데이터와 댓글 데이터 가져오기
+  useEffect(() => {
+    fetchAnnouncementData();
+    getCommentByStock(stock_id).then((data) => setComment(data));
+  }, [stock_id]);
+
+  const disclosureHeaders = [
+    { key: "id", label: `전체 ${fetchAnnouncementData.length}개`, width: "10%"},
+    { key: "company", label: "공시 대상 회사", width: "18%" },
+    { key: "report", label: "보고서명", width: "25%" },
+    { key: "submitter", label: "제출인", width: "18%" },
+    { key: "date", label: "접수일자", width: "10%" },
+    { key: "votes", label: "투표", width: "12%" },
+    { key: "comments", label: "댓글수", width: "7%" },
+];
+
+  if (!stockData) return <div>Loading...</div>;
+
   const location = useLocation();
   console.log(location.state);
-  const stockData = location.state.data[0];
-  console.log("stockData ", stockData);
   const calculatePriceChange = (currentPrice, changeRate) => {
     let price = Math.round(
       (Number(currentPrice.slice(0, -2)) /
@@ -49,11 +92,6 @@ export default function StockPage() {
     stockData.price,
     stockData.changeRate
   );
-  const [chartType, setChartType] = useState("day");
-  const [comment, setComment] = useState([]);
-  useEffect(() => {
-    getCommentByStock(stockData.id).then((data) => setComment(data));
-  }, []);
 
   const stockItem = {
     id: stockData.id,
@@ -140,8 +178,14 @@ export default function StockPage() {
         <div className="font-bold text-xl">공시</div>
         <ListTables
           type="disclosure"
-          data={disclosureData}
+          data={stockData}
           headers={disclosureHeaders}
+        />
+        <Pagination
+          count={total}
+          page={currentPage}
+          onChange={handlePageChange}
+          color="primary"
         />
       </div>
       <div>
