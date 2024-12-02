@@ -1,5 +1,5 @@
-import { loginContext } from "../contexts/loginContext";
 import { useContext } from "react";
+import { loginContext } from "../contexts/loginContext";
 
 export function useLogin() {
   const {
@@ -11,8 +11,11 @@ export function useLogin() {
     setEmail,
     nickname,
     setNickname,
+    favoriteAnnouncementIds,
+    setFavoriteAnnouncementIds,
+    favoriteStockIds,
+    setFavoriteStockIds,
     resetLoginState,
-    token,
   } = useContext(loginContext);
 
   return {
@@ -24,7 +27,10 @@ export function useLogin() {
     setEmail,
     nickname,
     setNickname,
+    favoriteAnnouncementIds,
+    setFavoriteAnnouncementIds,
+    favoriteStockIds,
+    setFavoriteStockIds,
     resetLoginState,
-    token,
   };
 }
