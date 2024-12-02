@@ -10,10 +10,7 @@ import Paper from "@mui/material/Paper";
 import "../css/ListTables.css";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { useNavigate } from "react-router-dom";
-import { useDarkmode } from "../../hooks/useDarkmode";
 import {
   addFavoriteAnnouncementAPI,
   removeFavoriteAnnouncementAPI,
@@ -44,7 +41,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 export default function ListTables({ type, data, headers }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [favorites, setFavorites] = useState([]);
-  const { handleDarkMode, dark } = useDarkmode();
+  // const { handleDarkMode, dark } = useDarkmode();
   const itemsPerPage = 10;
 
   const navigate = useNavigate();

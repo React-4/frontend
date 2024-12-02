@@ -9,7 +9,6 @@ import HistoryIcon from "@mui/icons-material/History";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import Button from "@mui/material/Button";
 import SidebarContent from "./SidebarContent";
-import { useDarkmode } from "../../hooks/useDarkmode";
 import { fetchStockPricesAPI, fetchAnnouncementListAPI } from "../../services/stockAPI";
 
 

@@ -58,14 +58,14 @@ export function StockSidebarItem({
   };
 
   return (
-    <div className="flex flex-row justify-between items-start mx-1 my-3 cursor-pointer">
+    <div className="flex flex-row justify-between items-start mx-1 my-3">
       <div
-        className="font-semibold max-w-25 min-w-20 cursor-pointer"
+        className="font-semibold max-w-20 min-w-20 cursor-pointer"
         onClick={handleNavigate}
       >
         {name}
       </div>
-      <div className="flex flex-col items-end  mr-2" onClick={handleNavigate}>
+      <div className="flex flex-col items-end mr-2">
         <div className="font-semibold">{price}</div>
         <div
           className={`flex flex-row text-xs items-end ${

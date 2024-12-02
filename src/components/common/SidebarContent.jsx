@@ -39,35 +39,28 @@ export default function SidebarContent({ drawerTitle, data }) {
             </Typography>
             <Divider sx={{ my: 2 }} />
             <div className="h-2/5">
-              <Typography variant="body1" component="div">
-                <div className="max-h-60 min-h-60 overflow-auto p-2 mt-4 ">
-                  {stockHisList.length === 0 ? (
-                    <div className="text-center">
-                      아직 {drawerTitle} 종목이 없어요
-                    </div>
-                  ) : (
-                    <>
-                      {" "}
-                      {stockHisList.map((d) => {
-                        return (
-                          <StockSidebarItem
-                            key={d.id}
-                            id={d.id}
-                            drawerTitle={drawerTitle}
-                            code={d.code}
-                            name={d.company}
-                            price={d.price}
-                            transaction={d.transaction}
-                            changeRate={d.rate}
-                            gap={d.gap}
-                            setStockHisList={setStockHisList}
-                          />
-                        );
-                      })}
-                    </>
-                  )}
-                </div>
-              </Typography>
+              {stockHisList.length > 0 ? (
+                stockHisList.map((d, index) => (
+                  <StockSidebarItem
+                    key={drawerTitle === "최근 본" ? d.id : d.종목id || index}
+                    id={drawerTitle === "최근 본" ? d.id : d.종목id}
+                    drawerTitle={drawerTitle}
+                    code={drawerTitle === "최근 본" ? d.code : d.종목코드}
+                    name={drawerTitle === "최근 본" ? d.company : d.종목명}
+                    price={drawerTitle === "최근 본" ? d.price : d.현재가}
+                    transaction={
+                      drawerTitle === "최근 본" ? d.transaction : d.거래량 || "N/A"
+                    }
+                    changeRate={
+                      drawerTitle === "최근 본" ? d.rate : d.등락률
+                    }
+                    gap={drawerTitle === "최근 본" ? d.gap : d.gap || 0}
+                    setStockHisList={setStockHisList}
+                  />
+                ))
+              ) : (
+                <Typography align="center">아직 {drawerTitle} 종목이 없어요</Typography>
+              )}
             </div>
           </div>
           <div>
@@ -79,32 +72,23 @@ export default function SidebarContent({ drawerTitle, data }) {
             </Typography>
             <Divider sx={{ my: 2 }} />
             <div className="h-2/5">
-              <Typography variant="body1" component="div">
-                <div className="max-h-60 min-h-6 overflow-auto p-2 mt-4">
-                  {discloHisList.length === 0 ? (
-                    <div className="text-center">
-                      아직 {drawerTitle} 공시가 없어요
-                    </div>
-                  ) : (
-                    <>
-                      {discloHisList.map((d) => {
-                        return (
-                          <DisclosureSidebarItem
-                            key={d.id}
-                            id={d.id}
-                            drawerTitle={drawerTitle}
-                            company={d.company}
-                            title={d.title}
-                            date={d.date}
-                            stockId={d.stockId}
-                            setDiscloHisList={setDiscloHisList}
-                          />
-                        );
-                      })}
-                    </>
-                  )}
-                </div>
-              </Typography>
+              {discloHisList.length > 0 ? (
+                discloHisList.map((d, index) => (
+                  <DisclosureSidebarItem
+                    key={d.id || index}
+                    id={d.id}
+                    drawerTitle={drawerTitle}
+                    company={
+                      drawerTitle === "최근 본" ? d.company : d.stockName
+                    }
+                    title={d.title}
+                    date={d.date}
+                    setDiscloHisList={setDiscloHisList}
+                  />
+                ))
+              ) : (
+                <Typography align="center">아직 {drawerTitle} 공시가 없어요</Typography>
+              )}
             </div>
           </div>
         </div>
