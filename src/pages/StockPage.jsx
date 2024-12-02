@@ -69,10 +69,22 @@ export default function StockPage() {
   return (
     <div className="flex flex-col mb-12 m-3">
       <div className="flex flex-row w-full justify-between">
-        <div className="flex flex-row gap-2">
-          <div className="font-semibold text-xl">{stockData.name}</div>
-          <div className="text-primary-2 font-semibold text-lg ">
-            {stockData.code}
+        <div className="flex flex-row items-center">
+          <img
+            src={`https://thumb.tossinvest.com/image/resized/96x0/https%3A%2F%2Fstatic.toss.im%2Fpng-icons%2Fsecurities%2Ficn-sec-fill-${stockData.code}.png`}
+            alt={`${stockData.code} 아이콘`}
+            style={{
+              width: "50px",
+              height: "50px",
+              marginRight: "0.3em",
+            }} // 크기 및 여백 조정
+            className="rounded-xl"
+          />
+          <div className="flex flex-row gap-2">
+            <div className="font-semibold text-xl">{stockData.name}</div>
+            <div className="text-primary-2 font-semibold text-lg ">
+              {stockData.code}
+            </div>
           </div>
         </div>
         <div className="flex flex-row gap-2">
