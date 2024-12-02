@@ -60,7 +60,6 @@ export default function Comment({ announcement, announcement_id }) {
         if (confirmCancel) {
           try {
             const res = await deleteVote(announcement_id); // 투표 취소 요청
-            console.log(res);
             if (res.status === 200) {
               localStorage.removeItem(`vote_${announcement_id}`);
               if (voteType === "POSITIVE") {
