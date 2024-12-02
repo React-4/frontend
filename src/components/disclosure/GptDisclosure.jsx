@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
-import { getGPTDisclosure } from "../../services/disclosureAPI";
 
 function parseSectionContent(content) {
   const result = [];
