@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ApexChart from "../components/chart/ApexChart";
 import ListTables from "../components/common/ListTables";
-import CommentList from "../components/disclosure/CommentList";
 import { useLocation } from "react-router-dom";
 import { getCommentByStock } from "../services/commentAPI";
 import { addToHistory } from "../utils/history";
@@ -26,6 +25,7 @@ export default function StockPage() {
   const params = useParams();
   const [stockData, setStockData] = useState([]);
   const [disclosureData, setDisclosureData] = useState([]);
+  console.log("asdf", stockData);
   useEffect(() => {
     if (location.state !== null) {
       setStockData(location.state.data[0]);
@@ -69,6 +69,7 @@ export default function StockPage() {
       );
 
       if (response.status === 200) {
+        console.log("Stock Data: ", stockData); // 상태가 업데이트된 후 값 확인
         const { announcementList = [], announcementCount } =
           response.data.data || {};
         setDisclosureData(announcementList);
@@ -116,7 +117,7 @@ export default function StockPage() {
   // 공시 데이터 로드
   useEffect(() => {
     if (stock_id) fetchDisclosureData();
-  }, [stock_id]);
+  }, [stockData, stock_id]);
 
   // 로컬 스토리지에서 초기화
   useEffect(() => {
@@ -187,12 +188,12 @@ export default function StockPage() {
       <div className="flex flex-row w-full justify-between">
         <div className="flex flex-row items-center">
           <img
-            src={`https://thumb.tossinvest.com/image/resized/96x0/https%3A%2F%2Fstatic.toss.im%2Fpng-icons%2Fsecurities%2Ficn-sec-fill-${stockData.code}.png`}
-            alt={`${stockData.code} 아이콘`}
+            src={`https://thumb.tossinvest.com/image/resized/96x0/https%3A%2F%2Fstatic.toss.im%2Fpng-icons%2Fsecurities%2Ficn-sec-fill-${stockData?.code}.png`}
+            alt={`${stockData?.code} 아이콘`}
             style={{
-              width: "50px",
-              height: "50px",
-              marginRight: "0.3em",
+              width: "45px",
+              height: "45px",
+              marginRight: "0.5em",
             }}
             className="rounded-xl"
             onError={(e) => {
@@ -203,7 +204,7 @@ export default function StockPage() {
           <div className="flex flex-row gap-2">
             <div className="font-semibold text-xl">{stockData.name}</div>
             <div className="text-primary-2 font-semibold text-lg ">
-              {stockData.code}
+              {stockData?.code}
             </div>
           </div>
           {loggedIn && (
@@ -306,7 +307,6 @@ export default function StockPage() {
       <div>
         <div className="font-bold text-xl pl-5">댓글</div>
         <div className="mx-4">
-          <CommentList commentData={comment} />
           {comment.map((com) => (
             <StockComment
               key={com.commentId}

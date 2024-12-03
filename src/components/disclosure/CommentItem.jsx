@@ -104,14 +104,28 @@ export default function CommentItem({
           {nickname === username && !isEditing && (
             <div className="ml-4 flex flex-row h-2 items-center gap-1 py-5 text-primary-2">
               <EditOutlinedIcon
-                sx={{ width: "1.2rem", cursor: "pointer" }}
+                sx={{
+                  width: "1.2rem",
+                  cursor: "pointer",
+                  "&:hover": {
+                    transform: "scale(1.2)",
+                    transition: "transform 0.2s ease",
+                  },
+                }}
                 onClick={() => {
                   setIsEditing(true);
                 }}
               />
 
               <CloseIcon
-                sx={{ width: "1.4rem", cursor: "pointer" }}
+                sx={{
+                  width: "1.4rem",
+                  cursor: "pointer",
+                  "&:hover": {
+                    transform: "scale(1.2)",
+                    transition: "transform 0.2s ease",
+                  },
+                }}
                 onClick={handleRemove}
               />
             </div>
@@ -128,7 +142,7 @@ export default function CommentItem({
             ></textarea>
             <button
               type="submit"
-              className="absolute bottom-4 right-4 h-8 w-16 bg-primary text-white rounded-lg "
+              className="absolute bottom-4 right-4 h-8 w-16 bg-primary text-white rounded-lg hover:opacity-70"
               onClick={handleEdit}
             >
               등록

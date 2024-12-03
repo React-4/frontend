@@ -18,8 +18,8 @@ const ApexChart = ({ stockId, type, company }) => {
   const navigate = useNavigate();
   // type 변경에 따라 length 조정
   useEffect(() => {
-    if (type === "day") setLength(100);
-    if (type === "week") setLength(50);
+    if (type === "day") setLength(50);
+    if (type === "week") setLength(30);
     if (type === "month") setLength(20);
   }, [type]);
   console.log("chart com", company);

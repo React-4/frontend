@@ -12,6 +12,7 @@ import "../css/ListTables.css";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { useNavigate } from "react-router-dom";
+import { useLogin } from "../../hooks/useLogin";
 import {
   addFavoriteAnnouncementAPI,
   removeFavoriteAnnouncementAPI,
@@ -46,11 +47,12 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 export default function ListTables({ type, data, headers }) {
+  console.log("dis", data);
   const [currentPage, setCurrentPage] = useState(1);
   const [favorites, setFavorites] = useState([]);
   // const { handleDarkMode, dark } = useDarkmode();
   const itemsPerPage = 10;
-
+  const { loggedIn } = useLogin();
   const navigate = useNavigate();
 
   // 로컬 스토리지에서 초기화
@@ -139,20 +141,23 @@ export default function ListTables({ type, data, headers }) {
                   <StyledTableCell key={i} align="center">
                     {header.key === "id" ? (
                       <div className="heart-number">
-                        <span
-                          className="heart"
-                          onClick={(e) => {
-                            e.stopPropagation(); // 좋아요 클릭 시 행 이동 이벤트 중단
-                            handleFavoriteToggle(row.id);
-                          }}
-                          style={{ cursor: "pointer" }}
-                        >
-                          {favorites.includes(row.id) ? (
-                            <FavoriteIcon style={{ color: "#F04452" }} />
-                          ) : (
-                            <FavoriteBorderIcon />
-                          )}
-                        </span>
+                        {loggedIn && (
+                          <span
+                            className="heart"
+                            onClick={(e) => {
+                              e.stopPropagation(); // 좋아요 클릭 시 행 이동 이벤트 중단
+                              handleFavoriteToggle(row.id);
+                            }}
+                            style={{ cursor: "pointer" }}
+                          >
+                            {favorites.includes(row.id) ? (
+                              <FavoriteIcon style={{ color: "#F04452" }} />
+                            ) : (
+                              <FavoriteBorderIcon />
+                            )}
+                          </span>
+                        )}
+
                         <img
                           src={
                             (

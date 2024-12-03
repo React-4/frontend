@@ -7,7 +7,7 @@ import {
   postComment,
 } from "../../services/commentAPI";
 import { postVote, deleteVote } from "../../services/voteAPI";
-import Modal from "../common/Modal";
+import { CancleVoteModal, LoginModal } from "../common/Modal";
 import ScrollToTopButton from "../common/ScrollToTopButton";
 
 export default function Comment({ announcement, announcement_id }) {
@@ -22,7 +22,9 @@ export default function Comment({ announcement, announcement_id }) {
   const [localComment, setLocalComment] = useState([]);
   const nickname = localStorage.getItem("nickname");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [pendingVoteType, setPendingVoteType] = useState(null);
+
   const colorClasses = [
     "bg-profile",
     "bg-profile-0",
@@ -68,7 +70,7 @@ export default function Comment({ announcement, announcement_id }) {
         await submitVote(newVoteType);
       }
     } else {
-      alert("로그인 후 투표할 수 있어요");
+      setIsLoginModalOpen(true);
     }
   };
 
@@ -135,6 +137,9 @@ export default function Comment({ announcement, announcement_id }) {
     setIsModalOpen(false);
   };
 
+  const handleCloseLoginModal = () => {
+    setIsLoginModalOpen(false);
+  };
   useEffect(() => {
     getCommentByAnnouncement(announcement_id, 0, 6).then((data) => {
       setLocalComment(data);
@@ -237,7 +242,7 @@ export default function Comment({ announcement, announcement_id }) {
               ></textarea>
               <button
                 type="submit"
-                className="absolute bottom-4 right-4 h-8 w-16 bg-primary text-white rounded-lg"
+                className="absolute bottom-4 right-4 h-8 w-16 bg-primary text-white rounded-lg hover:opacity-70"
                 onClick={handlePostComment}
               >
                 등록
@@ -256,11 +261,17 @@ export default function Comment({ announcement, announcement_id }) {
       </div>
       <ScrollToTopButton />
 
-      <Modal
+      <CancleVoteModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         onConfirm={handleConfirmCancel}
         message="이미 투표한 내용이 있습니다. 투표를 취소하시겠습니까?"
+      />
+
+      <LoginModal
+        isOpen={isLoginModalOpen}
+        onClose={handleCloseLoginModal}
+        message="로그인 후 투표할 수 있어요"
       />
     </>
   );
