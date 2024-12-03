@@ -205,13 +205,14 @@ export default function StockPage() {
           data={filteredDisclosureData}
           headers={disclosureHeaders}
         />
-        <Pagination
-          count={totalPages}
-          page={currentDisclosurePage}
-          onChange={handlePageChange}
-          color="primary"
-        />
-
+        <div className="pagination-container">
+          <Pagination
+            count={totalPages}
+            page={currentDisclosurePage}
+            onChange={handlePageChange}
+            color="primary"
+          />
+        </div>
       </div>
       <div>
         <div className="font-bold text-xl">댓글</div>
