@@ -66,11 +66,11 @@ function convertToJSONWithDetails(text) {
   return result;
 }
 
-export default function GptDisclosure({ announcement, company,disclo_id }) {
+export default function GptDisclosure({ announcement, company, disclo_id }) {
   const navigate = useNavigate();
   //const [announcement, setAnnouncement] = useState({});
   const [summaryJSON, setSummaryJSON] = useState(null);
-
+  console.log(announcement);
   useEffect(() => {
     if (
       announcement &&
@@ -82,52 +82,47 @@ export default function GptDisclosure({ announcement, company,disclo_id }) {
     }
   }, [announcement]);
 
-  const handleNavigate = () => {
-    console.log(announcement);
-    // navigate(`/stock/${announcement.stockId}`, {
-    //   state: {
-    //     data: [
-    //       {
-    //         id: id,
-    //         name: name,
-    //         price: price, // 가격
-    //         changeRate: changeRate, // 변동률
-    //         transaction: transaction, // 거래량
-    //         code: code, // 주식 코드
-    //         // 필요한 다른 데이터가 있다면 여기에 추가
-    //       },
-    //     ],
-    //   },
-    // });
-  };
+  // const handleNavigate = () => {
+  //   console.log(announcement);
+  //   navigate(`/stock/${announcement.stockId}`, {
+  //     state: {
+  //       data: [
+  //         {
+  //           id: sid,
+  //           name: name,
+  //           price: price, // 가격
+  //           changeRate: changeRate, // 변동률
+  //           transaction: transaction, // 거래량
+  //           code: code, // 주식 코드
+  //         },
+  //       ],
+  //     },
+  //   });
+  // };
 
   const [favorites, setFavorites] = useState([]);
   // 로컬 스토리지에서 초기화
   useEffect(() => {
     const storedFavorites = JSON.parse(
-      localStorage.getItem(
-        "favoriteAnnouncementIds"
-      ) || "[]"
+      localStorage.getItem("favoriteAnnouncementIds") || "[]"
     );
     setFavorites(storedFavorites);
   }, []);
 
   const handleFavoriteToggle = async (id) => {
-    console.log(id)
+    console.log(id);
     try {
       if (favorites.includes(id)) {
-          await removeFavoriteAnnouncementAPI(id);
-          setFavorites((prev) => prev.filter((favId) => favId !== id));
+        await removeFavoriteAnnouncementAPI(id);
+        setFavorites((prev) => prev.filter((favId) => favId !== id));
       } else {
-          await addFavoriteAnnouncementAPI(id);
-          setFavorites((prev) => [...prev, id]);
+        await addFavoriteAnnouncementAPI(id);
+        setFavorites((prev) => [...prev, id]);
       }
     } catch (error) {
       console.error("Error toggling favorite:", error);
     }
   };
-  
-
 
   return (
     <div className="flex flex-col items-center w-full">
@@ -137,23 +132,20 @@ export default function GptDisclosure({ announcement, company,disclo_id }) {
           {announcement?.title}
 
           <span
-              className="heart"
-              onClick={(e) => {
-                e.stopPropagation(); // 좋아요 클릭 시 행 이동 이벤트 중단
-                handleFavoriteToggle(disclo_id);
-              }}
-              style={{ cursor: "pointer" }}
-            >
-              {favorites.includes(disclo_id) ? (
-                <FavoriteIcon style={{ color: "#F04452" }} />
-              ) : (
-                <FavoriteBorderIcon />
-              )}
+            className="heart"
+            onClick={(e) => {
+              e.stopPropagation(); // 좋아요 클릭 시 행 이동 이벤트 중단
+              handleFavoriteToggle(disclo_id);
+            }}
+            style={{ cursor: "pointer" }}
+          >
+            {favorites.includes(disclo_id) ? (
+              <FavoriteIcon style={{ color: "#F04452" }} />
+            ) : (
+              <FavoriteBorderIcon />
+            )}
           </span>
-
         </div>
-
-
 
         <div className="flex flex-row gap-5 w-full justify-center mt-1">
           <div>제출자 : {announcement?.submitter || "정보 없음"}</div>
@@ -166,7 +158,7 @@ export default function GptDisclosure({ announcement, company,disclo_id }) {
         <div className="flex flex-row gap-3 w-full justify-end mt-3">
           <div
             className="bg-primary text-white px-5 h-7 rounded-lg text-center cursor-pointer"
-            onClick={handleNavigate}
+            // onClick={handleNavigate}
           >
             {company || "회사 정보 없음"}
           </div>
