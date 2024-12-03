@@ -1,17 +1,21 @@
-/* eslint-disable react/prop-types */
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import ReactApexChart from "react-apexcharts";
 import axios from "axios";
 const BASE_URL = import.meta.env.VITE_BACK_URL;
 import { getChartDisclosure } from "../../services/disclosureAPI";
+import { useNavigate } from "react-router-dom";
+import { Fullscreen } from "@mui/icons-material";
 
-const ApexChart = ({ stockId, type }) => {
+const ApexChart = ({ stockId, type, company }) => {
   const [stockData, setStockData] = useState([]);
   const [chartData, setChartData] = useState([]);
   const [markerData, setMarkerData] = useState([]);
   const [length, setLength] = useState(100);
   const [disclosure, setDisclosure] = useState([]);
-
+  const [selectedAnnouncements, setSelectedAnnouncements] = useState([]); // 선택된 공시 목록
+  const [isListVisible, setIsListVisible] = useState(false); // 공시 리스트 표시 여부
+  const [selectedDate, setSelectedDate] = useState(""); // 선택된 날짜
+  const navigate = useNavigate();
   // type 변경에 따라 length 조정
   useEffect(() => {
     if (type === "day") setLength(100);
@@ -103,7 +107,6 @@ const ApexChart = ({ stockId, type }) => {
 
   useEffect(() => {
     getChartDisclosure(stockId, type).then((data) => setDisclosure(data));
-    console.log(type, disclosure);
   }, [stockId, type]);
 
   // 공시 데이터를 기반으로 markerData 생성
@@ -116,7 +119,6 @@ const ApexChart = ({ stockId, type }) => {
     )
       return [];
 
-    // 날짜별 공시 제목과 중간값 리스트 생성
     const markerDataMap = new Map();
 
     disclosure.forEach((item) => {
@@ -126,7 +128,6 @@ const ApexChart = ({ stockId, type }) => {
         item.date.slice(8, 10)
       ).getTime();
 
-      // 해당 날짜의 주가 데이터 검색
       const stockForDate = stockData.find((stock) => {
         const stockDate = new Date(
           stock.date.slice(0, 4),
@@ -149,7 +150,7 @@ const ApexChart = ({ stockId, type }) => {
           }
           markerDataMap.get(announcementDate).announcements.push({
             title: announcement.title,
-            id: announcement.announcementId, // 공시 ID 추가
+            id: announcement.announcementId,
           });
         });
       }
@@ -188,6 +189,14 @@ const ApexChart = ({ stockId, type }) => {
           zoom: {
             enabled: true,
           },
+          events: {
+            markerClick: (event, chartContext, config) => {
+              const clickedMarker = markerData[config.dataPointIndex];
+              setSelectedAnnouncements(clickedMarker.announcements);
+              setSelectedDate(clickedMarker.x); // 전체 날짜 출력 (DB에서 받아온 대로)
+              setIsListVisible(true);
+            },
+          },
         },
         plotOptions: {
           candlestick: {
@@ -220,13 +229,14 @@ const ApexChart = ({ stockId, type }) => {
             if (seriesIndex === 1) {
               const announcements =
                 w.config.series[seriesIndex].data[dataPointIndex].announcements;
+              const announcementCount = announcements.length;
 
               const announcementList = announcements
                 .map(
                   ({ title, id }) =>
-                    `<li style="margin: 5px 0;">
+                    `<li class="mb-2">
                       <a href="/disclosure/${id}"
-                         style="text-decoration: none; color: #007bff;"
+                         class="text-blue-600 hover:text-blue-800"
                          target="_blank"
                          rel="noopener noreferrer">
                         ${title}
@@ -236,17 +246,17 @@ const ApexChart = ({ stockId, type }) => {
                 .join("");
 
               return `
-                <div style="padding: 10px; background: #fff; border: 1px solid #ccc; border-radius: 5px;">
-                  <strong style="display: block; margin-bottom: 5px;">공시 목록</strong>
-                  <ul style="margin: 0; padding: 0; list-style: none;">
+                <div class="p-4 bg-white border border-gray-300 rounded-lg">
+                  <strong class="block mb-2">공시 목록 (총 ${announcementCount}개)</strong>
+                  <ul class="m-0 p-0 list-none">
                     ${announcementList}
                   </ul>
                 </div>`;
             }
             return null;
           },
-          customPosition: function ({ x, y }) {
-            return { bottom: y - 100000, left: x };
+          customPosition: function ({ x, y, w }) {
+            return { bottom: y - 40, left: x };
           },
         },
       },
@@ -262,6 +272,17 @@ const ApexChart = ({ stockId, type }) => {
     setMarkerData(generatedMarkerData);
   }, [processedData, generatedMarkerData]);
 
+  const handleCloseList = () => {
+    setIsListVisible(false);
+    setSelectedAnnouncements([]);
+  };
+
+  // DB에서 받아온 날짜를 YYYY-MM 형식으로 변경하여 출력
+  const formatDate = (date) => {
+    const d = new Date(date);
+    return d.toISOString().slice(0, 10); // yyyy-mm-dd 형식으로 출력
+  };
+
   return (
     <div>
       <div id="chart">
@@ -272,6 +293,42 @@ const ApexChart = ({ stockId, type }) => {
             type="candlestick"
             height={350}
           />
+        )}
+      </div>
+      <div className="w-100 flex flex-col items-center">
+        {isListVisible && selectedAnnouncements.length > 0 && (
+          <div className="relative my-4 py-4 px-6 bg-primary-1 rounded-lg w-full">
+            <button
+              className="absolute top-3 right-3 border-1 border-primary text-primary px-3 py-1 rounded-md font-semibold text-xs hover:bg-primary hover:text-primary-1"
+              onClick={handleCloseList}
+            >
+              닫기
+            </button>
+            <div className="mb-4 text-xl font-semibold">
+              {formatDate(selectedDate)}
+            </div>
+            <ul className="space-y-2">
+              {selectedAnnouncements.map(({ title, id }, index) => (
+                <li
+                  key={id}
+                  className="text-black hover:text-blue-600 cursor-pointer"
+                >
+                  <div
+                    onClick={() => {
+                      navigate(`/disclosure/${id}`, {
+                        state: { data: [{ company: company }] },
+                      });
+                    }}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-black hover:text-blue-600"
+                  >
+                    - {title}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
         )}
       </div>
     </div>

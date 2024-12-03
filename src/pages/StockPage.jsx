@@ -38,7 +38,7 @@ export default function StockPage() {
   console.log("stockData ", stockData);
   const calculatePriceChange = (currentPrice, changeRate) => {
     let price = Math.round(
-      (Number(currentPrice.slice(0, -2)) /
+      (Number(currentPrice.replaceAll(",", "").slice(0, -1)) /
         (1 + Number(changeRate.slice(0, -1)) / 100)) *
         (Number(changeRate.slice(0, -1)) / 100)
     );
@@ -77,7 +77,7 @@ export default function StockPage() {
               width: "50px",
               height: "50px",
               marginRight: "0.3em",
-            }} // 크기 및 여백 조정
+            }}
             className="rounded-xl"
           />
           <div className="flex flex-row gap-2">
@@ -129,12 +129,18 @@ export default function StockPage() {
               changePrice < 0 ? "text-primary-4" : "text-primary-3"
             } font-bold ml-1`}
           >
-            {changePrice}원 ({stockData.changeRate})
+            {changePrice > 0 ? `+` : null}
+            {Number(changePrice).toLocaleString()}원 ({stockData.changeRate})
           </span>
         </div>
       </div>
       <div>
-        <ApexChart name="test" stockId={stockData.id} type={chartType} />
+        <ApexChart
+          name="test"
+          stockId={stockData.id}
+          type={chartType}
+          company={stockData.name}
+        />
       </div>
       <div>
         <div className="font-bold text-xl">공시</div>

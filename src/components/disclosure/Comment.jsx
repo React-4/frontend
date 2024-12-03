@@ -8,7 +8,12 @@ import {
 } from "../../services/commentAPI";
 import { postVote, deleteVote } from "../../services/voteAPI";
 
-export default function Comment({ announcement, announcement_id }) {
+export default function Comment({
+  announcement,
+  announcement_id,
+  startCoinRain,
+  startRain,
+}) {
   const [page, setPage] = useState(0);
   const [good, setGood] = useState(0);
   const [bad, setBad] = useState(0);
@@ -75,7 +80,6 @@ export default function Comment({ announcement, announcement_id }) {
           }
         }
       } else {
-        // 투표하지 않은 상태에서 새로운 투표 진행
         if (e.target.innerHTML.slice(0, 2) === "호재") {
           try {
             const res = await postVote(announcement_id, "POSITIVE");
@@ -83,6 +87,7 @@ export default function Comment({ announcement, announcement_id }) {
               setGood((prev) => prev + 1);
               setVoted(true);
               setVoteType("POSITIVE");
+              startCoinRain();
               // 로컬 스토리지에 투표 정보 저장
               localStorage.setItem(
                 `vote_${announcement_id}`,
@@ -99,6 +104,7 @@ export default function Comment({ announcement, announcement_id }) {
               setBad((prev) => prev + 1);
               setVoted(true);
               setVoteType("NEGATIVE");
+              startRain();
               // 로컬 스토리지에 투표 정보 저장
               localStorage.setItem(
                 `vote_${announcement_id}`,
@@ -133,8 +139,9 @@ export default function Comment({ announcement, announcement_id }) {
         createdAt: new Date().toISOString(),
         userProfileColor: profileColor,
       };
-      setLocalComment((prev) => [newCommentData, ...prev]);
+      // setLocalComment((prev) => [newCommentData, ...prev]);
       setNewComment("");
+      refreshComments();
     } catch (error) {
       console.error("댓글 등록 실패:", error);
     }
@@ -152,9 +159,6 @@ export default function Comment({ announcement, announcement_id }) {
   useEffect(() => {
     if (page > 0) {
       getCommentByAnnouncement(announcement_id, page, 3).then((data) => {
-        if (data.length > 0) {
-          setLocalComment((prev) => [...prev, ...data]);
-        }
         if (data.length < 3) {
           setIsEnd(true);
         }
@@ -231,7 +235,7 @@ export default function Comment({ announcement, announcement_id }) {
         page={page}
         setPage={setPage}
         isEnd={isEnd}
-        refreshComments={refreshComments} // 새로고침 콜백 전달
+        refreshComments={refreshComments}
       />
     </div>
   );

@@ -153,7 +153,6 @@
   color: #3182f6;
 }
 
-
 .no-results-box {
   display: flex;
   align-items: center;
@@ -161,19 +160,18 @@
   width: 100%;
   height: 300px;
   border-radius: 8px;
-  margin-top: 20px; 
+  margin-top: 20px;
 }
 
 .no-results-text {
-  font-size: 24px; 
-  font-weight:500 ;
-  color: #0045B0; 
+  font-size: 24px;
+  font-weight: 500;
+  color: #0045b0;
   text-align: center;
 }
 
-
 .change-rate-positive {
-  color: red;
+  color: #f04452;
   font-weight: bold;
 }
 
@@ -183,6 +181,6 @@
 }
 
 .change-rate-negative {
-  color: blue;
+  color: #3182f6;
   font-weight: bold;
 }
