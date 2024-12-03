@@ -53,7 +53,11 @@ export function StockSidebarItem({
   // 이동 처리
   const handleNavigate = () => {
     navigate(`/stock/${id}`, {
-      state: { id, name, price, changeRate, transaction, code },
+      state: {
+        data: [
+          { id, name, price, changeRate, transaction, code }
+        ]
+      },
     });
   };
 
@@ -122,10 +126,11 @@ export function DisclosureSidebarItem({
     }
   };
 
+
   // 이동 처리
   const handleNavigate = () => {
     navigate(`/disclosure/${id}`, {
-      state: { id, company, title, date },
+      state: { data: [id, company, title, date ]},
     });
   };
 
