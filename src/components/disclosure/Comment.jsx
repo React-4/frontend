@@ -62,7 +62,6 @@ export default function Comment({ announcement, announcement_id }) {
         // 투표한 상태일 경우
         setPendingVoteType(newVoteType); // 취소할 투표 타입 저장
         setIsModalOpen(true); // 모달 열기
-        console.log("isVoted ", isModalOpen);
       } else {
         // 투표하지 않은 상태에서 새로운 투표 진행
 
@@ -72,13 +71,6 @@ export default function Comment({ announcement, announcement_id }) {
       alert("로그인 후 투표할 수 있어요");
     }
   };
-
-  // 모달 상태가 변경될 때마다 확인
-  useEffect(() => {
-    if (isModalOpen) {
-      console.log("모달이 열렸습니다.");
-    }
-  }, [isModalOpen]);
 
   const submitVote = async (voteType) => {
     try {
