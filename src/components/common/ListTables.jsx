@@ -47,7 +47,6 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 export default function ListTables({ type, data, headers }) {
-  console.log("dis", data);
   const [currentPage, setCurrentPage] = useState(1);
   const [favorites, setFavorites] = useState([]);
   // const { handleDarkMode, dark } = useDarkmode();

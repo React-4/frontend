@@ -88,7 +88,6 @@ export default function EditInfo() {
 
   // 수정 핸들러
   const handleNicknameSave = async () => {
-    console.log(userInputNickname);
     try {
       const response = await axios.patch(
         BASE_URL + "/api/user",

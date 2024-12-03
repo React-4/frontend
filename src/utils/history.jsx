@@ -34,9 +34,6 @@ export const removeFromHistory = (type, itemId) => {
     sessionStorage.getItem("viewHistory") || '{"stock":[], "disclosure":[]}'
   );
 
-  console.log("type ", type);
-  console.log("itemId ", itemId);
-
   // 항목 제거
   history[type] = history[type].filter(
     (existingItem) => existingItem.id != itemId

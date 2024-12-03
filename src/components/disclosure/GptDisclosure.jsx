@@ -86,7 +86,6 @@ export default function GptDisclosure({ announcement, company, disclo_id }) {
   const fetchStockData = async () => {
     try {
       const BASE_URL = import.meta.env.VITE_BACK_URL;
-      console.log(company);
       const searchResponse = await axios.get(`${BASE_URL}/api/stock/search`, {
         params: {
           keyword: company,
@@ -114,7 +113,6 @@ export default function GptDisclosure({ announcement, company, disclo_id }) {
               : "0주",
           }
         : null;
-      console.log("result ", result);
       return result;
     } catch (error) {
       console.error("Failed to fetch stock data:", error);
@@ -122,7 +120,6 @@ export default function GptDisclosure({ announcement, company, disclo_id }) {
   };
 
   const handleNavigate = async () => {
-    console.log(announcement);
     const stock = await fetchStockData();
     navigate(`/stock/${announcement.stockId}`, {
       state: {

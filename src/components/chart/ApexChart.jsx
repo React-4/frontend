@@ -22,7 +22,7 @@ const ApexChart = ({ stockId, type, company }) => {
     if (type === "week") setLength(30);
     if (type === "month") setLength(20);
   }, [type]);
-  console.log("chart com", company);
+
   // 주식 데이터 가져오기
   const getStockData = useCallback(async () => {
     try {

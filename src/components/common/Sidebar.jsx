@@ -48,8 +48,6 @@ export default function SidebarWithDrawer() {
     try {
       if (drawerTitle === "관심") {
         const { stockIds, announcementIds } = getFavoriteIdsFromStorage();
-        console.log("Favorite stock IDs:", stockIds);
-        console.log("Favorite announcement IDs:", announcementIds);
 
         const favoriteStocksResponse = await fetchStockPricesAPI(stockIds);
         const favoriteDisclosuresResponse = await fetchAnnouncementListAPI(
@@ -58,9 +56,6 @@ export default function SidebarWithDrawer() {
 
         const favoriteStocks = Object.values(favoriteStocksResponse.data || {});
         const favoriteDisclosures = favoriteDisclosuresResponse.data || [];
-
-        console.log("Transformed favorite stocks:", favoriteStocks);
-        console.log("Favorite disclosures:", favoriteDisclosures);
 
         setData({
           stock: favoriteStocks,
@@ -71,7 +66,6 @@ export default function SidebarWithDrawer() {
         setHistColor("primary-2");
       } else if (drawerTitle === "최근 본") {
         const historyData = getHistoryFromStorage();
-        console.log("History data:", historyData);
 
         setData(historyData);
         setHistColor("primary");
