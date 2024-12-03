@@ -9,8 +9,9 @@ import { addToHistory } from "../utils/history";
 export default function DisclosurePage() {
   const [announcement, setAnnouncement] = useState([]);
   const location = useLocation();
-  console.log(location.state);
+
   let data = location.state?.data[0];
+  console.log("lllll", data);
   const params = useParams();
 
   useEffect(() => {

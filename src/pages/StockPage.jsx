@@ -19,14 +19,28 @@ import StockComment from "../components/stock/StockComment";
 const BASE_URL = import.meta.env.VITE_BACK_URL;
 import NoPhoto from "/img/NoPhoto.png";
 import { useLogin } from "../hooks/useLogin";
+import { useParams } from "react-router-dom";
 
 export default function StockPage() {
   const location = useLocation();
-  console.log(location.state);
-  const stockData = location.state.data[0];
-  console.log(stockData);
-  console.log("stockData ", stockData);
+  const params = useParams();
+  const [stockData, setStockData] = useState([]);
   const [disclosureData, setDisclosureData] = useState([]);
+  useEffect(() => {
+    if (location.state !== null) {
+      setStockData(location.state.data[0]);
+    } else {
+      setStockData({
+        changeRate: null,
+        code: null,
+        id: params.id,
+        name: disclosureData[0]?.stockName,
+        price: null,
+        transaction: null,
+      });
+    }
+  }, [location.state, params.id, disclosureData]);
+
   const [filteredDisclosureData, setFilteredDisclosureData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [totalPages, setTotalPages] = useState(1);
@@ -128,9 +142,9 @@ export default function StockPage() {
 
   const calculatePriceChange = (currentPrice, changeRate) => {
     let price = Math.round(
-      (Number(currentPrice.replaceAll(",", "").slice(0, -1)) /
-        (1 + Number(changeRate.slice(0, -1)) / 100)) *
-        (Number(changeRate.slice(0, -1)) / 100)
+      (Number(currentPrice?.replaceAll(",", "").slice(0, -1)) /
+        (1 + Number(changeRate?.slice(0, -1)) / 100)) *
+        (Number(changeRate?.slice(0, -1)) / 100)
     );
     return price;
   };
@@ -257,7 +271,12 @@ export default function StockPage() {
         </div>
       </div>
       <div>
-        <ApexChart name="test" stockId={stockData.id} type={chartType} />
+        <ApexChart
+          name="test"
+          stockId={stockData.id}
+          type={chartType}
+          company={stockData.name}
+        />
       </div>
       <div>
         <div className="font-bold text-xl pl-5">공시</div>
@@ -278,9 +297,9 @@ export default function StockPage() {
 
         {filteredDisclosureData.length === 0 && (
           <div className="flex items-center justify-center w-full h-55 rounded-lg mt-5">
-              <span className="text-2xl font-medium text-black text-center">
+            <span className="text-2xl font-medium text-black text-center">
               공시 데이터가 존재하지 않습니다.
-              </span>
+            </span>
           </div>
         )}
       </div>
