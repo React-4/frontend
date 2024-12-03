@@ -9,7 +9,6 @@
 .list-title {
   text-align: left;
   margin-left: 20px;
-  margin-top: 20px;
   font-size: 24px;
   font-weight: bold;
 }
@@ -83,7 +82,7 @@
 
 /* 버튼 컨테이너 */
 .sort-buttons {
-  margin-bottom: 20px; 
+  margin-bottom: 20px;
   text-align: right;
 }
 
@@ -171,15 +170,12 @@
 
 .change-rate-positive {
   color: #f04452;
-  font-weight: bold;
 }
 
 .change-rate-neutral {
   color: black;
-  font-weight: bold;
 }
 
 .change-rate-negative {
   color: #3182f6;
-  font-weight: bold;
 }
