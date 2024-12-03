@@ -297,8 +297,8 @@ export default function StockPage() {
         </div>
 
         {filteredDisclosureData.length === 0 && (
-          <div className="flex items-center justify-center w-full h-55 rounded-lg mt-5">
-            <span className="text-2xl font-medium text-black text-center">
+          <div className="flex items-center justify-center w-full h-55 rounded-lg my-10">
+            <span className="text-xl font-medium text-primary-2 text-center">
               공시 데이터가 존재하지 않습니다.
             </span>
           </div>
@@ -307,9 +307,9 @@ export default function StockPage() {
       <div>
         <div className="font-bold text-xl pl-5">댓글</div>
         {comment.length === 0 && (
-          <div className="flex items-center justify-center w-full h-55 rounded-lg mt-5">
-            <span className="text-2xl font-medium text-black text-center">
-              공시 데이터가 존재하지 않습니다.
+          <div className="flex items-center justify-center w-full h-55 rounded-lg my-10">
+            <span className="text-xl font-medium text-primary-2 text-center">
+              공시 댓글이 존재하지 않습니다.
             </span>
           </div>
         )}
