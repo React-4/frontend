@@ -178,8 +178,10 @@ const SearchResultPage = () => {
 
   // 페이지가 변경될 때 데이터를 새로 가져옴
   useEffect(() => {
-    fetchDisclosureData(currentDisclosurePage, activeQuery);
-  }, [currentDisclosurePage, activeQuery]);
+    const keyword = companyKeyword.trim() || activeQuery; // 현재 검색 키워드 유지
+    fetchDisclosureData(currentDisclosurePage, keyword, filters);
+  }, [currentDisclosurePage]);
+  
 
   const handleFilterChange = (field, value) => {
     if (field === "keyword" && value.trim() === "") {
@@ -365,8 +367,6 @@ const SearchResultPage = () => {
           </div>
         </div>
 
-        <section className="separator1"></section>
-
         <div className="filter-group type-group">
           <label>공시 유형</label>
           <div className="type-buttons">
@@ -392,8 +392,6 @@ const SearchResultPage = () => {
             ))}
           </div>
         </div>
-
-        <section className="separator2"></section>
 
         <div className="sector2">
           <div className="filter-actions">
