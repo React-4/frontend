@@ -5,7 +5,7 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import CloseIcon from "@mui/icons-material/Close";
 import { patchComment, deleteComment } from "../../services/commentAPI";
 
-function formatDate(inputDate) {
+export function formatDate(inputDate) {
   const now = new Date();
   const date = new Date(inputDate);
 

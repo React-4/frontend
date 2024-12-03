@@ -1,5 +1,6 @@
+/* eslint-disable react/prop-types */
 import React, { useState, useEffect } from "react";
-import { styled } from "@mui/material/styles";
+import { duration, styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
@@ -17,6 +18,7 @@ import {
   addFavoriteStockAPI,
   removeFavoriteStockAPI,
 } from "../../services/stockAPI";
+import NoPhoto from "/img/NoPhoto.png";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -35,6 +37,11 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
   "&:last-child td, &:last-child th": {
     border: 0,
+  },
+  "&:hover": {
+    // 마우스 오버 효과 추가
+    backgroundColor: theme.palette.action.selected,
+    transform: true,
   },
 }));
 
@@ -100,6 +107,10 @@ export default function ListTables({ type, data, headers }) {
     });
   };
 
+  useEffect(() => {
+    console.log("currentData ", currentData);
+  }, [currentData]);
+
   return (
     <div className="list-container">
       <TableContainer component={Paper}>
@@ -146,7 +157,38 @@ export default function ListTables({ type, data, headers }) {
                             <FavoriteBorderIcon />
                           )}
                         </span>
-                        <span className="number">{row[header.key]}</span>
+                        <img
+                          src={
+                            (
+                              row["ticker"] ||
+                              row["code"] ||
+                              "Unknown"
+                            ).includes("Unknown")
+                              ? NoPhoto // Unknown일 때 출력할 이미지 URL
+                              : `https://thumb.tossinvest.com/image/resized/96x0/https%3A%2F%2Fstatic.toss.im%2Fpng-icons%2Fsecurities%2Ficn-sec-fill-${
+                                  row["ticker"] || row["code"]
+                                }.png`
+                          }
+                          alt={`${row["ticker"] || row["code"]} 아이콘`}
+                          style={{
+                            width: "40px",
+                            height: "40px",
+                          }}
+                          className="rounded-xl"
+                          onError={(e) => {
+                            e.target.onerror = null; // 무한 루프 방지
+                            e.target.src = NoPhoto; // 기본 이미지 URL
+                          }}
+                        />
+                      </div>
+                    ) : header.key === "report" &&
+                      row[header.key].slice(0, 6) === "[기재정정]" ? (
+                      <div>
+                        {" "}
+                        <span className="text-primary-4 font-semibold">
+                          [기재정정]
+                        </span>{" "}
+                        <span>{row[header.key].slice(6)}</span>
                       </div>
                     ) : header.key === "votes" ? (
                       <div className="votes-container">

@@ -33,19 +33,12 @@ export default function DisclosurePage() {
       });
   }, [params.id]);
 
-  const startCoinRain = () => {
-    setIsGoodAnimating(true); // 애니메이션 시작
-  };
-
-  const startRain = () => {
-    setIsBadAnimating(true);
-  };
-
   return (
     <div className="flex flex-col mt-9 mb-20 items-center">
       <GptDisclosure
         announcement={announcement}
         company={data ? data.company : ""}
+        disclo_id={params.id}
         // stockId={data.}
       />
       <div className=" mt-20 w-9/12">
