@@ -80,7 +80,7 @@
 }
 
 .type-group {
-  flex: 1.2;
+  flex: 1.5;
 }
 
 .type-group label {
@@ -105,27 +105,6 @@
 .market-buttons {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-}
-
-.separator1 {
-  margin-right: 50px;
-  display: flex;
-  width: 1px;
-  height: auto;
-  min-height: 100%;
-  align-self: stretch;
-  border: 1px solid #0045B0;
-}
-
-.separator2 {
-  margin-left: 5px;
-  margin-right: 50px;
-  display: flex;
-  width: 1px;
-  height: auto;
-  min-height: 100%;
-  align-self: stretch;
-  border: 1px solid #0045B0;
 }
 
 .filter-group button {
