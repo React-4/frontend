@@ -5,7 +5,10 @@ import CloseIcon from "@mui/icons-material/Close";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { useNavigate } from "react-router-dom";
-import { removeFavoriteStockAPI,removeFavoriteAnnouncementAPI } from "../../services/stockAPI";
+import {
+  removeFavoriteStockAPI,
+  removeFavoriteAnnouncementAPI,
+} from "../../services/stockAPI";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 
 export function StockSidebarItem({
@@ -64,7 +67,7 @@ export function StockSidebarItem({
           <p className="font-semibold text-lg">{price}</p>
           <div
             className={`flex items-center text-sm ${
-              isPositive ? "text-green-600" : "text-red-600"
+              isPositive ? "text-primary-3" : "text-primary-4"
             }`}
           >
             {isPositive ? (
@@ -88,10 +91,7 @@ export function StockSidebarItem({
             className="cursor-pointer text-gray-500 hover:text-gray-700"
           />
         ) : (
-          <span
-            onClick={handleRemoveFav}
-            className="cursor-pointer"
-          >
+          <span onClick={handleRemoveFav} className="cursor-pointer">
             {fav ? (
               <FavoriteIcon style={{ color: "#F04452" }} />
             ) : (
@@ -103,7 +103,6 @@ export function StockSidebarItem({
     </div>
   );
 }
-
 
 export function DisclosureSidebarItem({
   id,
