@@ -195,7 +195,7 @@ export default function GptDisclosure({ announcement, company, disclo_id }) {
 
         <div className="flex flex-row gap-3 w-full justify-end mt-20">
           <div
-            className="bg-primary text-white px-5 h-7 rounded-lg text-center"
+            className="bg-primary text-white px-5 h-7 rounded-lg text-center cursor-pointer transition-all duration-200 ease-in-out transform hover:scale-105"
             onClick={handleNavigate}
           >
             {company || "회사 정보 없음"}
