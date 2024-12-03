@@ -63,7 +63,7 @@ export default function StockPage() {
     try {
       setLoading(true);
       const response = await axios.get(
-        `${BASE_URL}/api/announcement/stock/${stock_id}`,
+        `${BASE_URL}/api/announcement/stock/${params.id || stock_id}`,
         {
           params: { sortBy: "latest", page: page - 1, size: 10 },
         }
@@ -109,10 +109,10 @@ export default function StockPage() {
   };
 
   useEffect(() => {
-    getCommentByStock(stockData.id).then((data) => {
+    getCommentByStock(stockData.id || params.id).then((data) => {
       setComment(data);
     });
-  }, [stockData.id]);
+  }, [stockData.id, params.id]);
 
   // 공시 데이터 로드
   useEffect(() => {
