@@ -9,8 +9,10 @@ import HistoryIcon from "@mui/icons-material/History";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import Button from "@mui/material/Button";
 import SidebarContent from "./SidebarContent";
-import { fetchStockPricesAPI, fetchAnnouncementListAPI } from "../../services/stockAPI";
-
+import {
+  fetchStockPricesAPI,
+  fetchAnnouncementListAPI,
+} from "../../services/stockAPI";
 
 const initialHistoryData = {
   stock: [],
@@ -33,11 +35,14 @@ export default function SidebarWithDrawer() {
   };
 
   const getFavoriteIdsFromStorage = () => {
-    const stockIds = JSON.parse(localStorage.getItem("favoriteStockIds") || "[]");
-    const announcementIds = JSON.parse(localStorage.getItem("favoriteAnnouncementIds") || "[]");
+    const stockIds = JSON.parse(
+      localStorage.getItem("favoriteStockIds") || "[]"
+    );
+    const announcementIds = JSON.parse(
+      localStorage.getItem("favoriteAnnouncementIds") || "[]"
+    );
     return { stockIds, announcementIds };
   };
-  
 
   const fetchData = async () => {
     try {
@@ -45,27 +50,29 @@ export default function SidebarWithDrawer() {
         const { stockIds, announcementIds } = getFavoriteIdsFromStorage();
         console.log("Favorite stock IDs:", stockIds);
         console.log("Favorite announcement IDs:", announcementIds);
-  
+
         const favoriteStocksResponse = await fetchStockPricesAPI(stockIds);
-        const favoriteDisclosuresResponse = await fetchAnnouncementListAPI(announcementIds);
-  
+        const favoriteDisclosuresResponse = await fetchAnnouncementListAPI(
+          announcementIds
+        );
+
         const favoriteStocks = Object.values(favoriteStocksResponse.data || {});
         const favoriteDisclosures = favoriteDisclosuresResponse.data || [];
-  
+
         console.log("Transformed favorite stocks:", favoriteStocks);
         console.log("Favorite disclosures:", favoriteDisclosures);
-  
+
         setData({
           stock: favoriteStocks,
           disclosure: favoriteDisclosures,
         });
-  
+
         setFavColor("primary");
         setHistColor("primary-2");
       } else if (drawerTitle === "최근 본") {
         const historyData = getHistoryFromStorage();
         console.log("History data:", historyData);
-  
+
         setData(historyData);
         setHistColor("primary");
         setFavColor("primary-2");
@@ -77,8 +84,7 @@ export default function SidebarWithDrawer() {
       console.error("Error fetching data:", error);
     }
   };
-  
-  
+
   useEffect(() => {
     fetchData();
   }, [drawerTitle]);
@@ -142,7 +148,7 @@ export default function SidebarWithDrawer() {
           <div>
             <ListItem disablePadding>
               <Button onClick={handleDrawerClose}>
-                <div className="flex flex-col items-center text-primary-2">
+                <div className="flex flex-col items-center text-primary-2 transition-all duration-200 ease-in-out transform hover:scale-105">
                   <HomeOutlinedIcon />
                   닫기
                 </div>
@@ -152,7 +158,9 @@ export default function SidebarWithDrawer() {
               <Button onClick={() => handleDrawerOpen("관심")}>
                 <div
                   className={`flex flex-col items-center ${
-                    favColor === "primary" ? "text-primary" : "text-primary-2"
+                    favColor === "primary"
+                      ? "text-primary transition-all duration-200 ease-in-out transform hover:scale-105"
+                      : "text-primary-2 transition-all duration-200 ease-in-out transform hover:scale-105"
                   } `}
                 >
                   <FavoriteBorderIcon />
@@ -163,7 +171,7 @@ export default function SidebarWithDrawer() {
             {/* <ListItem disablePadding> */}
             <Button onClick={() => handleDrawerOpen("최근 본")}>
               <div
-                className={`flex flex-col items-center  ${
+                className={`flex flex-col items-center transition-all duration-200 ease-in-out transform hover:scale-105  ${
                   histColor === "primary" ? "text-primary" : "text-primary-2"
                 } `}
               >

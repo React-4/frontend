@@ -22,16 +22,22 @@ const MyComment = forwardRef(
           <div className="felx flex-column">
             <button
               className="hover:underline hover:text-blue-500"
-              onClick={() => navigate(`/stock/${stockId}`)}
+              onClick={() =>
+                navigate(`/disclosure/${announcementId}`, {
+                  state: {
+                    data: [
+                      {
+                        announcementId,
+                        company,
+                        title,
+                        date,
+                      },
+                    ],
+                  },
+                })
+              }
             >
-              {company}
-            </button>{" "}
-            /{" "}
-            <button
-              className="hover:underline hover:text-blue-500"
-              onClick={() => navigate(`/disclosure/${announcementId}`)}
-            >
-              {title}
+              {company} / {title}
             </button>
           </div>
           <div>{date.slice(0, 10)}</div>
