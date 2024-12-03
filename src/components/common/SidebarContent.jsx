@@ -49,17 +49,19 @@ export default function SidebarContent({ drawerTitle, data }) {
                     name={drawerTitle === "최근 본" ? d.company : d.종목명}
                     price={drawerTitle === "최근 본" ? d.price : d.현재가}
                     transaction={
-                      drawerTitle === "최근 본" ? d.transaction : d.거래량 || "N/A"
+                      drawerTitle === "최근 본"
+                        ? d.transaction
+                        : d.거래량 || "N/A"
                     }
-                    changeRate={
-                      drawerTitle === "최근 본" ? d.rate : d.등락률
-                    }
+                    changeRate={drawerTitle === "최근 본" ? d.rate : d.등락률}
                     gap={drawerTitle === "최근 본" ? d.gap : d.gap || 0}
                     setStockHisList={setStockHisList}
                   />
                 ))
               ) : (
-                <Typography align="center">아직 {drawerTitle} 종목이 없어요</Typography>
+                <Typography align="center">
+                  아직 {drawerTitle} 종목이 없어요
+                </Typography>
               )}
             </div>
           </div>
@@ -87,7 +89,9 @@ export default function SidebarContent({ drawerTitle, data }) {
                   />
                 ))
               ) : (
-                <Typography align="center">아직 {drawerTitle} 공시가 없어요</Typography>
+                <Typography align="center">
+                  아직 {drawerTitle} 공시가 없어요
+                </Typography>
               )}
             </div>
           </div>
@@ -99,12 +103,14 @@ export default function SidebarContent({ drawerTitle, data }) {
           <Typography align="center">
             목록을 저장하려면 <br /> 로그인이 필요해요
           </Typography>
-          <button
-            className="bg-primary w-2/3 p-1 text-white rounded-lg font-bold"
-            onClick={() => navigate("/login")}
-          >
-            로그인 하러가기
-          </button>
+          <div className="flex flex-row justify-center w-full">
+            <button
+              className="bg-primary w-2/3 p-1 text-white rounded-lg font-bold "
+              onClick={() => navigate("/login")}
+            >
+              로그인 하러가기
+            </button>
+          </div>
         </div>
       )}
     </Box>

@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getGPTDisclosure } from "../../services/disclosureAPI";
@@ -16,27 +15,30 @@ function parseSectionContent(content) {
 
   let match;
   while ((match = regex.exec(content)) !== null) {
+    console.log("Match found:", match[1], match[2], match[3]);
     if (match[1] && match[2]) {
       const title = match[1].trim(); // **안의 텍스트
       const desc = match[2].trim(); // 그 뒤의 내용
       result.push({ title, desc });
     } else if (match[3]) {
       // 제목 없이 설명만 있는 경우
-      const desc = match[3].trim(); // - 뒤의 텍스트
+      const desc = match[3].trim();
       result.push({ desc });
     }
   }
 
   return result;
 }
-
 function convertToJSONWithDetails(text) {
-  if (text === "test") return {}; // 방어 로직: 텍스트가 없는 경우 빈 객체 반환
+  if (text === "test") return {};
+  const cleanText = text.replace(/\*\*(.*?)\*\*/g, (match, p1) => {
+    return p1;
+  });
 
-  const sections = text
+  const sections = cleanText
     .split("###")
     .map((section) => section.trim())
-    .filter(Boolean); // '###'로 분리하고 빈 섹션 제거
+    .filter(Boolean);
 
   const result = {};
   sections.forEach((section) => {
@@ -44,8 +46,8 @@ function convertToJSONWithDetails(text) {
       .split("\n")
       .map((line) => line.trim())
       .filter(Boolean);
-    const title = lines.shift(); // 첫 줄을 제목으로 사용
-    const content = lines.join(" "); // 나머지를 내용으로 결합
+    const title = lines.shift();
+    const content = lines.join(" ");
 
     // 키를 영어로 매핑
     const titleMapping = {
@@ -55,10 +57,10 @@ function convertToJSONWithDetails(text) {
       "투자 의견": "opinion",
     };
 
-    const englishKey = titleMapping[title] || title; // 매핑되지 않은 키는 그대로 사용
+    const englishKey = titleMapping[title] || title;
 
     if (englishKey === "good" || englishKey === "bad") {
-      result[englishKey] = parseSectionContent(content); // 배열 형태로 변환
+      result[englishKey] = parseSectionContent(content);
     } else {
       result[englishKey] = content;
     }
@@ -69,9 +71,8 @@ function convertToJSONWithDetails(text) {
 
 export default function GptDisclosure({ announcement, company, disclo_id }) {
   const navigate = useNavigate();
-  //const [announcement, setAnnouncement] = useState({});
   const [summaryJSON, setSummaryJSON] = useState(null);
-  console.log(announcement);
+
   useEffect(() => {
     if (
       announcement &&
@@ -141,7 +142,6 @@ export default function GptDisclosure({ announcement, company, disclo_id }) {
   };
 
   const [favorites, setFavorites] = useState([]);
-  // 로컬 스토리지에서 초기화
   useEffect(() => {
     const storedFavorites = JSON.parse(
       localStorage.getItem("favoriteAnnouncementIds") || "[]"
@@ -150,7 +150,6 @@ export default function GptDisclosure({ announcement, company, disclo_id }) {
   }, []);
 
   const handleFavoriteToggle = async (id) => {
-    console.log(id);
     try {
       if (favorites.includes(id)) {
         await removeFavoriteAnnouncementAPI(id);
@@ -167,14 +166,13 @@ export default function GptDisclosure({ announcement, company, disclo_id }) {
   return (
     <div className="flex flex-col items-center w-full">
       <div className="w-9/12">
-        {/* 제목 */}
-        <div className="flex justify-center font-bold items-center  text-3xl gap-5 text-center">
+        <div className="flex justify-center font-bold items-center text-3xl gap-5 text-center">
           {announcement?.title}
 
           <span
             className="heart"
             onClick={(e) => {
-              e.stopPropagation(); // 좋아요 클릭 시 행 이동 이벤트 중단
+              e.stopPropagation();
               handleFavoriteToggle(disclo_id);
             }}
             style={{ cursor: "pointer" }}
@@ -214,7 +212,10 @@ export default function GptDisclosure({ announcement, company, disclo_id }) {
 
         <div className="flex flex-col gap-5 full">
           <div className="font-bold text-xl">공시 내용 요약</div>
-          <div>{summaryJSON?.summary || "요약 정보가 없습니다."}</div>
+          <div>
+            {summaryJSON?.summary.replaceAll("-", "") ||
+              "요약 정보가 없습니다."}
+          </div>
 
           {/* 호재 */}
           <div className="font-bold text-xl">호재</div>
@@ -233,7 +234,6 @@ export default function GptDisclosure({ announcement, company, disclo_id }) {
             <div>호재 정보가 없습니다.</div>
           )}
 
-          {/* 악재 */}
           <div className="font-bold text-xl">악재</div>
           {summaryJSON?.bad?.length ? (
             <div>
@@ -249,10 +249,11 @@ export default function GptDisclosure({ announcement, company, disclo_id }) {
           ) : (
             <div>악재 정보가 없습니다.</div>
           )}
-
-          {/* 평가 의견 */}
           <div className="font-bold text-xl">평가 의견</div>
-          <div>{summaryJSON?.opinion || "의견 정보가 없습니다."}</div>
+          <div>
+            {summaryJSON?.opinion.replaceAll("-", "") ||
+              "의견 정보가 없습니다."}
+          </div>
         </div>
       </div>
     </div>
