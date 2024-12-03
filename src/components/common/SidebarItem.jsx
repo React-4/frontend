@@ -64,9 +64,11 @@ export function StockSidebarItem({
           <p className="text-sm text-gray-500">{code}</p>
         </div>
         <div className="text-right">
-          <p className="font-semibold text-lg">{price}</p>
+          <p className="font-semibold text-lg">
+              {String(price).endsWith("원") ? price : `${Number(price)}원`}
+          </p>
           <div
-            className={`flex items-center text-sm ${
+            className={`flex justify-end items-center text-sm ${
               isPositive ? "text-primary-3" : "text-primary-4"
             }`}
           >

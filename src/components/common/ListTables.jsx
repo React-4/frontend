@@ -18,6 +18,7 @@ import {
   addFavoriteStockAPI,
   removeFavoriteStockAPI,
 } from "../../services/stockAPI";
+import NoPhoto from "/img/NoPhoto.png";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -157,15 +158,27 @@ export default function ListTables({ type, data, headers }) {
                           )}
                         </span>
                         <img
-                          src={`https://thumb.tossinvest.com/image/resized/96x0/https%3A%2F%2Fstatic.toss.im%2Fpng-icons%2Fsecurities%2Ficn-sec-fill-${
-                            row["ticker"] || row["code"]
-                          }.png`}
+                          src={
+                            (
+                              row["ticker"] ||
+                              row["code"] ||
+                              "Unknown"
+                            ).includes("Unknown")
+                              ? NoPhoto // Unknown일 때 출력할 이미지 URL
+                              : `https://thumb.tossinvest.com/image/resized/96x0/https%3A%2F%2Fstatic.toss.im%2Fpng-icons%2Fsecurities%2Ficn-sec-fill-${
+                                  row["ticker"] || row["code"]
+                                }.png`
+                          }
                           alt={`${row["ticker"] || row["code"]} 아이콘`}
                           style={{
                             width: "40px",
                             height: "40px",
                           }}
                           className="rounded-xl"
+                          onError={(e) => {
+                            e.target.onerror = null; // 무한 루프 방지
+                            e.target.src = NoPhoto; // 기본 이미지 URL
+                          }}
                         />
                       </div>
                     ) : header.key === "report" &&
