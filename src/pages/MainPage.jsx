@@ -43,6 +43,7 @@ const MainPage = () => {
         announcementList.map((item) => ({
           id: item.announcementId,
           company: item.stockName,
+          ticker: item.ticker,
           report: item.title?.trim() || "N/A",
           submitter: item.submitter || "Unknown",
           date: item.announcementDate || "Unknown",
