@@ -5,7 +5,7 @@ import CommentList from "../components/disclosure/CommentList";
 import { useLocation } from "react-router-dom";
 import { getCommentByStock } from "../services/commentAPI";
 import { addToHistory } from "../utils/history";
-import '../components/css/SearRes.css';
+import "../components/css/SearRes.css";
 import Pagination from "@mui/material/Pagination";
 import axios from "axios";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -14,15 +14,15 @@ import {
   addFavoriteStockAPI,
   removeFavoriteStockAPI,
 } from "../services/stockAPI";
-
 import ScrollToTopButton from "../components/common/ScrollToTopButton";
-
+import StockComment from "../components/stock/StockComment";
 const BASE_URL = import.meta.env.VITE_BACK_URL;
 
 export default function StockPage() {
   const location = useLocation();
   console.log(location.state);
   const stockData = location.state.data[0];
+  console.log(stockData);
   console.log("stockData ", stockData);
   const [disclosureData, setDisclosureData] = useState([]);
   const [filteredDisclosureData, setFilteredDisclosureData] = useState([]);
@@ -49,13 +49,14 @@ export default function StockPage() {
       const response = await axios.get(
         `${BASE_URL}/api/announcement/stock/${stock_id}`,
         {
-          params: { sortBy: "latest", page: page-1, size: 10 },
+          params: { sortBy: "latest", page: page - 1, size: 10 },
         }
       );
       console.log("Fetched disclosure data:", response.data);
 
       if (response.status === 200) {
-        const { announcementList = [], announcementCount } = response.data.data || {};
+        const { announcementList = [], announcementCount } =
+          response.data.data || {};
         setDisclosureData(announcementList);
         setTotalPages(announcementCount);
         setFilteredDisclosureData(
@@ -73,7 +74,10 @@ export default function StockPage() {
           }))
         );
       } else {
-        console.error("Failed to fetch disclosure data:", response.data.message);
+        console.error(
+          "Failed to fetch disclosure data:",
+          response.data.message
+        );
       }
     } catch (error) {
       console.error("Error fetching disclosure data:", error);
@@ -84,18 +88,21 @@ export default function StockPage() {
 
   const handlePageChange = (event, value) => {
     setCurrentDisclosurePage(value);
-    fetchDisclosureData(value); // 클릭된 페이지에 맞춰 API 호출
+    fetchDisclosureData(value);
   };
 
   useEffect(() => {
-    getCommentByStock(stockData.id).then((data) => setComment(data));
-  }, [stockData.id]); //원래는 빈배열이긴 했음
+    getCommentByStock(stockData.id).then((data) => {
+      setComment(data);
+      console.log(data);
+    });
+  }, [stockData.id]);
 
   // 공시 데이터 로드
   useEffect(() => {
     if (stock_id) fetchDisclosureData();
   }, [stock_id]);
-  
+
   // 로컬 스토리지에서 초기화
   useEffect(() => {
     const storedFavorites = JSON.parse(
@@ -105,7 +112,11 @@ export default function StockPage() {
   }, []);
 
   const disclosureHeaders = [
-    { key: "id", label: `전체 ${filteredDisclosureData.length}개`, width: "10%" },
+    {
+      key: "id",
+      label: `전체 ${filteredDisclosureData.length}개`,
+      width: "10%",
+    },
     { key: "company", label: "공시 대상 회사", width: "18%" },
     { key: "report", label: "보고서명", width: "25%" },
     { key: "submitter", label: "제출인", width: "18%" },
@@ -113,7 +124,6 @@ export default function StockPage() {
     { key: "votes", label: "투표", width: "12%" },
     { key: "comments", label: "댓글수", width: "7%" },
   ];
-
 
   const calculatePriceChange = (currentPrice, changeRate) => {
     let price = Math.round(
@@ -250,18 +260,31 @@ export default function StockPage() {
           headers={disclosureHeaders}
         />
         <div className="pagination-container">
-        <Pagination
-          count={totalPages}
-          page={currentDisclosurePage}
-          onChange={handlePageChange}
-          color="primary"
-        />
+          <Pagination
+            count={totalPages}
+            page={currentDisclosurePage}
+            onChange={handlePageChange}
+            color="primary"
+          />
         </div>
       </div>
       <div>
         <div className="font-bold text-xl">댓글</div>
         <div className="mx-4">
-          <CommentList commentData={comment} />
+          {/* <CommentList commentData={comment} /> */}
+          {comment.map((com) => (
+            <StockComment
+              key={com.commentId}
+              announcementId={com.announcementId}
+              announcementTitle={com.announcementTitle}
+              commentId={com.commentId}
+              content={com.content}
+              createdAt={com.createdAt}
+              userProfileColor={com.userProfileColor}
+              username={com.username}
+              company={stockData.name}
+            />
+          ))}
         </div>
       </div>
       <ScrollToTopButton />
