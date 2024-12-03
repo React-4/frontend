@@ -201,8 +201,8 @@ const ApexChart = ({ stockId, type, company }) => {
         plotOptions: {
           candlestick: {
             colors: {
-              upward: "#2372EB",
-              downward: "#FF5959",
+              upward: "#FF5959",
+              downward: "#2372EB",
             },
           },
         },
