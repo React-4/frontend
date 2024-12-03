@@ -70,7 +70,7 @@ export default function GptDisclosure({ announcement, company, disclo_id }) {
   const navigate = useNavigate();
   //const [announcement, setAnnouncement] = useState({});
   const [summaryJSON, setSummaryJSON] = useState(null);
-
+  console.log(announcement);
   useEffect(() => {
     if (
       announcement &&
@@ -82,24 +82,23 @@ export default function GptDisclosure({ announcement, company, disclo_id }) {
     }
   }, [announcement]);
 
-  const handleNavigate = () => {
-    console.log(announcement);
-    // navigate(`/stock/${announcement.stockId}`, {
-    //   state: {
-    //     data: [
-    //       {
-    //         id: id,
-    //         name: name,
-    //         price: price, // 가격
-    //         changeRate: changeRate, // 변동률
-    //         transaction: transaction, // 거래량
-    //         code: code, // 주식 코드
-    //         // 필요한 다른 데이터가 있다면 여기에 추가
-    //       },
-    //     ],
-    //   },
-    // });
-  };
+  // const handleNavigate = () => {
+  //   console.log(announcement);
+  //   navigate(`/stock/${announcement.stockId}`, {
+  //     state: {
+  //       data: [
+  //         {
+  //           id: sid,
+  //           name: name,
+  //           price: price, // 가격
+  //           changeRate: changeRate, // 변동률
+  //           transaction: transaction, // 거래량
+  //           code: code, // 주식 코드
+  //         },
+  //       ],
+  //     },
+  //   });
+  // };
 
   const [favorites, setFavorites] = useState([]);
   // 로컬 스토리지에서 초기화
@@ -157,10 +156,7 @@ export default function GptDisclosure({ announcement, company, disclo_id }) {
         </div>
 
         <div className="flex flex-row gap-3 w-full justify-end mt-20">
-          <div
-            className="bg-primary text-white px-5 h-7 rounded-lg text-center"
-            onClick={handleNavigate}
-          >
+          <div className="bg-primary text-white px-5 h-7 rounded-lg text-center">
             {company || "회사 정보 없음"}
           </div>
           <div

@@ -14,6 +14,7 @@ const MainPage = () => {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
   //공시
   const [disclosureSortType, setDisclosureSortType] = useState("latest");
   const [disclosureData, setDisclosureData] = useState([]);
@@ -41,7 +42,6 @@ const MainPage = () => {
       setDisclosureData(
         announcementList.map((item) => ({
           id: item.announcementId,
-          num: item.announcementId,
           company: item.stockName,
           report: item.title?.trim() || "N/A",
           submitter: item.submitter || "Unknown",
@@ -92,7 +92,7 @@ const MainPage = () => {
   };
 
   const disclosureHeaders = [
-    { key: "num", label: `전체 ${totalDisclosure}개`, width: "10%" },
+    { key: "id", label: `전체 ${totalDisclosure}개`, width: "10%" },
     { key: "company", label: "공시 대상 회사", width: "18%" },
     { key: "report", label: "보고서명", width: "25%" },
     { key: "submitter", label: "제출인", width: "18%" },
@@ -122,32 +122,18 @@ const MainPage = () => {
       });
 
       const data = response.data?.data || {};
-      const formattedData = Object.keys(data).map((key, index) => ({
-        id: index + 1,
-        num: parseInt(key),
+      const formattedData = Object.keys(data).map((key) => ({
+        id: data[key]["종목id"],
+        name: data[key]["종목명"],
         code: data[key]["종목코드"],
-        price: `${data[key]["현재가"]} 원`,
+        price: `${Number(data[key]["현재가"]).toLocaleString()}원`,
         changeRate: `${data[key]["등락률"]}%`,
-        transaction: `${data[key]["거래량"]} 주`,
-      }));
-
-      const updatedData = await Promise.all(
-        formattedData.map(async (stock) => {
-          try {
-            const tickerResponse = await axios.get(
-              `${BASE_URL}/api/stock/ticker/${stock.code}`
-            );
-            const companyName =
-              tickerResponse.data?.data?.companyName || "알 수 없음";
-            const stockId = tickerResponse.data?.data?.stockId || stock.num;
-            return { ...stock, name: companyName, id: stockId, num: stockId };
-          } catch (error) {
-            return null;
-          }
-        })
+        transaction: `${Number(data[key]["거래량"]).toLocaleString()}주`,
+      }))
+      
+      const filteredData = formattedData.filter((item) =>
+        Object.values(item).every((value) => value !== null)
       );
-      const filteredData = updatedData.filter((item) => item !== null);
-
       setStockData(filteredData);
     } catch (error) {
       console.error("Failed to fetch stock data:", error);
@@ -172,7 +158,7 @@ const MainPage = () => {
   const currentSData = stockData.slice(startIndex, endIndex);
 
   const stockHeaders = [
-    { key: "num", label: `전체 ${stockData.length}개`, width: "10%" },
+    { key: "id", label: `전체 ${stockData.length}개`, width: "10%" },
     { key: "name", label: "종목명", width: "20%" },
     { key: "code", label: "종목코드", width: "10%" },
     { key: "price", label: "현재가", width: "10%" },
@@ -238,7 +224,7 @@ const MainPage = () => {
           />
         </div>
       </TabPanel>
-      <TabPanel value="2">
+      <TabPanel value="2"  sx={{ padding: "10px" }}>
         <div className="sort-buttons">
           {stockSortOptions.map((option) => (
             <button
@@ -262,6 +248,59 @@ const MainPage = () => {
       </TabPanel>
       <TabPanel value="3">Item Three</TabPanel>
     </TabContext>
+
+    // <div>
+    //   <h2 className="list-title">공시</h2>
+    //   <div className="sort-buttons">
+    //     {disclosureSortOptions.map((option) => (
+    //       <button
+    //         key={option.key}
+    //         className={disclosureSortType === option.key ? "active" : ""}
+    //         onClick={() => handleDisclosureSortChange(option.key)}
+    //       >
+    //         {option.label}
+    //       </button>
+    //     ))}
+    //   </div>
+
+    //   <ListTables
+    //     type="disclosure"
+    //     data={disclosureData}
+    //     headers={disclosureHeaders}
+    //   />
+
+    //   <div className="pagination-container z-0">
+    //     <Pagination
+    //       count={totalPages}
+    //       page={currentDPage}
+    //       onChange={handleDPageClick}
+    //       color="primary"
+    //     />
+    //   </div>
+
+    //   <h2 className="list-title">종목</h2>
+    //   <div className="sort-buttons">
+    //     {stockSortOptions.map((option) => (
+    //       <button
+    //         key={option.key}
+    //         className={stockSortType === option.key ? "active" : ""}
+    //         onClick={() => handleStockSortChange(option.key)}
+    //       >
+    //         {option.label}
+    //       </button>
+    //     ))}
+    //   </div>
+    //   <ListTables type="stock" data={currentSData} headers={stockHeaders} />
+
+    //   <div className="pagination-container">
+    //     <Pagination
+    //       count={Math.ceil(stockData.length / pageSSize)}
+    //       page={currentSPage}
+    //       onChange={handleSPageClick}
+    //       color="primary"
+    //     />
+    //   </div>
+    // </div>
   );
 };
 
