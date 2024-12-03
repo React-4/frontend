@@ -210,23 +210,33 @@ export default function StockPage() {
         />
       </div>
       <div>
-        <div className="font-bold text-xl">공시</div>
+        <div className="font-bold text-xl pl-5">공시</div>
         <ListTables
           type="disclosure"
           data={filteredDisclosureData}
           headers={disclosureHeaders}
         />
-        <Pagination
-          count={totalPages}
-          page={currentDisclosurePage}
-          onChange={handlePageChange}
-          color="primary"
-        />
+        <div className="pagination-container">
+          <Pagination
+            count={totalPages}
+            page={currentDisclosurePage}
+            onChange={handlePageChange}
+            color="primary"
+          />
+        </div>
       </div>
       <div>
-        <div className="font-bold text-xl">댓글</div>
+        <div className="font-bold text-xl pl-5">댓글</div>
         <div className="mx-4">
-          <CommentList commentData={comment} />
+          {stockData.comment && stockData.comment.length > 0 ? (
+            <CommentList commentData={stockData.comment} />
+          ) : (
+            <div className="flex items-center justify-center w-full h-72 rounded-lg mt-5">
+              <span className="text-2xl font-medium text-black text-center">
+                공시 댓글이 없습니다.
+              </span>
+            </div>
+          )}
         </div>
       </div>
     </div>
