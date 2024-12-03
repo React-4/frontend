@@ -39,15 +39,12 @@ export default function EditInfo() {
   };
   const handleLeave = async () => {
     try {
-      const response = await axios.delete(
-        BASE_URL + "/api/user",
-        {
-          password: leavePassword,
+      const response = await axios.delete(BASE_URL + "/api/user", {
+        data: {
+          password: leavePassword, // 요청 본문에 password 포함
         },
-        {
-          withCredentials: true,
-        }
-      );
+        withCredentials: true,
+      });
 
       if (response.status === 200) {
         toast.success("회원 탈퇴 성공");
