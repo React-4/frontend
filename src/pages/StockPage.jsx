@@ -16,7 +16,6 @@ export default function StockPage() {
   console.log(location.state);
   const stockData = location.state.data[0];
   console.log("stockData ", stockData);
-
   const [disclosureData, setDisclosureData] = useState([]);
   const [filteredDisclosureData, setFilteredDisclosureData] = useState([]);
   const [loading, setLoading] = useState(true);
