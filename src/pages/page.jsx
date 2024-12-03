@@ -1,114 +1,112 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import axios from "axios";
 import ApexChart from "../components/chart/ApexChart";
 import ListTables from "../components/common/ListTables";
 import CommentList from "../components/disclosure/CommentList";
+import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { getCommentByStock } from "../services/commentAPI";
 import { addToHistory } from "../utils/history";
+import { Pagination } from "@mui/material";
 import '../components/css/SearRes.css';
-import Pagination from "@mui/material/Pagination";
-import axios from "axios";
 
 const BASE_URL = import.meta.env.VITE_BACK_URL;
 
 export default function StockPage() {
-  const location = useLocation();
-  console.log(location.state);
-  const stockData = location.state.data[0];
-  console.log("stockData ", stockData);
-
-  const [disclosureData, setDisclosureData] = useState([]);
-  const [filteredDisclosureData, setFilteredDisclosureData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [totalPages, setTotalPages] = useState(1);
-  const [currentDisclosurePage, setCurrentDisclosurePage] = useState(1);
+  const [totalstockDatas, setTotalStockDatas] = useState([]);
+  const [totalAnnouncements, setTotalAnnouncements] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [chartType, setChartType] = useState("day");
+  const [comment, setComment] = useState([]);
+  const pageSize = 10;
 
   const getStockIdFromUrl = () => {
     const path = window.location.pathname;
-    const match = path.match(/\/stock\/(\d+)/); // /stock/:stock_id
-    return match ? parseInt(match[1], 10) : null;
+    const match = path.match(/\/stock\/(\d+)/); // "/stock/:stock_id" 패턴 매칭
+    return match ? parseInt(match[1], 10) : null; 
   };
-
+  
   const stock_id = getStockIdFromUrl();
-  console.log("Extracted stock_id:", stock_id);
+console.log("Extracted and converted stock_id:", stock_id, typeof stock_id);
 
-  const [chartType, setChartType] = useState("day");
-  const [comment, setComment] = useState([]);
+useEffect(() => {
+  console.log("useEffect triggered");
+  console.log("stock_id:", stock_id);
+}, [stock_id]);
+// 최초 렌더링 시 공시 데이터와 댓글 데이터 가져오기
+useEffect(() => {
+  // fetchAnnouncementData();
+  console.log("useEffect called with stock_id:", stock_id);
+if (stock_id) {
+  console.log("띨띨롱");
+  fetchAnnouncementData();
+}
+  getCommentByStock(stock_id).then((data) => setComment(data));
+}, [stock_id]);
 
-  const fetchDisclosureData = async (page = 1) => {
+console.log("BASE_URL:", BASE_URL);
+
+
+  const fetchAnnouncementData = async (page = 1) => {
     try {
-      setLoading(true);
+      console.log("fetchAnnouncementData called with page:", page);
+
       const response = await axios.get(
-        `${BASE_URL}/api/announcement/stock/${stock_id}`,
+        `${BASE_URL}/api/announcement/stock/${stock_id}`, // stock_id를 URL 경로에 포함
         {
-          params: { sortBy: "latest", page: page-1, size: 10 },
+          params: {
+            sortBy: "latest",
+            page,
+            size: pageSize,
+          },
         }
       );
-      console.log("Fetched disclosure data:", response.data);
+      console.log("!!!response: ", response.data);
 
       if (response.status === 200) {
-        const { announcementList = [], announcementCount } = response.data.data || {};
-        setDisclosureData(announcementList);
-        setTotalPages(announcementCount);
-        setFilteredDisclosureData(
-          announcementList.map((item) => ({
-            id: item.announcementId,
-            company: item.stockName,
-            report: item.title,
-            submitter: item.submitter,
-            date: item.announcementDate,
-            votes: {
-              good: item.positiveVoteCount,
-              bad: item.negativeVoteCount,
-            },
-            comments: item.commentCount,
-          }))
-        );
+        const { announcementList = [], announcementCount } = response.data?.data || {};
+        setTotalStockDatas(announcementList);
+        console.log("announcementList: ", announcementList);
+        setTotalAnnouncements(announcementCount);
       } else {
-        console.error("Failed to fetch disclosure data:", response.data.message);
+        console.error("!!Failed to fetch announcement data:", response.data?.message);
       }
     } catch (error) {
-      console.error("Error fetching disclosure data:", error);
-    } finally {
-      setLoading(false);
+      console.error("!!!!Error fetching announcement data:", error);
     }
   };
 
+  // 페이지 변경 핸들러
   const handlePageChange = (event, value) => {
-    setCurrentDisclosurePage(value);
-    fetchDisclosureData(value); // 클릭된 페이지에 맞춰 API 호출
+    setCurrentPage(value);
+    fetchAnnouncementData(value);
   };
-
-  useEffect(() => {
-    getCommentByStock(stockData.id).then((data) => setComment(data));
-  }, [stockData.id]);
-
-  // 공시 데이터 로드
-  useEffect(() => {
-    if (stock_id) fetchDisclosureData();
-  }, [stock_id]);
 
   
   const disclosureHeaders = [
-    { key: "id", label: `전체 ${filteredDisclosureData.length}개`, width: "10%" },
+    { key: "id", label: `전체 ${fetchAnnouncementData.length}개`, width: "10%"},
     { key: "company", label: "공시 대상 회사", width: "18%" },
     { key: "report", label: "보고서명", width: "25%" },
     { key: "submitter", label: "제출인", width: "18%" },
     { key: "date", label: "접수일자", width: "10%" },
     { key: "votes", label: "투표", width: "12%" },
     { key: "comments", label: "댓글수", width: "7%" },
-  ];
+];
 
+  if (!totalstockDatas) return <div>Loading...</div>;
 
+  const location = useLocation();
+  const stockData = location.state.data[0];
+  console.log("location.state", location.state);
   const calculatePriceChange = (currentPrice, changeRate) => {
     let price = Math.round(
-      (Number(currentPrice.replaceAll(",", "").slice(0, -1)) /
+      (Number(currentPrice.slice(0, -2)) /
         (1 + Number(changeRate.slice(0, -1)) / 100)) *
         (Number(changeRate.slice(0, -1)) / 100)
     );
+
     return price;
   };
-
   const changePrice = calculatePriceChange(
     stockData.price,
     stockData.changeRate
@@ -125,8 +123,6 @@ export default function StockPage() {
   };
   addToHistory("stock", stockItem);
 
-  if (loading) return <div>Loading...</div>;
-
   return (
     <div className="flex flex-col mb-12 m-3">
       <div className="flex flex-row w-full justify-between">
@@ -138,7 +134,7 @@ export default function StockPage() {
               width: "50px",
               height: "50px",
               marginRight: "0.3em",
-            }}
+            }} // 크기 및 여백 조정
             className="rounded-xl"
           />
           <div className="flex flex-row gap-2">
@@ -190,33 +186,26 @@ export default function StockPage() {
               changePrice < 0 ? "text-primary-4" : "text-primary-3"
             } font-bold ml-1`}
           >
-            {changePrice > 0 ? `+` : null}
-            {Number(changePrice).toLocaleString()}원 ({stockData.changeRate})
+            {changePrice}원 ({stockData.changeRate})
           </span>
         </div>
       </div>
       <div>
-        <ApexChart
-          name="test"
-          stockId={stockData.id}
-          type={chartType}
-          company={stockData.name}
-        />
+        <ApexChart name="test" stockId={stockData.id} type={chartType} />
       </div>
       <div>
         <div className="font-bold text-xl">공시</div>
         <ListTables
           type="disclosure"
-          data={filteredDisclosureData}
+          data={stockData}
           headers={disclosureHeaders}
         />
         <Pagination
-          count={totalPages}
-          page={currentDisclosurePage}
+          count={totalAnnouncements}
+          page={currentPage}
           onChange={handlePageChange}
           color="primary"
         />
-
       </div>
       <div>
         <div className="font-bold text-xl">댓글</div>
