@@ -17,6 +17,7 @@ function formatDate(inputDate) {
     now.getDate() === date.getDate();
 
   if (diffMinutes < 60) {
+    if (diffMinutes < 0) return "0분 전";
     return `${diffMinutes}분 전`;
   } else if (isSameDay) {
     return `${diffHours}시간 전`;
@@ -87,18 +88,34 @@ export default function CommentItem({
   };
 
   return (
-    <div className="flex flex-row justify-between mt-6 w-full">
+    <div className="flex flex-row justify-between mt-6 w-full items-center">
       <div
         className={`rounded-full w-10 h-10 text-white p-1 ${colorClass} flex flex-col items-center justify-center`}
       >
         {username.slice(0, 2)}
       </div>
       <div className="w-full flex flex-col px-4">
-        <div>
+        <div className="flex flex-row items-center">
           {username}
           <span className="ml-3 text-xs text-primary-2">
             {formatDate(date)}
           </span>
+
+          {nickname === username && !isEditing && (
+            <div className="ml-4 flex flex-row h-2 items-center gap-1 py-5 text-primary-2">
+              <EditOutlinedIcon
+                sx={{ width: "1.2rem", cursor: "pointer" }}
+                onClick={() => {
+                  setIsEditing(true);
+                }}
+              />
+
+              <CloseIcon
+                sx={{ width: "1.4rem", cursor: "pointer" }}
+                onClick={handleRemove}
+              />
+            </div>
+          )}
         </div>
 
         {isEditing ? (
@@ -129,22 +146,6 @@ export default function CommentItem({
         {isOverflow && (
           <div className="text-blue-500 cursor-pointer my-2 text-sm">
             더보기 ...
-          </div>
-        )}
-
-        {nickname === username && !isEditing && (
-          <div className="flex flex-row h-2 items-center gap-1 py-5 text-primary-2">
-            <EditOutlinedIcon
-              sx={{ width: "1.2rem", cursor: "pointer" }}
-              onClick={() => {
-                setIsEditing(true);
-              }}
-            />
-
-            <CloseIcon
-              sx={{ width: "1.4rem", cursor: "pointer" }}
-              onClick={handleRemove}
-            />
           </div>
         )}
       </div>

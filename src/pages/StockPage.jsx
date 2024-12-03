@@ -15,6 +15,7 @@ import {
   removeFavoriteStockAPI,
 } from "../services/stockAPI";
 
+import ScrollToTopButton from "../components/common/ScrollToTopButton";
 
 const BASE_URL = import.meta.env.VITE_BACK_URL;
 
@@ -99,17 +100,13 @@ export default function StockPage() {
     if (stock_id) fetchDisclosureData();
   }, [stock_id]);
 
-    // 로컬 스토리지에서 초기화
-    useEffect(() => {
-      const storedFavorites = JSON.parse(
-        localStorage.getItem(
-          "favoriteStockIds"
-        ) || "[]"
-      );
-      setFavorites(storedFavorites);
-    }, []);
-
-
+  // 로컬 스토리지에서 초기화
+  useEffect(() => {
+    const storedFavorites = JSON.parse(
+      localStorage.getItem("favoriteStockIds") || "[]"
+    );
+    setFavorites(storedFavorites);
+  }, []);
 
   const disclosureHeaders = [
     {
@@ -152,23 +149,20 @@ export default function StockPage() {
 
   if (loading) return <div>Loading...</div>;
 
-
-
   const handleFavoriteToggle = async (id) => {
-    console.log(id)
+    console.log(id);
     try {
       if (favorites.includes(id)) {
-          await removeFavoriteStockAPI(id);
-          setFavorites((prev) => prev.filter((favId) => favId !== id));
+        await removeFavoriteStockAPI(id);
+        setFavorites((prev) => prev.filter((favId) => favId !== id));
       } else {
-          await addFavoriteStockAPI(id);
-          setFavorites((prev) => [...prev, id]);
+        await addFavoriteStockAPI(id);
+        setFavorites((prev) => [...prev, id]);
       }
     } catch (error) {
       console.error("Error toggling favorite:", error);
     }
   };
-
 
   return (
     <div className="flex flex-col mb-12 m-3">
@@ -191,18 +185,18 @@ export default function StockPage() {
             </div>
           </div>
           <span
-              className="heart pl-5"
-              onClick={(e) => {
-                e.stopPropagation(); // 좋아요 클릭 시 행 이동 이벤트 중단
-                handleFavoriteToggle(stockData.id);
-              }}
-              style={{ cursor: "pointer" }}
-            >
-              {favorites.includes(stockData.id) ? (
-                <FavoriteIcon style={{ color: "#F04452" }} />
-              ) : (
-                <FavoriteBorderIcon />
-              )}
+            className="heart pl-5"
+            onClick={(e) => {
+              e.stopPropagation(); // 좋아요 클릭 시 행 이동 이벤트 중단
+              handleFavoriteToggle(stockData.id);
+            }}
+            style={{ cursor: "pointer" }}
+          >
+            {favorites.includes(stockData.id) ? (
+              <FavoriteIcon style={{ color: "#F04452" }} />
+            ) : (
+              <FavoriteBorderIcon />
+            )}
           </span>
         </div>
         <div className="flex flex-row gap-2">
@@ -290,6 +284,7 @@ export default function StockPage() {
           )}
         </div>
       </div>
+      <ScrollToTopButton />
     </div>
   );
 }
