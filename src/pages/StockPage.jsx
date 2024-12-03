@@ -39,7 +39,6 @@ export default function StockPage() {
   };
 
   const stock_id = getStockIdFromUrl();
-  console.log("Extracted stock_id:", stock_id);
 
   const [chartType, setChartType] = useState("day");
   const [comment, setComment] = useState([]);
@@ -53,7 +52,6 @@ export default function StockPage() {
           params: { sortBy: "latest", page: page - 1, size: 10 },
         }
       );
-      console.log("Fetched disclosure data:", response.data);
 
       if (response.status === 200) {
         const { announcementList = [], announcementCount } =
@@ -265,6 +263,7 @@ export default function StockPage() {
           data={filteredDisclosureData}
           headers={disclosureHeaders}
         />
+
         <div className="pagination-container">
           <Pagination
             count={totalPages}
@@ -273,11 +272,19 @@ export default function StockPage() {
             color="primary"
           />
         </div>
+
+        {filteredDisclosureData.length === 0 && (
+          <div className="flex items-center justify-center w-full h-55 rounded-lg mt-5">
+              <span className="text-2xl font-medium text-black text-center">
+              공시 데이터가 존재하지 않습니다.
+              </span>
+          </div>
+        )}
       </div>
       <div>
         <div className="font-bold text-xl">댓글</div>
         <div className="mx-4">
-          {/* <CommentList commentData={comment} /> */}
+          <CommentList commentData={comment} />
           {comment.map((com) => (
             <StockComment
               key={com.commentId}
