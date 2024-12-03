@@ -18,6 +18,7 @@ import ScrollToTopButton from "../components/common/ScrollToTopButton";
 import StockComment from "../components/stock/StockComment";
 const BASE_URL = import.meta.env.VITE_BACK_URL;
 import NoPhoto from "/img/NoPhoto.png";
+import { useLogin } from "../hooks/useLogin";
 
 export default function StockPage() {
   const location = useLocation();
@@ -31,7 +32,7 @@ export default function StockPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [currentDisclosurePage, setCurrentDisclosurePage] = useState(1);
   const [favorites, setFavorites] = useState([]);
-
+  const { loggedIn } = useLogin();
   const getStockIdFromUrl = () => {
     const path = window.location.pathname;
     const match = path.match(/\/stock\/(\d+)/); // /stock/:stock_id
@@ -191,20 +192,22 @@ export default function StockPage() {
               {stockData.code}
             </div>
           </div>
-          <span
-            className="heart pl-5"
-            onClick={(e) => {
-              e.stopPropagation(); // 좋아요 클릭 시 행 이동 이벤트 중단
-              handleFavoriteToggle(stockData.id);
-            }}
-            style={{ cursor: "pointer" }}
-          >
-            {favorites.includes(stockData.id) ? (
-              <FavoriteIcon style={{ color: "#F04452" }} />
-            ) : (
-              <FavoriteBorderIcon />
-            )}
-          </span>
+          {loggedIn && (
+            <span
+              className="heart pl-5"
+              onClick={(e) => {
+                e.stopPropagation(); // 좋아요 클릭 시 행 이동 이벤트 중단
+                handleFavoriteToggle(stockData.id);
+              }}
+              style={{ cursor: "pointer" }}
+            >
+              {favorites.includes(stockData.id) ? (
+                <FavoriteIcon style={{ color: "#F04452" }} />
+              ) : (
+                <FavoriteBorderIcon />
+              )}
+            </span>
+          )}
         </div>
         <div className="flex flex-row gap-2">
           <button

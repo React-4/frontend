@@ -9,8 +9,6 @@ import { addToHistory } from "../utils/history";
 export default function DisclosurePage() {
   const [announcement, setAnnouncement] = useState([]);
   const location = useLocation();
-  const [isGoodAnimating, setIsGoodAnimating] = useState(false); // 애니메이션 상태
-  const [isBadAnimating, setIsBadAnimating] = useState(false); // 애니메이션 상태
   console.log(location.state);
   let data = location.state?.data[0];
   const params = useParams();
