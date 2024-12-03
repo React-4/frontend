@@ -130,8 +130,8 @@ const MainPage = () => {
         price: `${Number(data[key]["현재가"]).toLocaleString()}원`,
         changeRate: `${data[key]["등락률"]}%`,
         transaction: `${Number(data[key]["거래량"]).toLocaleString()}주`,
-      }))
-      
+      }));
+
       const filteredData = formattedData.filter((item) =>
         Object.values(item).every((value) => value !== null)
       );
@@ -189,12 +189,12 @@ const MainPage = () => {
           <Tab
             label="공시"
             value="1"
-            sx={{ fontSize: "25px", fontWeight: "bold" }}
+            sx={{ fontSize: "20px", fontWeight: "bold" }}
           />
           <Tab
             label="종목"
             value="2"
-            sx={{ fontSize: "25px", fontWeight: "bold" }}
+            sx={{ fontSize: "20px", fontWeight: "bold" }}
           />
         </TabList>
       </Box>
@@ -225,7 +225,7 @@ const MainPage = () => {
           />
         </div>
       </TabPanel>
-      <TabPanel value="2"  sx={{ padding: "10px" }}>
+      <TabPanel value="2" sx={{ padding: "10px" }}>
         <div className="sort-buttons">
           {stockSortOptions.map((option) => (
             <button
