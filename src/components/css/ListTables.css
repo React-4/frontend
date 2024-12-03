@@ -109,6 +109,7 @@
   display: flex;
   text-align: center;
   justify-content: center;
+  padding-bottom: 50px;
 }
 
 .pagination-container a,

@@ -15,6 +15,17 @@ export default function CommentList({
     setVisibleComments((prev) => prev + 3);
   };
 
+  //댓글 없는 경우
+  if (!Array.isArray(commentData) || commentData.length === 0) {
+    return (
+      <div className="flex items-center justify-center w-full h-72 rounded-lg mt-5">
+        <span className="text-2xl font-medium text-black text-center">
+          공시 댓글이 없습니다.
+        </span>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col items-center w-full">
       {/* 댓글 리스트 */}
