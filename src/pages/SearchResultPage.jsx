@@ -285,7 +285,7 @@ const SearchResultPage = () => {
         </>
       ) : (
         <div className="no-results-box">
-          <p className="no-results-text">종목 검색 결과가 없습니다.</p>
+          <p className="no-results-text">종목 검색 결과가 존재하지 않습니다.</p>
         </div>
       )}
 
@@ -457,7 +457,7 @@ const SearchResultPage = () => {
         </>
       ) : (
         <div className="no-results-box">
-          <p className="no-results-text">공시 검색 결과가 없습니다.</p>
+          <p className="no-results-text">공시 검색 결과가 존재하지 않습니다.</p>
         </div>
       )}
     </div>
