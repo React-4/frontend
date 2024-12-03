@@ -2,7 +2,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getGPTDisclosure } from "../../services/disclosureAPI";
-
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import {
+  addFavoriteAnnouncementAPI,
+  removeFavoriteAnnouncementAPI,
+} from "../../services/stockAPI";
 function parseSectionContent(content) {
   const result = [];
   const regex =
@@ -61,7 +66,7 @@ function convertToJSONWithDetails(text) {
   return result;
 }
 
-export default function GptDisclosure({ announcement, company }) {
+export default function GptDisclosure({ announcement, company,disclo_id }) {
   const navigate = useNavigate();
   //const [announcement, setAnnouncement] = useState({});
   const [summaryJSON, setSummaryJSON] = useState(null);
@@ -96,13 +101,59 @@ export default function GptDisclosure({ announcement, company }) {
     // });
   };
 
+  const [favorites, setFavorites] = useState([]);
+  // 로컬 스토리지에서 초기화
+  useEffect(() => {
+    const storedFavorites = JSON.parse(
+      localStorage.getItem(
+        "favoriteAnnouncementIds"
+      ) || "[]"
+    );
+    setFavorites(storedFavorites);
+  }, []);
+
+  const handleFavoriteToggle = async (id) => {
+    console.log(id)
+    try {
+      if (favorites.includes(id)) {
+          await removeFavoriteAnnouncementAPI(id);
+          setFavorites((prev) => prev.filter((favId) => favId !== id));
+      } else {
+          await addFavoriteAnnouncementAPI(id);
+          setFavorites((prev) => [...prev, id]);
+      }
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
+    }
+  };
+  
+
+
   return (
     <div className="flex flex-col items-center w-full">
       <div className="w-9/12">
         {/* 제목 */}
-        <div className="font-bold text-3xl text-center">
+        <div className="flex justify-center font-bold items-center  text-3xl gap-5 text-center">
           {announcement?.title}
+
+          <span
+              className="heart"
+              onClick={(e) => {
+                e.stopPropagation(); // 좋아요 클릭 시 행 이동 이벤트 중단
+                handleFavoriteToggle(disclo_id);
+              }}
+              style={{ cursor: "pointer" }}
+            >
+              {favorites.includes(disclo_id) ? (
+                <FavoriteIcon style={{ color: "#F04452" }} />
+              ) : (
+                <FavoriteBorderIcon />
+              )}
+          </span>
+
         </div>
+
+
 
         <div className="flex flex-row gap-5 w-full justify-center mt-1">
           <div>제출자 : {announcement?.submitter || "정보 없음"}</div>
