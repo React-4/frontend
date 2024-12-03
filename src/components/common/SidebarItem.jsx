@@ -74,7 +74,7 @@ export function StockSidebarItem({
             )}
             <div>
               {drawerTitle === "최근 본" ? 
-                `${(parseFloat(changeRate) * 100).toFixed(2)}%` 
+                `${(parseFloat(changeRate)).toFixed(2)}%` 
               : 
                 `${(parseFloat(changeRate) * 100).toFixed(2)}%`}
             </div>
