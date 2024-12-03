@@ -5,10 +5,6 @@ import { useParams, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getGPTDisclosure } from "../services/disclosureAPI";
 import { addToHistory } from "../utils/history";
-import {
-  VoteBadAnimation,
-  VoteGoodAnimation,
-} from "../components/stock/\bVoteAnimation";
 
 export default function DisclosurePage() {
   const [announcement, setAnnouncement] = useState([]);
@@ -52,15 +48,9 @@ export default function DisclosurePage() {
         company={data ? data.company : ""}
         // stockId={data.}
       />
-      <VoteGoodAnimation isAnimating={isGoodAnimating} />
-      <VoteBadAnimation isAnimating={isBadAnimating} />
+
       <div className=" mt-3 w-9/12">
-        <Comment
-          announcement={announcement}
-          announcement_id={params.id}
-          startCoinRain={startCoinRain}
-          startRain={startRain}
-        />
+        <Comment announcement={announcement} announcement_id={params.id} />
       </div>
     </div>
   );

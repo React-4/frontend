@@ -5,7 +5,7 @@ import CommentList from "../components/disclosure/CommentList";
 import { useLocation } from "react-router-dom";
 import { getCommentByStock } from "../services/commentAPI";
 import { addToHistory } from "../utils/history";
-import '../components/css/SearRes.css';
+import "../components/css/SearRes.css";
 import Pagination from "@mui/material/Pagination";
 import axios from "axios";
 
@@ -41,13 +41,14 @@ export default function StockPage() {
       const response = await axios.get(
         `${BASE_URL}/api/announcement/stock/${stock_id}`,
         {
-          params: { sortBy: "latest", page: page-1, size: 10 },
+          params: { sortBy: "latest", page: page - 1, size: 10 },
         }
       );
       console.log("Fetched disclosure data:", response.data);
 
       if (response.status === 200) {
-        const { announcementList = [], announcementCount } = response.data.data || {};
+        const { announcementList = [], announcementCount } =
+          response.data.data || {};
         setDisclosureData(announcementList);
         setTotalPages(announcementCount);
         setFilteredDisclosureData(
@@ -65,7 +66,10 @@ export default function StockPage() {
           }))
         );
       } else {
-        console.error("Failed to fetch disclosure data:", response.data.message);
+        console.error(
+          "Failed to fetch disclosure data:",
+          response.data.message
+        );
       }
     } catch (error) {
       console.error("Error fetching disclosure data:", error);
@@ -88,9 +92,12 @@ export default function StockPage() {
     if (stock_id) fetchDisclosureData();
   }, [stock_id]);
 
-  
   const disclosureHeaders = [
-    { key: "id", label: `전체 ${filteredDisclosureData.length}개`, width: "10%" },
+    {
+      key: "id",
+      label: `전체 ${filteredDisclosureData.length}개`,
+      width: "10%",
+    },
     { key: "company", label: "공시 대상 회사", width: "18%" },
     { key: "report", label: "보고서명", width: "25%" },
     { key: "submitter", label: "제출인", width: "18%" },
@@ -98,7 +105,6 @@ export default function StockPage() {
     { key: "votes", label: "투표", width: "12%" },
     { key: "comments", label: "댓글수", width: "7%" },
   ];
-
 
   const calculatePriceChange = (currentPrice, changeRate) => {
     let price = Math.round(
@@ -135,9 +141,9 @@ export default function StockPage() {
             src={`https://thumb.tossinvest.com/image/resized/96x0/https%3A%2F%2Fstatic.toss.im%2Fpng-icons%2Fsecurities%2Ficn-sec-fill-${stockData.code}.png`}
             alt={`${stockData.code} 아이콘`}
             style={{
-              width: "50px",
-              height: "50px",
-              marginRight: "0.3em",
+              width: "45px",
+              height: "45px",
+              marginRight: "0.5em",
             }}
             className="rounded-xl"
           />
@@ -222,14 +228,12 @@ export default function StockPage() {
       <div>
         <div className="font-bold text-xl pl-5">댓글</div>
         <div className="mx-4">
-            {stockData.comment && stockData.comment.length > 0 ? (
+          {stockData.comment && stockData.comment.length > 0 ? (
             <CommentList commentData={stockData.comment} />
           ) : (
-            <div
-  className="flex items-center justify-center w-full h-72 rounded-lg mt-5"
->
-  <span className="text-2xl font-medium text-black text-center">
-              공시 댓글이 없습니다.
+            <div className="flex items-center justify-center w-full h-72 rounded-lg mt-5">
+              <span className="text-2xl font-medium text-black text-center">
+                공시 댓글이 없습니다.
               </span>
             </div>
           )}

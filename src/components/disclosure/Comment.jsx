@@ -8,12 +8,7 @@ import {
 } from "../../services/commentAPI";
 import { postVote, deleteVote } from "../../services/voteAPI";
 
-export default function Comment({
-  announcement,
-  announcement_id,
-  startCoinRain,
-  startRain,
-}) {
+export default function Comment({ announcement, announcement_id }) {
   const [page, setPage] = useState(0);
   const [good, setGood] = useState(0);
   const [bad, setBad] = useState(0);
@@ -87,7 +82,6 @@ export default function Comment({
               setGood((prev) => prev + 1);
               setVoted(true);
               setVoteType("POSITIVE");
-              startCoinRain();
               // 로컬 스토리지에 투표 정보 저장
               localStorage.setItem(
                 `vote_${announcement_id}`,
@@ -104,7 +98,6 @@ export default function Comment({
               setBad((prev) => prev + 1);
               setVoted(true);
               setVoteType("NEGATIVE");
-              startRain();
               // 로컬 스토리지에 투표 정보 저장
               localStorage.setItem(
                 `vote_${announcement_id}`,
