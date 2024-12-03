@@ -177,6 +177,15 @@ export default function ListTables({ type, data, headers }) {
                           }}
                         />
                       </div>
+                    ) : header.key === "report" &&
+                      row[header.key].slice(0, 6) === "[기재정정]" ? (
+                      <div>
+                        {" "}
+                        <span className="text-primary-4 font-semibold">
+                          [기재정정]
+                        </span>{" "}
+                        <span>{row[header.key].slice(6)}</span>
+                      </div>
                     ) : header.key === "votes" ? (
                       <div className="votes-container">
                         <span className="votes-good">
