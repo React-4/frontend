@@ -257,7 +257,7 @@ export default function StockPage() {
         <ApexChart name="test" stockId={stockData.id} type={chartType} />
       </div>
       <div>
-        <div className="font-bold text-xl">공시</div>
+        <div className="font-bold text-xl pl-5">공시</div>
         <ListTables
           type="disclosure"
           data={filteredDisclosureData}
@@ -282,7 +282,7 @@ export default function StockPage() {
         )}
       </div>
       <div>
-        <div className="font-bold text-xl">댓글</div>
+        <div className="font-bold text-xl pl-5">댓글</div>
         <div className="mx-4">
           <CommentList commentData={comment} />
           {comment.map((com) => (
