@@ -11,7 +11,6 @@ export default function DisclosurePage() {
   const location = useLocation();
 
   let data = location.state?.data[0];
-  console.log("lllll", data);
   const params = useParams();
 
   useEffect(() => {

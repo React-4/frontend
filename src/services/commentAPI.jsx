@@ -29,7 +29,6 @@ export async function postComment(announcement_id, content) {
 }
 
 export async function patchComment(comment_id, content) {
-  console.log(comment_id, content);
   const res = await axios.patch(
     `${BASE_URL}/api/comments/${comment_id}`,
     { content: content },
@@ -37,12 +36,10 @@ export async function patchComment(comment_id, content) {
       withCredentials: true,
     }
   );
-  console.log(res);
 }
 
 export async function deleteComment(comment_id) {
   const res = await axios.delete(`${BASE_URL}/api/comments/${comment_id}`, {
     withCredentials: true,
   });
-  console.log(res);
 }

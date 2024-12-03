@@ -25,7 +25,7 @@ export default function StockPage() {
   const params = useParams();
   const [stockData, setStockData] = useState([]);
   const [disclosureData, setDisclosureData] = useState([]);
-  console.log("asdf", stockData);
+
   useEffect(() => {
     if (location.state !== null) {
       setStockData(location.state.data[0]);
@@ -70,7 +70,6 @@ export default function StockPage() {
       );
 
       if (response.status === 200) {
-        console.log("Stock Data: ", stockData); // 상태가 업데이트된 후 값 확인
         const { announcementList = [], announcementCount } =
           response.data.data || {};
         setDisclosureData(announcementList);
@@ -169,7 +168,6 @@ export default function StockPage() {
   if (loading) return <div>Loading...</div>;
 
   const handleFavoriteToggle = async (id) => {
-    console.log(id);
     try {
       if (favorites.includes(id)) {
         await removeFavoriteStockAPI(id);

@@ -17,7 +17,6 @@ export default function CommentList({
 
   //댓글 없는 경우
   if (!Array.isArray(commentData) || commentData.length === 0) {
-    console.log("업따");
     return (
       <div className="flex items-center justify-center w-full h-55 rounded-lg my-10">
         <span className="text-xl font-medium text-primary-2 text-center">
