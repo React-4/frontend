@@ -146,11 +146,13 @@
 }
 
 .votes-good {
-  color: #f04452;
+  color: #21c55d;
+  font-weight: 600;
 }
 
 .votes-bad {
-  color: #3182f6;
+  color: #ef4444;
+  font-weight: 600;
 }
 
 .no-results-box {
@@ -172,12 +174,15 @@
 
 .change-rate-positive {
   color: #f04452;
+  font-weight: 600;
 }
 
 .change-rate-neutral {
   color: black;
+  font-weight: 600;
 }
 
 .change-rate-negative {
   color: #3182f6;
+  font-weight: 600;
 }
