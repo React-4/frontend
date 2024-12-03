@@ -72,7 +72,12 @@ export function StockSidebarItem({
             ) : (
               <ArrowDropDownIcon fontSize="small" />
             )}
-            {`${(parseFloat(changeRate) * 100).toFixed(2)}%`}
+            <div>
+              {drawerTitle === "최근 본" ? 
+                `${(parseFloat(changeRate) * 100).toFixed(2)}%` 
+              : 
+                `${(parseFloat(changeRate) * 100).toFixed(2)}%`}
+            </div>
           </div>
         </div>
       </div>
