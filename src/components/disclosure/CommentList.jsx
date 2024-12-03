@@ -41,7 +41,7 @@ export default function CommentList({
         />
       ))}
 
-      {!isEnd && commentData.length > 3 && (
+      {!isEnd && commentData.length > 3 && setPage && (
         <button
           onClick={handleShowMore}
           className="mt-4 text-primary-4 hover:underline"

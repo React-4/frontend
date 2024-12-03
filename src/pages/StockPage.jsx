@@ -14,7 +14,8 @@ import {
   addFavoriteStockAPI,
   removeFavoriteStockAPI,
 } from "../services/stockAPI";
-
+import ScrollToTopButton from "../components/common/ScrollToTopButton";
+import StockComment from "../components/stock/StockComment";
 const BASE_URL = import.meta.env.VITE_BACK_URL;
 
 export default function StockPage() {
@@ -91,8 +92,11 @@ export default function StockPage() {
   };
 
   useEffect(() => {
-    getCommentByStock(stockData.id).then((data) => setComment(data));
-  }, [stockData.id]); //원래는 빈배열이긴 했음
+    getCommentByStock(stockData.id).then((data) => {
+      setComment(data);
+      console.log(data);
+    });
+  }, [stockData.id]);
 
   // 공시 데이터 로드
   useEffect(() => {
@@ -267,7 +271,20 @@ export default function StockPage() {
       <div>
         <div className="font-bold text-xl">댓글</div>
         <div className="mx-4">
-          <CommentList commentData={comment} />
+          {/* <CommentList commentData={comment} /> */}
+          {comment.map((com) => (
+            <StockComment
+              key={com.commentId}
+              announcementId={com.announcementId}
+              announcementTitle={com.announcementTitle}
+              commentId={com.commentId}
+              content={com.content}
+              createdAt={com.createdAt}
+              userProfileColor={com.userProfileColor}
+              username={com.username}
+              company={stockData.name}
+            />
+          ))}
         </div>
       </div>
       <ScrollToTopButton />
