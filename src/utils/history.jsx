@@ -1,6 +1,5 @@
 export const addToHistory = (type, item) => {
   if (!item.id) {
-    console.warn("Item does not have an id. Not saving to history.");
     return;
   }
 
