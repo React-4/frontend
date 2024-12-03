@@ -38,6 +38,7 @@ export default function DisclosurePage() {
       <GptDisclosure
         announcement={announcement}
         company={data ? data.company : ""}
+        disclo_id={params.id}
         // stockId={data.}
       />
       <div className=" mt-20 w-9/12">

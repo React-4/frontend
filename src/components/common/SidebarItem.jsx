@@ -1,14 +1,12 @@
-/* eslint-disable react/prop-types */
 import React, { useState } from "react";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import CloseIcon from "@mui/icons-material/Close";
+import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { useNavigate } from "react-router-dom";
-import { removeFromHistory } from "../../utils/history";
-import {
-  removeFavoriteAnnouncementAPI,
-  removeFavoriteStockAPI,
-} from "../../services/stockAPI";
+import { removeFavoriteStockAPI,removeFavoriteAnnouncementAPI } from "../../services/stockAPI";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 
 export function StockSidebarItem({
   id,
@@ -21,85 +19,86 @@ export function StockSidebarItem({
   gap,
   setStockHisList,
 }) {
-  const [fav, setFav] = useState(true); // 좋아요 상태
+  const [fav, setFav] = useState(true);
   const navigate = useNavigate();
 
-  // '최근 본'에서 삭제
   const handleRemoveHist = () => {
     setStockHisList((prev) => prev.filter((item) => item.id !== id));
   };
 
-  // 좋아요를 삭제하는 함수
-  const handleRemoveFav = async (type, id) => {
+  const handleRemoveFav = async () => {
     try {
       if (fav) {
-        // stock인 경우에만 처리
-        if (type === "stock") {
-          await removeFavoriteStockAPI(id); // API 호출
-        }
+        await removeFavoriteStockAPI(id);
       }
-
-      // 상태 업데이트 후 바로 삭제된 항목을 반영
-      setFav(false); // 좋아요 해제 상태로 변경
-      setStockHisList((prev) => prev.filter((item) => item.종목id !== id)); // 해당 항목 제거
+      setFav(false);
+      setStockHisList((prev) => prev.filter((item) => item.종목id !== id));
     } catch (error) {
       console.error("Error toggling favorite:", error);
     }
   };
 
-  // 이동 처리
   const handleNavigate = () => {
     navigate(`/stock/${id}`, {
       state: {
-        data: [
-          {
-            id,
-            name,
-            price,
-            changeRate,
-            transaction,
-            code,
-          },
-        ],
+        data: [{ id, name, price, changeRate, transaction, code }],
       },
     });
   };
 
+  const isPositive = parseFloat(changeRate) > 0;
+
   return (
-    <div className="flex flex-row justify-between items-start mx-1 my-3">
-      <div
-        className="font-semibold max-w-20 min-w-20 cursor-pointer transition-all duration-200 ease-in-out transform hover:scale-105"
-        onClick={handleNavigate}
-      >
-        {name}
-      </div>
-      <div className="flex flex-col items-end mr-2">
-        <div className="font-semibold">{price}</div>
-        <div
-          className={`flex flex-row text-xs items-end ${
-            parseFloat(changeRate) > 0 ? "text-primary-3" : "text-primary-4"
-          }`}
-        >
-          {`${(parseFloat(changeRate) * 100).toFixed(2)}%`}
+    <div className="bg-white rounded-lg shadow-md p-4 mb-4 hover:shadow-lg transition-shadow duration-300">
+      <div className="flex justify-between items-start">
+        <div className="flex-1">
+          <h3
+            className="font-bold text-lg mb-1 cursor-pointer hover:text-blue-600 transition-colors duration-200"
+            onClick={handleNavigate}
+          >
+            {name}
+          </h3>
+          <p className="text-sm text-gray-500">{code}</p>
+        </div>
+        <div className="text-right">
+          <p className="font-semibold text-lg">{price}</p>
+          <div
+            className={`flex items-center text-sm ${
+              isPositive ? "text-green-600" : "text-red-600"
+            }`}
+          >
+            {isPositive ? (
+              <ArrowDropUpIcon fontSize="small" />
+            ) : (
+              <ArrowDropDownIcon fontSize="small" />
+            )}
+            {`${(parseFloat(changeRate) * 100).toFixed(2)}%`}
+          </div>
         </div>
       </div>
-      {drawerTitle === "최근 본" ? (
-        <CloseIcon onClick={handleRemoveHist} className="cursor-pointer" />
-      ) : (
-        <span
-          onClick={() => handleRemoveFav("stock", id)}
-          className="cursor-pointer"
-        >
-          {fav ? (
-            <FavoriteIcon style={{ color: "#F04452" }} />
-          ) : (
-            <FavoriteBorderIcon />
-          )}
-        </span>
-      )}
+      <div className="mt-2 flex justify-end">
+        {drawerTitle === "최근 본" ? (
+          <CloseIcon
+            onClick={handleRemoveHist}
+            className="cursor-pointer text-gray-500 hover:text-gray-700"
+          />
+        ) : (
+          <span
+            onClick={handleRemoveFav}
+            className="cursor-pointer"
+          >
+            {fav ? (
+              <FavoriteIcon style={{ color: "#F04452" }} />
+            ) : (
+              <FavoriteBorderIcon className="text-gray-500 hover:text-gray-700" />
+            )}
+          </span>
+        )}
+      </div>
     </div>
   );
 }
+
 
 export function DisclosureSidebarItem({
   id,
@@ -112,70 +111,59 @@ export function DisclosureSidebarItem({
   const [fav, setFav] = useState(true);
   const navigate = useNavigate();
 
-  // '최근 본'에서 삭제
   const handleRemoveHist = () => {
     setDiscloHisList((prev) => prev.filter((item) => item.id !== id));
   };
 
-  // 좋아요를 삭제하는 함수
-  const handleRemoveFav = async (type, id) => {
+  const handleRemoveFav = async () => {
     try {
       if (fav) {
-        if (type === "disclosure") {
-          await removeFavoriteAnnouncementAPI(id); // 공시 좋아요 삭제
-        }
+        await removeFavoriteAnnouncementAPI(id);
       }
-
-      setFav(false); // 좋아요 해제 상태로 변경
-      setDiscloHisList((prev) => prev.filter((item) => item.id !== id)); // 해당 항목 제거
+      setFav(false);
+      setDiscloHisList((prev) => prev.filter((item) => item.id !== id));
     } catch (error) {
       console.error("Error removing favorite:", error);
     }
   };
 
-
-  // 이동 처리
   const handleNavigate = () => {
     navigate(`/disclosure/${id}`, {
       state: {
-        data: [
-          {
-            id,
-            company,
-            title,
-            date,
-          },
-        ],
+        data: [{ id, company, title, date }],
       },
     });
   };
 
   return (
-    <div className="flex flex-row justify-between mx-1 my-3">
-      <div className="font-semibold max-w-20 min-w-20">{company}</div>
-      <div className="flex flex-col items-start">
-        <div
-          className="font-semibold text-xs cursor-pointer transition-all duration-200 ease-in-out transform hover:scale-105"
-          onClick={handleNavigate}
-        >
-          {title}
-        </div>
-        <div className="text-xs text-primary-2">{date}</div>
+    <div className="bg-white rounded-lg shadow-md p-4 mb-4 hover:shadow-lg transition-shadow duration-300">
+      <div className="flex justify-between items-start mb-2">
+        <h3 className="font-bold text-lg">{company}</h3>
+        {drawerTitle === "최근 본" ? (
+          <CloseIcon
+            onClick={handleRemoveHist}
+            className="cursor-pointer text-gray-500 hover:text-gray-700"
+          />
+        ) : (
+          <span onClick={handleRemoveFav} className="cursor-pointer">
+            {fav ? (
+              <FavoriteIcon style={{ color: "#F04452" }} />
+            ) : (
+              <FavoriteBorderIcon className="text-gray-500 hover:text-gray-700" />
+            )}
+          </span>
+        )}
       </div>
-      {drawerTitle === "최근 본" ? (
-        <CloseIcon onClick={handleRemoveHist} className="cursor-pointer" />
-      ) : (
-        <span
-          onClick={() => handleRemoveFav("disclosure", id)}
-          className="cursor-pointer"
-        >
-          {fav ? (
-            <FavoriteIcon style={{ color: "#F04452" }} />
-          ) : (
-            <FavoriteBorderIcon />
-          )}
-        </span>
-      )}
+      <p
+        className="text-sm mb-2 cursor-pointer hover:text-blue-600 transition-colors duration-200"
+        onClick={handleNavigate}
+      >
+        {title}
+      </p>
+      <div className="flex items-center justify-end text-xs text-gray-500">
+        <CalendarTodayIcon fontSize="small" className="mr-1" />
+        {date}
+      </div>
     </div>
   );
 }
