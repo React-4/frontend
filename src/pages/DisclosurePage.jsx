@@ -5,12 +5,18 @@ import { useParams, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getGPTDisclosure } from "../services/disclosureAPI";
 import { addToHistory } from "../utils/history";
+import {
+  VoteBadAnimation,
+  VoteGoodAnimation,
+} from "../components/stock/\bVoteAnimation";
 
 export default function DisclosurePage() {
   const [announcement, setAnnouncement] = useState([]);
   const location = useLocation();
-
-  const data = location.state?.data[0];
+  const [isGoodAnimating, setIsGoodAnimating] = useState(false); // 애니메이션 상태
+  const [isBadAnimating, setIsBadAnimating] = useState(false); // 애니메이션 상태
+  console.log(location.state);
+  let data = location.state?.data[0];
   const params = useParams();
 
   useEffect(() => {
@@ -30,6 +36,15 @@ export default function DisclosurePage() {
         console.error("Error fetching announcement data:", error);
       });
   }, [params.id]);
+
+  const startCoinRain = () => {
+    setIsGoodAnimating(true); // 애니메이션 시작
+  };
+
+  const startRain = () => {
+    setIsBadAnimating(true);
+  };
+
   return (
     <div className="flex flex-col mt-9 mb-20 items-center">
       <GptDisclosure
@@ -37,8 +52,15 @@ export default function DisclosurePage() {
         company={data ? data.company : ""}
         // stockId={data.}
       />
+      <VoteGoodAnimation isAnimating={isGoodAnimating} />
+      <VoteBadAnimation isAnimating={isBadAnimating} />
       <div className=" mt-3 w-9/12">
-        <Comment announcement={announcement} announcement_id={params.id} />
+        <Comment
+          announcement={announcement}
+          announcement_id={params.id}
+          startCoinRain={startCoinRain}
+          startRain={startRain}
+        />
       </div>
     </div>
   );

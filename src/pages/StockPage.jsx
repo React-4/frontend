@@ -196,7 +196,12 @@ export default function StockPage() {
         </div>
       </div>
       <div>
-        <ApexChart name="test" stockId={stockData.id} type={chartType} />
+        <ApexChart
+          name="test"
+          stockId={stockData.id}
+          type={chartType}
+          company={stockData.name}
+        />
       </div>
       <div>
         <div className="font-bold text-xl">공시</div>

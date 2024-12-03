@@ -30,15 +30,13 @@ export default function CommentList({
         />
       ))}
 
-      {commentData.length > 3 && isEnd === false ? (
+      {!isEnd && commentData.length > 3 && (
         <button
           onClick={handleShowMore}
           className="mt-4 text-primary-4 hover:underline"
         >
           더보기
         </button>
-      ) : (
-        <></>
       )}
     </div>
   );
