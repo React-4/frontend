@@ -44,3 +44,21 @@
 .read-the-docs {
   color: #888;
 } */
+
+/* 스크롤바 CSS */
+::-webkit-scrollbar {
+  width: 2px; /* 스크롤바의 너비 */
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1; /* 스크롤바 트랙의 배경색 */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888; /* 스크롤바의 색상 */
+  border-radius: 10px; /* 스크롤바의 모서리 둥글게 */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555; /* 스크롤바에 마우스를 올렸을 때 색상 */
+}

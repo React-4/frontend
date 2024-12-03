@@ -17,6 +17,7 @@ import {
 import ScrollToTopButton from "../components/common/ScrollToTopButton";
 import StockComment from "../components/stock/StockComment";
 const BASE_URL = import.meta.env.VITE_BACK_URL;
+import NoPhoto from "/img/NoPhoto.png";
 
 export default function StockPage() {
   const location = useLocation();
@@ -181,6 +182,10 @@ export default function StockPage() {
               marginRight: "0.3em",
             }}
             className="rounded-xl"
+            onError={(e) => {
+              e.target.onerror = null; // 무한 루프 방지
+              e.target.src = NoPhoto; // 기본 이미지 URL
+            }}
           />
           <div className="flex flex-row gap-2">
             <div className="font-semibold text-xl">{stockData.name}</div>
