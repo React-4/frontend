@@ -66,6 +66,7 @@ export default function StockPage() {
             report: item.title,
             submitter: item.submitter,
             date: item.announcementDate,
+            code: stockData.code,
             votes: {
               good: item.positiveVoteCount,
               bad: item.negativeVoteCount,
