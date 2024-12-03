@@ -185,7 +185,7 @@ export default function SignupPage() {
         </FormGroup>
         <button
           type="submit"
-          className="bg-primary w-1/3 rounded-lg text-white p-3 text-lg font-bold hover"
+          className="bg-primary w-1/3 rounded-lg text-white p-3 text-lg font-bold hover:opacity-80"
         >
           가입완료
         </button>

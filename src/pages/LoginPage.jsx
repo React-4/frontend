@@ -132,7 +132,7 @@ export default function LoginPage() {
       <button
         type="submit"
         onClick={handleLogin}
-        className="bg-primary w-1/3 rounded-lg text-white p-3 text-lg font-bold"
+        className="bg-primary w-1/3 rounded-lg text-white p-3 text-lg font-bold hover:opacity-70"
       >
         로그인
       </button>

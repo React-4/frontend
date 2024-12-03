@@ -33,7 +33,7 @@ export default function StockComment({
 
   return (
     <div
-      className="flex flex-row justify-between mt-6 w-full items-center cursor-pointer"
+      className="flex flex-row justify-between my-6 w-full items-center cursor-pointer hover:bg-primary-1 p-2"
       onClick={() => {
         navigate(`/disclosure/${announcementId}`, {
           state: { data: [{ company: company }] },

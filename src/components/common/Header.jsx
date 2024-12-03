@@ -70,7 +70,7 @@ export default function Header() {
   const colorClass = colorClasses[profileColor];
 
   return (
-    <div className="hover:opacity-80 flex flex-row items-center justify-between p-3 h-16 w-full bg-white z-50">
+    <div className=" flex flex-row items-center justify-between p-3 h-16 w-full bg-white z-50">
       <img
         src={logoImg}
         className="w-1/12 cursor-pointer hover:opacity-80 transition-opacity duration-200" // hover 효과 및 커서 변경
@@ -94,7 +94,7 @@ export default function Header() {
       {loggedIn ? (
         <div className="relative">
           <button
-            className={`rounded-full w-10 h-10 ${colorClass} text-white`}
+            className={`rounded-full w-10 h-10 ${colorClass} text-white hover:opacity-70`}
             onClick={() => setShowTooltip(true)}
           >
             {nickname.slice(0, 2)}
@@ -122,7 +122,7 @@ export default function Header() {
         </div>
       ) : (
         <button
-          className="bg-primary text-white h-10 w-20 rounded-xl text-l"
+          className="bg-primary text-white h-10 w-20 rounded-xl text-l hover:opacity-80"
           onClick={() =>
             navigate("/login", { state: { from: window.location.pathname } })
           } // 현재 경로를 state로 전달
