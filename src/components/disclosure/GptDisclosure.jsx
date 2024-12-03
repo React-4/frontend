@@ -8,6 +8,7 @@ import {
   addFavoriteAnnouncementAPI,
   removeFavoriteAnnouncementAPI,
 } from "../../services/stockAPI";
+import axios from "axios";
 function parseSectionContent(content) {
   const result = [];
   const regex =
@@ -82,23 +83,62 @@ export default function GptDisclosure({ announcement, company, disclo_id }) {
     }
   }, [announcement]);
 
-  // const handleNavigate = () => {
-  //   console.log(announcement);
-  //   navigate(`/stock/${announcement.stockId}`, {
-  //     state: {
-  //       data: [
-  //         {
-  //           id: sid,
-  //           name: name,
-  //           price: price, // 가격
-  //           changeRate: changeRate, // 변동률
-  //           transaction: transaction, // 거래량
-  //           code: code, // 주식 코드
-  //         },
-  //       ],
-  //     },
-  //   });
-  // };
+  const fetchStockData = async () => {
+    try {
+      const BASE_URL = import.meta.env.VITE_BACK_URL;
+      console.log(company);
+      const searchResponse = await axios.get(`${BASE_URL}/api/stock/search`, {
+        params: {
+          keyword: company,
+        },
+      });
+      const searchData = searchResponse.data?.data || [];
+
+      const formattedData = searchData.find(
+        (stockItem) => stockItem.id === announcement.stockId
+      ); // id가 같은 첫 번째 항목 찾기
+
+      const result = formattedData
+        ? {
+            id: formattedData.id,
+            code: formattedData.ticker,
+            name: formattedData.companyName,
+            price: formattedData.currentPrice
+              ? `${Number(formattedData.currentPrice).toLocaleString()}원`
+              : "0원",
+            changeRate: formattedData.changeRate
+              ? `${(formattedData.changeRate * 100).toFixed(2)}%`
+              : "0%",
+            transaction: formattedData.volume
+              ? `${Number(formattedData.volume).toLocaleString()}주`
+              : "0주",
+          }
+        : null;
+      console.log("result ", result);
+      return result;
+    } catch (error) {
+      console.error("Failed to fetch stock data:", error);
+    }
+  };
+
+  const handleNavigate = async () => {
+    console.log(announcement);
+    const stock = await fetchStockData();
+    navigate(`/stock/${announcement.stockId}`, {
+      state: {
+        data: [
+          {
+            id: stock.id,
+            name: stock.name,
+            price: stock.price, // 가격
+            changeRate: stock.changeRate, // 변동률
+            transaction: stock.transaction, // 거래량
+            code: stock.code, // 주식 코드
+          },
+        ],
+      },
+    });
+  };
 
   const [favorites, setFavorites] = useState([]);
   // 로컬 스토리지에서 초기화
@@ -156,7 +196,10 @@ export default function GptDisclosure({ announcement, company, disclo_id }) {
         </div>
 
         <div className="flex flex-row gap-3 w-full justify-end mt-20">
-          <div className="bg-primary text-white px-5 h-7 rounded-lg text-center">
+          <div
+            className="bg-primary text-white px-5 h-7 rounded-lg text-center"
+            onClick={handleNavigate}
+          >
             {company || "회사 정보 없음"}
           </div>
           <div

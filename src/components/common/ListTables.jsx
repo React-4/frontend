@@ -107,10 +107,6 @@ export default function ListTables({ type, data, headers }) {
     });
   };
 
-  useEffect(() => {
-    console.log("currentData ", currentData);
-  }, [currentData]);
-
   return (
     <div className="list-container">
       <TableContainer component={Paper}>
