@@ -147,28 +147,25 @@ export default function GptDisclosure({ announcement, company, disclo_id }) {
           </span>
         </div>
 
-        <div className="flex flex-row gap-5 w-full justify-center mt-1">
+        <div className="flex flex-row gap-5 w-full justify-center mt-10 items-start">
           <div>제출자 : {announcement?.submitter || "정보 없음"}</div>
           <div>{announcement?.announcementDate || "날짜 정보 없음"}</div>
-          <div className="border-primary border-2 px-5 h-7 rounded-lg text-center cursor-pointer">
+          <div className="border-primary border-2 px-5 h-7 rounded-lg text-center">
             {announcement?.announcementType || "타입 정보 없음"}
           </div>
         </div>
 
-        <div className="flex flex-row gap-3 w-full justify-end mt-3">
-          <div
-            className="bg-primary text-white px-5 h-7 rounded-lg text-center cursor-pointer"
-            // onClick={handleNavigate}
-          >
+        <div className="flex flex-row gap-3 w-full justify-end mt-20">
+          <div className="bg-primary text-white px-5 h-7 rounded-lg text-center">
             {company || "회사 정보 없음"}
           </div>
           <div
-            className="bg-primary text-white w-32 h-7 rounded-lg text-center cursor-pointer"
+            className="bg-primary text-white w-52 h-7 rounded-lg text-center cursor-pointer transition-all duration-200 ease-in-out transform hover:scale-105"
             onClick={() => {
               window.open(announcement?.originalAnnouncementUrl);
             }}
           >
-            원본 공시 내용
+            원본 공시 내용 보러가기
           </div>
         </div>
 
