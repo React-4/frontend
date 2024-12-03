@@ -21,8 +21,7 @@ export function StockSidebarItem({
   gap,
   setStockHisList,
 }) {
-
-  const [fav, setFav] = useState(true);  // 좋아요 상태
+  const [fav, setFav] = useState(true); // 좋아요 상태
   const navigate = useNavigate();
 
   // '최근 본'에서 삭제
@@ -43,20 +42,25 @@ export function StockSidebarItem({
       // 상태 업데이트 후 바로 삭제된 항목을 반영
       setFav(false); // 좋아요 해제 상태로 변경
       setStockHisList((prev) => prev.filter((item) => item.종목id !== id)); // 해당 항목 제거
-
     } catch (error) {
       console.error("Error toggling favorite:", error);
     }
   };
 
-  
   // 이동 처리
   const handleNavigate = () => {
     navigate(`/stock/${id}`, {
       state: {
         data: [
-          { id, name, price, changeRate, transaction, code }
-        ]
+          {
+            id,
+            name,
+            price,
+            changeRate,
+            transaction,
+            code,
+          },
+        ],
       },
     });
   };
@@ -64,7 +68,7 @@ export function StockSidebarItem({
   return (
     <div className="flex flex-row justify-between items-start mx-1 my-3">
       <div
-        className="font-semibold max-w-20 min-w-20 cursor-pointer"
+        className="font-semibold max-w-20 min-w-20 cursor-pointer transition-all duration-200 ease-in-out transform hover:scale-105"
         onClick={handleNavigate}
       >
         {name}
@@ -82,7 +86,10 @@ export function StockSidebarItem({
       {drawerTitle === "최근 본" ? (
         <CloseIcon onClick={handleRemoveHist} className="cursor-pointer" />
       ) : (
-        <span onClick={() => handleRemoveFav("stock", id)} className="cursor-pointer">
+        <span
+          onClick={() => handleRemoveFav("stock", id)}
+          className="cursor-pointer"
+        >
           {fav ? (
             <FavoriteIcon style={{ color: "#F04452" }} />
           ) : (
@@ -130,7 +137,16 @@ export function DisclosureSidebarItem({
   // 이동 처리
   const handleNavigate = () => {
     navigate(`/disclosure/${id}`, {
-      state: { data: [id, company, title, date ]},
+      state: {
+        data: [
+          {
+            id,
+            company,
+            title,
+            date,
+          },
+        ],
+      },
     });
   };
 
@@ -138,7 +154,10 @@ export function DisclosureSidebarItem({
     <div className="flex flex-row justify-between mx-1 my-3">
       <div className="font-semibold max-w-20 min-w-20">{company}</div>
       <div className="flex flex-col items-start">
-        <div className="font-semibold text-xs cursor-pointer" onClick={handleNavigate}>
+        <div
+          className="font-semibold text-xs cursor-pointer transition-all duration-200 ease-in-out transform hover:scale-105"
+          onClick={handleNavigate}
+        >
           {title}
         </div>
         <div className="text-xs text-primary-2">{date}</div>
@@ -146,7 +165,10 @@ export function DisclosureSidebarItem({
       {drawerTitle === "최근 본" ? (
         <CloseIcon onClick={handleRemoveHist} className="cursor-pointer" />
       ) : (
-        <span onClick={() => handleRemoveFav("disclosure", id)} className="cursor-pointer">
+        <span
+          onClick={() => handleRemoveFav("disclosure", id)}
+          className="cursor-pointer"
+        >
           {fav ? (
             <FavoriteIcon style={{ color: "#F04452" }} />
           ) : (

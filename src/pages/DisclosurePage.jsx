@@ -48,8 +48,7 @@ export default function DisclosurePage() {
         company={data ? data.company : ""}
         // stockId={data.}
       />
-
-      <div className=" mt-3 w-9/12">
+      <div className=" mt-20 w-9/12">
         <Comment announcement={announcement} announcement_id={params.id} />
       </div>
     </div>
