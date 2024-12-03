@@ -65,7 +65,7 @@ export function StockSidebarItem({
         </div>
         <div className="text-right">
           <p className="font-semibold text-lg">
-              {String(price).endsWith("원") ? price : `${Number(price)}원`}
+            {String(price).endsWith("원") ? price : `${Number(price)}원`}
           </p>
           <div
             className={`flex justify-end items-center text-sm ${
@@ -78,10 +78,9 @@ export function StockSidebarItem({
               <ArrowDropDownIcon fontSize="small" />
             )}
             <div>
-              {drawerTitle === "최근 본" ? 
-                `${(parseFloat(changeRate)).toFixed(2)}%` 
-              : 
-                `${(parseFloat(changeRate) * 100).toFixed(2)}%`}
+              {drawerTitle === "최근 본"
+                ? `${parseFloat(changeRate).toFixed(2)}%`
+                : `${(parseFloat(changeRate) * 100).toFixed(2)}%`}
             </div>
           </div>
         </div>

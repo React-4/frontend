@@ -37,6 +37,7 @@ export default function StockPage() {
         name: disclosureData[0]?.stockName,
         price: null,
         transaction: null,
+        gap: 1,
       });
     }
   }, [location.state, params.id, disclosureData]);
@@ -110,7 +111,6 @@ export default function StockPage() {
   useEffect(() => {
     getCommentByStock(stockData.id).then((data) => {
       setComment(data);
-      console.log(data);
     });
   }, [stockData.id]);
 
@@ -306,6 +306,13 @@ export default function StockPage() {
       </div>
       <div>
         <div className="font-bold text-xl pl-5">댓글</div>
+        {comment.length === 0 && (
+          <div className="flex items-center justify-center w-full h-55 rounded-lg mt-5">
+            <span className="text-2xl font-medium text-black text-center">
+              공시 데이터가 존재하지 않습니다.
+            </span>
+          </div>
+        )}
         <div className="mx-4">
           {comment.map((com) => (
             <StockComment
