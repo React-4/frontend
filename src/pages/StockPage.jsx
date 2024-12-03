@@ -8,6 +8,13 @@ import { addToHistory } from "../utils/history";
 import "../components/css/SearRes.css";
 import Pagination from "@mui/material/Pagination";
 import axios from "axios";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import {
+  addFavoriteStockAPI,
+  removeFavoriteStockAPI,
+} from "../services/stockAPI";
+
 
 const BASE_URL = import.meta.env.VITE_BACK_URL;
 
@@ -21,6 +28,7 @@ export default function StockPage() {
   const [loading, setLoading] = useState(true);
   const [totalPages, setTotalPages] = useState(1);
   const [currentDisclosurePage, setCurrentDisclosurePage] = useState(1);
+  const [favorites, setFavorites] = useState([]);
 
   const getStockIdFromUrl = () => {
     const path = window.location.pathname;
@@ -91,6 +99,18 @@ export default function StockPage() {
     if (stock_id) fetchDisclosureData();
   }, [stock_id]);
 
+    // 로컬 스토리지에서 초기화
+    useEffect(() => {
+      const storedFavorites = JSON.parse(
+        localStorage.getItem(
+          "favoriteStockIds"
+        ) || "[]"
+      );
+      setFavorites(storedFavorites);
+    }, []);
+
+
+
   const disclosureHeaders = [
     {
       key: "id",
@@ -132,6 +152,24 @@ export default function StockPage() {
 
   if (loading) return <div>Loading...</div>;
 
+
+
+  const handleFavoriteToggle = async (id) => {
+    console.log(id)
+    try {
+      if (favorites.includes(id)) {
+          await removeFavoriteStockAPI(id);
+          setFavorites((prev) => prev.filter((favId) => favId !== id));
+      } else {
+          await addFavoriteStockAPI(id);
+          setFavorites((prev) => [...prev, id]);
+      }
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
+    }
+  };
+
+
   return (
     <div className="flex flex-col mb-12 m-3">
       <div className="flex flex-row w-full justify-between">
@@ -152,6 +190,20 @@ export default function StockPage() {
               {stockData.code}
             </div>
           </div>
+          <span
+              className="heart pl-5"
+              onClick={(e) => {
+                e.stopPropagation(); // 좋아요 클릭 시 행 이동 이벤트 중단
+                handleFavoriteToggle(stockData.id);
+              }}
+              style={{ cursor: "pointer" }}
+            >
+              {favorites.includes(stockData.id) ? (
+                <FavoriteIcon style={{ color: "#F04452" }} />
+              ) : (
+                <FavoriteBorderIcon />
+              )}
+          </span>
         </div>
         <div className="flex flex-row gap-2">
           <button
