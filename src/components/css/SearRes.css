@@ -1,6 +1,6 @@
 .filters {
     border: 1px solid #0045B0;
-    padding: 10px 45px 10px 45px;
+    padding: 1% 7% 1% 7%;
     margin: 0 20px 20px 20px;
     border-radius: 20px;
     display: flex;
@@ -10,8 +10,12 @@
     height: auto;
   }
 
+.sec {
+  flex: 1;
+}
+
 .sector1 {
-  /* flex: 2; */
+  /* flex: 3; */
   display: flex;
   flex-direction: column;
 }
@@ -75,6 +79,10 @@
   font-size: 14px;
 }
 
+.type-group {
+  flex: 1.2;
+}
+
 .type-group label {
   display: flex;
   font-size: 12px;
@@ -100,7 +108,7 @@
 }
 
 .separator1 {
-  margin-right: 5px;
+  margin-right: 50px;
   display: flex;
   width: 1px;
   height: auto;
@@ -111,7 +119,7 @@
 
 .separator2 {
   margin-left: 5px;
-  margin-right: 15px;
+  margin-right: 50px;
   display: flex;
   width: 1px;
   height: auto;
@@ -178,14 +186,15 @@
 }
 
 .sector2 {
-  /* flex: 1; */
-  display: flex;
+  flex: 0.2;
+  /* display: flex; */
   flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100%;
   margin-top: 10px;
   gap: 10px;
+  margin-left: 50px;
 }
 
 
