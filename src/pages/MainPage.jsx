@@ -2,8 +2,19 @@ import React, { useState, useEffect } from "react";
 import ListTables from "../components/common/ListTables";
 import Pagination from "@mui/material/Pagination";
 import axios from "axios";
+import Tab from "@mui/material/Tab";
+import Box from "@mui/material/Box";
+import TabContext from "@mui/lab/TabContext";
+import TabList from "@mui/lab/TabList";
+import TabPanel from "@mui/lab/TabPanel";
 
 const MainPage = () => {
+  const [value, setValue] = React.useState("1");
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
   //공시
   const [disclosureSortType, setDisclosureSortType] = useState("latest");
   const [disclosureData, setDisclosureData] = useState([]);
@@ -163,58 +174,133 @@ const MainPage = () => {
   ];
 
   return (
-    <div>
-      <h2 className="list-title">공시</h2>
-      <div className="sort-buttons">
-        {disclosureSortOptions.map((option) => (
-          <button
-            key={option.key}
-            className={disclosureSortType === option.key ? "active" : ""}
-            onClick={() => handleDisclosureSortChange(option.key)}
-          >
-            {option.label}
-          </button>
-        ))}
-      </div>
-
-      <ListTables
-        type="disclosure"
-        data={disclosureData}
-        headers={disclosureHeaders}
-      />
-
-      <div className="pagination-container z-0">
-        <Pagination
-          count={totalPages}
-          page={currentDPage}
-          onChange={handleDPageClick}
-          color="primary"
+    <TabContext value={value}>
+      <Box
+        sx={{
+          marginTop: "1rem",
+          borderBottom: 1,
+          borderColor: "divider",
+          marginLeft: "2rem",
+          marginRight: "2rem",
+        }}
+      >
+        <TabList onChange={handleChange} aria-label="category tab">
+          <Tab
+            label="공시"
+            value="1"
+            sx={{ fontSize: "25px", fontWeight: "bold" }}
+          />
+          <Tab
+            label="종목"
+            value="2"
+            sx={{ fontSize: "25px", fontWeight: "bold" }}
+          />
+        </TabList>
+      </Box>
+      <TabPanel value="1" sx={{ padding: "10px" }}>
+        {/* <h2 className="list-title">공시</h2> */}
+        <div className="sort-buttons">
+          {disclosureSortOptions.map((option) => (
+            <button
+              key={option.key}
+              className={disclosureSortType === option.key ? "active" : ""}
+              onClick={() => handleDisclosureSortChange(option.key)}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+        <ListTables
+          type="disclosure"
+          data={disclosureData}
+          headers={disclosureHeaders}
         />
-      </div>
+        <div className="pagination-container">
+          <Pagination
+            count={totalPages}
+            page={currentDPage}
+            onChange={handleDPageClick}
+            color="primary"
+          />
+        </div>
+      </TabPanel>
+      <TabPanel value="2"  sx={{ padding: "10px" }}>
+        <div className="sort-buttons">
+          {stockSortOptions.map((option) => (
+            <button
+              key={option.key}
+              className={stockSortType === option.key ? "active" : ""}
+              onClick={() => handleStockSortChange(option.key)}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+        <ListTables type="stock" data={currentSData} headers={stockHeaders} />
+        <div className="pagination-container">
+          <Pagination
+            count={Math.ceil(stockData.length / pageSSize)}
+            page={currentSPage}
+            onChange={handleSPageClick}
+            color="primary"
+          />
+        </div>
+      </TabPanel>
+      <TabPanel value="3">Item Three</TabPanel>
+    </TabContext>
 
-      <h2 className="list-title">종목</h2>
-      <div className="sort-buttons">
-        {stockSortOptions.map((option) => (
-          <button
-            key={option.key}
-            className={stockSortType === option.key ? "active" : ""}
-            onClick={() => handleStockSortChange(option.key)}
-          >
-            {option.label}
-          </button>
-        ))}
-      </div>
-      <ListTables type="stock" data={currentSData} headers={stockHeaders} />
+    // <div>
+    //   <h2 className="list-title">공시</h2>
+    //   <div className="sort-buttons">
+    //     {disclosureSortOptions.map((option) => (
+    //       <button
+    //         key={option.key}
+    //         className={disclosureSortType === option.key ? "active" : ""}
+    //         onClick={() => handleDisclosureSortChange(option.key)}
+    //       >
+    //         {option.label}
+    //       </button>
+    //     ))}
+    //   </div>
 
-      <div className="pagination-container">
-        <Pagination
-          count={Math.ceil(stockData.length / pageSSize)}
-          page={currentSPage}
-          onChange={handleSPageClick}
-          color="primary"
-        />
-      </div>
-    </div>
+    //   <ListTables
+    //     type="disclosure"
+    //     data={disclosureData}
+    //     headers={disclosureHeaders}
+    //   />
+
+    //   <div className="pagination-container z-0">
+    //     <Pagination
+    //       count={totalPages}
+    //       page={currentDPage}
+    //       onChange={handleDPageClick}
+    //       color="primary"
+    //     />
+    //   </div>
+
+    //   <h2 className="list-title">종목</h2>
+    //   <div className="sort-buttons">
+    //     {stockSortOptions.map((option) => (
+    //       <button
+    //         key={option.key}
+    //         className={stockSortType === option.key ? "active" : ""}
+    //         onClick={() => handleStockSortChange(option.key)}
+    //       >
+    //         {option.label}
+    //       </button>
+    //     ))}
+    //   </div>
+    //   <ListTables type="stock" data={currentSData} headers={stockHeaders} />
+
+    //   <div className="pagination-container">
+    //     <Pagination
+    //       count={Math.ceil(stockData.length / pageSSize)}
+    //       page={currentSPage}
+    //       onChange={handleSPageClick}
+    //       color="primary"
+    //     />
+    //   </div>
+    // </div>
   );
 };
 
