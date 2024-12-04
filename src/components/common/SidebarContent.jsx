@@ -98,7 +98,12 @@ export default function SidebarContent({ drawerTitle, data }) {
         </div>
       ) : (
         <div className="flex flex-col gap-4">
-          <Typography variant="h6">관심 목록</Typography>
+          <Typography
+            variant="h6"
+            style={{ fontWeight: "bold", color: "#333", fontSize: "1.5rem" }}
+          >
+            {drawerTitle} 목록
+          </Typography>
           <Divider sx={{ my: 1 }} />
           <Typography align="center">
             목록을 저장하려면 <br /> 로그인이 필요해요
