@@ -210,7 +210,7 @@ export default function GptDisclosure({ announcement, company, disclo_id }) {
         <div className="flex flex-col gap-5 full">
           <div className="font-bold text-xl">공시 내용 요약</div>
           <div>
-            {summaryJSON?.summary.replaceAll("-", "").replaceAll("**", "") ||
+            {summaryJSON?.summary?.replaceAll("-", "").replaceAll("**", "") ||
               "요약 정보가 없습니다."}
           </div>
 
@@ -224,7 +224,7 @@ export default function GptDisclosure({ announcement, company, disclo_id }) {
                     <div className="font-semibold">{item.title}</div>
                   )}
                   <li>
-                    {item.desc.replaceAll("-", "").replaceAll("**", "") ||
+                    {item.desc?.replaceAll("-", "").replaceAll("**", "") ||
                       "설명 없음"}
                   </li>
                 </div>
@@ -243,7 +243,7 @@ export default function GptDisclosure({ announcement, company, disclo_id }) {
                     <div className="font-semibold">{item.title}</div>
                   )}
                   <li>
-                    {item.desc.replaceAll("-", "").replaceAll("**", "") ||
+                    {item.desc?.replaceAll("-", "").replaceAll("**", "") ||
                       "설명 없음"}
                   </li>
                 </div>
@@ -254,7 +254,7 @@ export default function GptDisclosure({ announcement, company, disclo_id }) {
           )}
           <div className="font-bold text-xl">평가 의견</div>
           <div>
-            {summaryJSON?.opinion.replaceAll("-", "").replaceAll("**", "") ||
+            {summaryJSON?.opinion?.replaceAll("-", "").replaceAll("**", "") ||
               "의견 정보가 없습니다."}
           </div>
         </div>

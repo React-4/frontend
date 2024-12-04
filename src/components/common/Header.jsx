@@ -14,6 +14,8 @@ export default function Header() {
   const [searchQuery, setSearchQuery] = useState("");
   const location = useLocation();
   const searchInputRef = useRef(null);
+  const tooltipRef = useRef(null); // 툴팁을 위한 ref 추가
+  const buttonRef = useRef(null); // 버튼을 위한 ref 추가
 
   const handleLogout = () => {
     const setCookieDis = async () => {
@@ -42,6 +44,28 @@ export default function Header() {
       searchInputRef.current.blur();
     }
   }, [location.pathname]);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // 툴팁이나 버튼 외부 클릭 시 tooltip 숨기기
+      if (
+        tooltipRef.current &&
+        !tooltipRef.current.contains(event.target) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(event.target)
+      ) {
+        setShowTooltip(false);
+      }
+    };
+
+    // document에 클릭 이벤트 리스너 추가
+    document.addEventListener("mousedown", handleClickOutside);
+
+    // 컴포넌트 언마운트 시 리스너 제거
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleSearchKeyDown = (e) => {
     if (e.key === "Enter" && searchQuery.trim()) {
@@ -94,6 +118,7 @@ export default function Header() {
       {loggedIn ? (
         <div className="relative">
           <button
+            ref={buttonRef} // 버튼에 ref 추가
             className={`rounded-full w-10 h-10 ${colorClass} text-white hover:opacity-70`}
             onClick={() => setShowTooltip(true)}
           >
@@ -101,7 +126,10 @@ export default function Header() {
           </button>
 
           {showTooltip && (
-            <div className="absolute right-0 mt-2 w-32 bg-white shadow-lg rounded-md z-10">
+            <div
+              ref={tooltipRef} // 툴팁에 ref 추가
+              className="absolute right-0 mt-2 w-32 bg-white shadow-lg rounded-md z-10"
+            >
               <button
                 className="block w-full px-4 py-2 text-left text-gray-700 hover:bg-gray-100"
                 onClick={() => {
