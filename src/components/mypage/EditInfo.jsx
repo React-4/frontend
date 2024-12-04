@@ -14,6 +14,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 
 const BASE_URL = import.meta.env.VITE_BACK_URL;
 
@@ -163,16 +164,28 @@ export default function EditInfo() {
     handlePwModalOpen();
   };
 
+  const colorClasses = [
+    "bg-profile",
+    "bg-profile-0",
+    "bg-profile-1",
+    "bg-profile-2",
+    "bg-profile-3",
+    "bg-profile-4",
+    "bg-profile-5",
+    "bg-profile-6",
+    "bg-profile-7",
+    "bg-profile-8",
+    "bg-profile-9",
+  ];
+
+  const colorClass = colorClasses[profileColor];
   return (
     <div className="w-2/3">
       <div className="flex flex-row justify-between">
         <div className="flex flex-col items-left w-100">
           <div
-            className={
-              "rounded-full w-24 h-24 bg-profile-" +
-              profileColor +
-              " text-4xl text-white flex items-center justify-center"
-            }
+            className={`rounded-full w-24 h-24 ${colorClass}
+               text-4xl text-white flex items-center justify-center`}
           >
             {nickname.slice(0, 2)}
           </div>
@@ -195,12 +208,27 @@ export default function EditInfo() {
                   display: isEditingNickname ? "block" : "none",
                 }}
               />
-              <img
+
+              <EditOutlinedIcon
+                sx={{
+                  width: "1.2rem",
+                  cursor: "pointer",
+                  marginLeft: "1rem",
+                  color: "#717171",
+                  "&:hover": {
+                    transform: "scale(1.1)",
+                    transition: "transform 0.2s ease",
+                  },
+                }}
+                onClick={() => setIsEditingNickname(true)}
+                style={{ display: isEditingNickname ? "none" : "block" }}
+              />
+              {/* <img
                 src={edit}
                 className="h-4 ml-2 cursor-pointer"
                 onClick={() => setIsEditingNickname(true)}
                 style={{ display: isEditingNickname ? "none" : "block" }}
-              />
+              /> */}
             </div>
           </div>
         </div>
@@ -220,11 +248,24 @@ export default function EditInfo() {
             <div className="flex flex-row items-center">
               <div className="flex items-center">
                 <div className="font-bold">****</div>
-                <img
+
+                <EditOutlinedIcon
+                  sx={{
+                    width: "1.2rem",
+                    cursor: "pointer",
+                    color: "#717171",
+                    "&:hover": {
+                      transform: "scale(1.1)",
+                      transition: "transform 0.2s ease",
+                    },
+                  }}
+                  onClick={handlePwEdit}
+                />
+                {/* <img
                   src={edit}
                   className="h-4 ml-2 cursor-pointer"
                   onClick={handlePwEdit}
-                />
+                /> */}
               </div>
             </div>
           </div>
@@ -232,7 +273,7 @@ export default function EditInfo() {
           <div className="flex flex-row justify-between my-3">
             <div>회원탈퇴</div>
             <button
-              className="bg-primary-3 text-white rounded-xl w-12 text-sm font-bold"
+              className="bg-primary-3 text-white rounded-lg w-12 text-sm font-semibold"
               onClick={handleClick}
             >
               탈퇴
