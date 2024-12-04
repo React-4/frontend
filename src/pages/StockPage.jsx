@@ -226,9 +226,9 @@ export default function StockPage() {
           <button
             className={`w-12 h-6 ${
               chartType === "day"
-                ? " bg-primary text-white "
+                ? " bg-primary text-white"
                 : " bg-white text-black"
-            } rounded-md flex align-items justify-center`}
+            } rounded-md flex align-items justify-center hover:shadow-md transition-shadow duration-300 cursor-pointer`}
             onClick={() => setChartType("day")}
           >
             일봉
@@ -238,7 +238,7 @@ export default function StockPage() {
               chartType === "week"
                 ? " bg-primary text-white "
                 : " bg-white text-black"
-            } rounded-md flex align-items justify-center`}
+            } rounded-md flex align-items justify-center hover:shadow-md transition-shadow duration-300 cursor-pointer`}
             onClick={() => setChartType("week")}
           >
             주봉
@@ -248,7 +248,7 @@ export default function StockPage() {
               chartType === "month"
                 ? " bg-primary text-white "
                 : " bg-white text-black"
-            } rounded-md flex align-items justify-center`}
+            } rounded-md flex align-items justify-center hover:shadow-md transition-shadow duration-300 cursor-pointer`}
             onClick={() => setChartType("month")}
           >
             월봉

@@ -191,11 +191,13 @@ const MainPage = () => {
             label="공시"
             value="1"
             sx={{ fontSize: "20px", fontWeight: "bold" }}
+            className="hover:shadow-lg transition-shadow duration-300 cursor-pointer"
           />
           <Tab
             label="종목"
             value="2"
             sx={{ fontSize: "20px", fontWeight: "bold" }}
+            className="hover:shadow-lg transition-shadow duration-300 cursor-pointer"
           />
         </TabList>
       </Box>
@@ -205,7 +207,11 @@ const MainPage = () => {
           {disclosureSortOptions.map((option) => (
             <button
               key={option.key}
-              className={disclosureSortType === option.key ? "active" : ""}
+              className={`rounded-l ${
+                disclosureSortType === option.key
+                  ? "rounded-l active hover:shadow-lg transition-shadow duration-300 cursor-pointer"
+                  : "rounded-l hover:bg-gray-200 hover:shadow-md transition-shadow duration-300 cursor-pointer"
+              }`}
               onClick={() => handleDisclosureSortChange(option.key)}
             >
               {option.label}
@@ -231,7 +237,11 @@ const MainPage = () => {
           {stockSortOptions.map((option) => (
             <button
               key={option.key}
-              className={stockSortType === option.key ? "active" : ""}
+              className={`rounded-l ${
+                stockSortType === option.key
+                  ? "rounded-l active hover:shadow-lg transition-shadow duration-300 cursor-pointer"
+                  : "rounded-l hover:bg-gray-200 hover:shadow-md transition-shadow duration-300 cursor-pointer"
+              }`}
               onClick={() => handleStockSortChange(option.key)}
             >
               {option.label}
