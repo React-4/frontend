@@ -7,7 +7,6 @@ const MyComment = forwardRef(
     const [isOverflow, setIsOverflow] = useState(false);
     const commentRef = useRef();
     const navigate = useNavigate();
-
     useEffect(() => {
       if (commentRef.current) {
         const isContentOverflowing =
