@@ -7,10 +7,11 @@ import Box from "@mui/material/Box";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
+import { useLogin } from "../hooks/useLogin";
 
 const MainPage = () => {
-  const [value, setValue] = React.useState("1");
-
+  // const [value, setValue] = useState("1");
+  const { value, setValue } = useLogin();
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };

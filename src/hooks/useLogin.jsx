@@ -16,6 +16,8 @@ export function useLogin() {
     favoriteStockIds,
     setFavoriteStockIds,
     resetLoginState,
+    value,
+    setValue,
   } = useContext(loginContext);
 
   return {
@@ -32,5 +34,7 @@ export function useLogin() {
     favoriteStockIds,
     setFavoriteStockIds,
     resetLoginState,
+    value,
+    setValue,
   };
 }
