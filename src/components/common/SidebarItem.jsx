@@ -10,6 +10,7 @@ import {
   removeFavoriteAnnouncementAPI,
 } from "../../services/stockAPI";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import { removeFromHistory } from "../../utils/history";
 
 export function StockSidebarItem({
   id,
@@ -27,6 +28,7 @@ export function StockSidebarItem({
 
   const handleRemoveHist = () => {
     setStockHisList((prev) => prev.filter((item) => item.id !== id));
+    removeFromHistory("stock", id);
   };
 
   const handleRemoveFav = async () => {
@@ -118,6 +120,7 @@ export function DisclosureSidebarItem({
 
   const handleRemoveHist = () => {
     setDiscloHisList((prev) => prev.filter((item) => item.id !== id));
+    removeFromHistory("disclosure", id);
   };
 
   const handleRemoveFav = async () => {
