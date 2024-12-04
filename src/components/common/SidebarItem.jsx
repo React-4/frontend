@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+/* eslint-disable react/prop-types */
+import { useState } from "react";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import CloseIcon from "@mui/icons-material/Close";
@@ -126,7 +127,7 @@ export function DisclosureSidebarItem({
   const handleRemoveFav = async () => {
     try {
       if (fav) {
-        await removeFavoriteAnnouncementAPI(id);
+        await removeFavoriteAnnouncementAPI(Number(id));
       }
       setFav(false);
       setDiscloHisList((prev) => prev.filter((item) => item.id !== id));

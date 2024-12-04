@@ -147,12 +147,12 @@ export default function GptDisclosure({ announcement, company, disclo_id }) {
 
   const handleFavoriteToggle = async (id) => {
     try {
-      if (favorites.includes(id)) {
-        await removeFavoriteAnnouncementAPI(id);
-        setFavorites((prev) => prev.filter((favId) => favId !== id));
+      if (favorites.includes(Number(id))) {
+        await removeFavoriteAnnouncementAPI(Number(id));
+        setFavorites((prev) => prev.filter((favId) => favId !== Number(id)));
       } else {
-        await addFavoriteAnnouncementAPI(id);
-        setFavorites((prev) => [...prev, id]);
+        await addFavoriteAnnouncementAPI(Number(id));
+        setFavorites((prev) => [...prev, Number(id)]);
       }
     } catch (error) {
       console.error("Error toggling favorite:", error);
@@ -173,7 +173,7 @@ export default function GptDisclosure({ announcement, company, disclo_id }) {
               }}
               style={{ cursor: "pointer" }}
             >
-              {favorites.includes(disclo_id) ? (
+              {favorites.includes(Number(disclo_id)) ? (
                 <FavoriteIcon style={{ color: "#F04452" }} />
               ) : (
                 <FavoriteBorderIcon />
