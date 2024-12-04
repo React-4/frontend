@@ -8,22 +8,35 @@ function checkLocal() {
     profileColor: localStorage.getItem("profileColor") || "",
     nickname: localStorage.getItem("nickname") || "",
     email: localStorage.getItem("email") || "",
-    favoriteAnnouncementIds: JSON.parse(localStorage.getItem("favoriteAnnouncementIds") || "[]"), // JSON 문자열을 배열로 변환
-    favoriteStockIds: JSON.parse(localStorage.getItem("favoriteStockIds") || "[]"), // JSON 문자열을 배열로 변환
+    favoriteAnnouncementIds: JSON.parse(
+      localStorage.getItem("favoriteAnnouncementIds") || "[]"
+    ), // JSON 문자열을 배열로 변환
+    favoriteStockIds: JSON.parse(
+      localStorage.getItem("favoriteStockIds") || "[]"
+    ), // JSON 문자열을 배열로 변환
   };
 }
 
 export function LoginProvider({ children }) {
-  const { isLoggedIn, profileColor, nickname, email, favoriteAnnouncementIds, favoriteStockIds } = checkLocal();
+  const {
+    isLoggedIn,
+    profileColor,
+    nickname,
+    email,
+    favoriteAnnouncementIds,
+    favoriteStockIds,
+  } = checkLocal();
 
   // 상태 관리
   const [loggedIn, setLoggedIn] = useState(isLoggedIn);
   const [userProfileColor, setUserProfileColor] = useState(profileColor);
   const [userNickname, setUserNickname] = useState(nickname);
   const [userEmail, setUserEmail] = useState(email);
-  const [userFavoriteAnnouncementIds, setUserFavoriteAnnouncementIds] = useState(favoriteAnnouncementIds);
-  const [userFavoriteStockIds, setUserFavoriteStockIds] = useState(favoriteStockIds);
-
+  const [userFavoriteAnnouncementIds, setUserFavoriteAnnouncementIds] =
+    useState(favoriteAnnouncementIds);
+  const [userFavoriteStockIds, setUserFavoriteStockIds] =
+    useState(favoriteStockIds);
+  const [value, setValue] = useState("1");
   // 상태 변경 시 로컬 스토리지 업데이트
   useEffect(() => {
     if (loggedIn) {
@@ -31,12 +44,25 @@ export function LoginProvider({ children }) {
       localStorage.setItem("profileColor", userProfileColor);
       localStorage.setItem("nickname", userNickname);
       localStorage.setItem("email", userEmail);
-      localStorage.setItem("favoriteAnnouncementIds", JSON.stringify(userFavoriteAnnouncementIds));
-      localStorage.setItem("favoriteStockIds", JSON.stringify(userFavoriteStockIds));
+      localStorage.setItem(
+        "favoriteAnnouncementIds",
+        JSON.stringify(userFavoriteAnnouncementIds)
+      );
+      localStorage.setItem(
+        "favoriteStockIds",
+        JSON.stringify(userFavoriteStockIds)
+      );
     } else {
       localStorage.clear();
     }
-  }, [loggedIn, userProfileColor, userNickname, userEmail, userFavoriteAnnouncementIds, userFavoriteStockIds]);
+  }, [
+    loggedIn,
+    userProfileColor,
+    userNickname,
+    userEmail,
+    userFavoriteAnnouncementIds,
+    userFavoriteStockIds,
+  ]);
 
   // 로그아웃 시 상태 리셋
   const resetLoginState = () => {
@@ -64,6 +90,8 @@ export function LoginProvider({ children }) {
         favoriteStockIds: userFavoriteStockIds,
         setFavoriteStockIds: setUserFavoriteStockIds,
         resetLoginState,
+        value,
+        setValue,
       }}
     >
       {children}
