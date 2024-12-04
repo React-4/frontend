@@ -10,18 +10,20 @@ const ApexChart = ({ stockId, type, company }) => {
   const [stockData, setStockData] = useState([]);
   const [chartData, setChartData] = useState([]);
   const [markerData, setMarkerData] = useState([]);
-  const [length, setLength] = useState(100);
+  const [length, setLength] = useState(80);
   const [disclosure, setDisclosure] = useState([]);
   const [selectedAnnouncements, setSelectedAnnouncements] = useState([]); // 선택된 공시 목록
   const [isListVisible, setIsListVisible] = useState(false); // 공시 리스트 표시 여부
   const [selectedDate, setSelectedDate] = useState(""); // 선택된 날짜
   const navigate = useNavigate();
+
   // type 변경에 따라 length 조정
   useEffect(() => {
-    if (type === "day") setLength(50);
+    if (type === "day") setLength(80);
     if (type === "week") setLength(30);
     if (type === "month") setLength(20);
   }, [type]);
+
   // 주식 데이터 가져오기
   const getStockData = useCallback(async () => {
     try {
@@ -35,21 +37,32 @@ const ApexChart = ({ stockId, type, company }) => {
     }
   }, [stockId, type, length]);
 
+  // 한국 시간으로 변환하는 함수
+  const toKoreanDate = (dateString) => {
+    const utcDate = new Date(
+      Date.UTC(
+        dateString.slice(0, 4), // 연도
+        dateString.slice(5, 7) - 1, // 월 (0-based)
+        dateString.slice(8, 10) // 일
+      )
+    );
+
+    // UTC 시간에서 9시간을 더하여 한국 시간(KST)으로 변환
+    utcDate.setHours(utcDate.getHours() + 9);
+    return utcDate;
+  };
+
   // stockData 변경 시 처리된 차트 데이터 생성
   const processedData = useMemo(() => {
     if (stockData.length === 0) return [];
-
+    console.log(stockData);
     const processStockData = (data) => {
       const processedData = [];
       let previousDate = null;
       let previousStock = null;
 
       for (const stock of data) {
-        const currentDate = new Date(
-          stock.date.slice(0, 4),
-          stock.date.slice(5, 7) - 1,
-          stock.date.slice(8, 10)
-        );
+        const currentDate = toKoreanDate(stock.date); // 한국 시간으로 변환
 
         // 비어있는 날짜 채우기
         if (previousDate) {
@@ -88,17 +101,7 @@ const ApexChart = ({ stockId, type, company }) => {
     };
 
     const sortedData = stockData.sort(
-      (a, b) =>
-        new Date(
-          a.date.slice(0, 4),
-          a.date.slice(5, 7) - 1,
-          a.date.slice(8, 10)
-        ) -
-        new Date(
-          b.date.slice(0, 4),
-          b.date.slice(5, 7) - 1,
-          b.date.slice(8, 10)
-        )
+      (a, b) => toKoreanDate(a.date).getTime() - toKoreanDate(b.date).getTime() // 한국 시간으로 비교
     );
 
     return processStockData(sortedData);
@@ -121,18 +124,10 @@ const ApexChart = ({ stockId, type, company }) => {
     const markerDataMap = new Map();
 
     disclosure.forEach((item) => {
-      const announcementDate = new Date(
-        item.date.slice(0, 4),
-        item.date.slice(5, 7) - 1,
-        item.date.slice(8, 10)
-      ).getTime();
+      const announcementDate = toKoreanDate(item.date).getTime(); // 한국 시간으로 변환
 
       const stockForDate = stockData.find((stock) => {
-        const stockDate = new Date(
-          stock.date.slice(0, 4),
-          stock.date.slice(5, 7) - 1,
-          stock.date.slice(8, 10)
-        ).getTime();
+        const stockDate = toKoreanDate(stock.date).getTime(); // 한국 시간으로 비교
         return stockDate === announcementDate;
       });
 
