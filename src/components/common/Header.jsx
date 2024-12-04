@@ -84,7 +84,7 @@ export default function Header() {
         />
         <input
           ref={searchInputRef}
-          className="border-primary border-2 rounded-3xl h-10 w-full pl-10"
+          className="border-primary border-2 rounded-3xl h-10 w-full pl-10 cursor-pointer focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 focus:scale-110 transition-transform duration-300"
           placeholder="검색어를 입력하세요"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -94,8 +94,8 @@ export default function Header() {
       {loggedIn ? (
         <div className="relative">
           <button
-            className={`rounded-full w-10 h-10 ${colorClass} text-white hover:opacity-70`}
-            onClick={() => setShowTooltip(true)}
+            className={`rounded-full w-10 h-10 ${colorClass} text-white hover:opacity-70 transition-shadow duration-300 scale-105`}
+            onClick={() => setShowTooltip(!showTooltip)}
           >
             {nickname.slice(0, 2)}
           </button>
