@@ -14,8 +14,8 @@ export default function Comment({ announcement, announcement_id }) {
   const [page, setPage] = useState(0);
   const [good, setGood] = useState(0);
   const [bad, setBad] = useState(0);
-  const [voted, setVoted] = useState(false); // 투표 상태
-  const [voteType, setVoteType] = useState(null); // 투표한 종류 (POSITIVE 또는 NEGATIVE)
+  const [voted, setVoted] = useState(false);
+  const [voteType, setVoteType] = useState(null);
   const [isEnd, setIsEnd] = useState(false);
   const { loggedIn, profileColor } = useLogin();
   const [newComment, setNewComment] = useState("");
@@ -146,7 +146,6 @@ export default function Comment({ announcement, announcement_id }) {
     });
   }, [announcement_id]);
 
-  // 댓글 등록
   const handlePostComment = async () => {
     if (!newComment.trim()) return;
     try {
@@ -158,7 +157,16 @@ export default function Comment({ announcement, announcement_id }) {
         createdAt: new Date().toISOString(),
         userProfileColor: profileColor,
       };
-      setLocalComment((prev) => [newCommentData, ...prev]);
+      setLocalComment((prev) => {
+        const commentExists = prev.some(
+          (comment) => comment.commentId === newCommentData.commentId
+        );
+        if (!commentExists) {
+          return [newCommentData, ...prev];
+        }
+        return prev;
+      });
+
       setNewComment("");
     } catch (error) {
       console.error("댓글 등록 실패:", error);
@@ -168,7 +176,7 @@ export default function Comment({ announcement, announcement_id }) {
   const refreshComments = async () => {
     try {
       const data = await getCommentByAnnouncement(announcement_id, 0, 6);
-      setLocalComment(data);
+      setLocalComment(data); // 새로고침 시 기존 댓글을 덮어쓰기
     } catch (error) {
       console.error("댓글 리스트 새로고침 실패:", error);
     }
@@ -178,7 +186,16 @@ export default function Comment({ announcement, announcement_id }) {
     if (page > 0) {
       getCommentByAnnouncement(announcement_id, page, 3).then((data) => {
         if (data.length > 0) {
-          setLocalComment((prev) => [...prev, ...data]);
+          setLocalComment((prev) => {
+            const newComments = data.filter(
+              (newComment) =>
+                !prev.some(
+                  (existingComment) =>
+                    existingComment.commentId === newComment.commentId
+                )
+            );
+            return [...prev, ...newComments];
+          });
         }
         if (data.length < 3) {
           setIsEnd(true);
@@ -256,7 +273,7 @@ export default function Comment({ announcement, announcement_id }) {
           page={page}
           setPage={setPage}
           isEnd={isEnd}
-          refreshComments={refreshComments} // 새로고침 콜백 전달
+          refreshComments={refreshComments}
         />
       </div>
       <ScrollToTopButton />
