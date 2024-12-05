@@ -38,6 +38,7 @@ export default function CommentItem({
   refreshComments,
 }) {
   const [isOverflow, setIsOverflow] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false); // 댓글 확장 여부
   const commentRef = useRef();
   const { nickname } = useLogin();
 
@@ -48,6 +49,10 @@ export default function CommentItem({
       setIsOverflow(isContentOverflowing);
     }
   }, []);
+
+  const handleMore = () => {
+    setIsExpanded(!isExpanded); // 더보기 버튼 클릭 시 확장/축소 토글
+  };
 
   const colorClasses = [
     "bg-profile",
@@ -88,11 +93,11 @@ export default function CommentItem({
   };
 
   return (
-    <div className="flex flex-row justify-between mt-6 w-full items-center">
+    <div className="flex flex-row justify-between mt-6 w-full items-start">
       <div
-        className={`rounded-full w-10 h-10 text-white p-1 ${colorClass} flex flex-col items-center justify-center`}
+        className={`rounded-full w-10 h-10 text-white p-1 ${colorClass} flex flex-col items-center justify-center mt-2`}
       >
-        {username.slice(0, 2)}
+        {username?.slice(0, 2)}
       </div>
       <div className="w-full flex flex-col px-4">
         <div className="flex flex-row items-center">
@@ -150,15 +155,20 @@ export default function CommentItem({
           </div>
         ) : (
           <div
-            className="w-full max-h-12 rounded-lg overflow-hidden"
+            className={`w-full rounded-lg overflow-hidden ${
+              isExpanded ? "" : "max-h-12"
+            }`}
             ref={commentRef}
           >
             {comment}
           </div>
         )}
 
-        {isOverflow && (
-          <div className="text-blue-500 cursor-pointer my-2 text-sm">
+        {isOverflow && !isExpanded && (
+          <div
+            className="text-blue-500 cursor-pointer my-2 text-sm"
+            onClick={handleMore}
+          >
             더보기 ...
           </div>
         )}
